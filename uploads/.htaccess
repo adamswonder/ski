@@ -1,0 +1,9 @@
+# Protect uploads directory
+<Files ~ "\.(php|php3|php4|php5|phtml|pl|py|jsp|asp|htm|shtml|sh|cgi)$">
+    deny from all
+</Files>
+
+# Allow image and document files only
+<FilesMatch "\.(jpg|jpeg|png|gif|webp|pdf|doc|docx)$">
+    allow from all
+</FilesMatch>
