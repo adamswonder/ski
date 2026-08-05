@@ -1,0 +1,5 @@
+CLAUDE.md
+error_log.txt
+server_config.php
+uploads/*
+!uploads/.htaccess
