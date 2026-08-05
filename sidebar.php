@@ -1,10 +1,6 @@
 <?php
 /**
- * Developed by Rameez Scripts
- * WhatsApp: https://wa.me/923224083545 (For Custom Projects)
- * YouTube: https://www.youtube.com/@rameezimdad (Subscribe for more!)
- *
- * Shared Sidebar Component
+ * * Shared Sidebar Component
  * Include this file in all dashboard pages
  *
  * Required variables before including:
@@ -28,6 +24,9 @@ $account_submenu_active = in_array($current_page, ['account', 'settings', 'logs'
 
 // Get user's custom theme
 $user_theme = getUserTheme($user_id);
+
+// Job postings nav item is visible to admins and users with the manage_postings permission
+$can_manage_postings = hasPermission($user_id, $role, 'manage_postings');
 
 // Output custom theme CSS
 echo generateUserThemeCSS($user_id);
@@ -80,6 +79,16 @@ echo generateUserThemeCSS($user_id);
                     <span>Calendar</span>
                 </a>
             </li>
+
+            <?php if ($can_manage_postings): ?>
+            <!-- Job Postings -->
+            <li data-tooltip="Job Postings">
+                <a href="job-postings.php" class="<?php echo $current_page === 'job-postings' ? 'active' : ''; ?>">
+                    <i class="fas fa-bullhorn"></i>
+                    <span>Job Postings</span>
+                </a>
+            </li>
+            <?php endif; ?>
 
             <?php if ($role === 'admin'): ?>
             <!-- Stages -->
