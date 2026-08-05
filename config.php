@@ -21,7 +21,12 @@ define('MAX_LOGIN_ATTEMPTS', 5);
 define('LOGIN_LOCKOUT_TIME', 900); // 15 minutes
 
 // Secure session configuration
+// APP_SESSION_NAME lets applicant-facing pages run under a separate session
+// cookie (see applicant_config.php) so staff and applicant logins don't collide.
 if (session_status() === PHP_SESSION_NONE) {
+    if (defined('APP_SESSION_NAME')) {
+        session_name(APP_SESSION_NAME);
+    }
     ini_set('session.cookie_httponly', 1);
     ini_set('session.cookie_secure', 1);
     ini_set('session.cookie_samesite', 'Strict');
@@ -66,6 +71,24 @@ function generateCSRFToken() {
 
 function validateCSRFToken($token) {
     return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+}
+
+// Resolves a job posting's open/closed state from its manual override and open/close dates
+function computeEffectiveStatus($statusOverride, $openDate, $closeDate) {
+    if ($statusOverride === 'force_open') {
+        return 'open';
+    }
+    if ($statusOverride === 'force_closed') {
+        return 'closed';
+    }
+    $today = date('Y-m-d');
+    if ($openDate && $today < $openDate) {
+        return 'closed';
+    }
+    if ($closeDate && $today > $closeDate) {
+        return 'closed';
+    }
+    return 'open';
 }
 
 // Permission check - admins implicitly have every permission, users need an explicit grant
