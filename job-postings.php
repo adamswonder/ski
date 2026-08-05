@@ -19,23 +19,6 @@ $current_page = 'job-postings';
 $ALLOWED_FIELD_TYPES = ['text', 'textarea', 'radio', 'dropdown', 'checkbox', 'file'];
 $CHOICE_FIELD_TYPES = ['radio', 'dropdown', 'checkbox'];
 
-function computeEffectiveStatus($statusOverride, $openDate, $closeDate) {
-    if ($statusOverride === 'force_open') {
-        return 'open';
-    }
-    if ($statusOverride === 'force_closed') {
-        return 'closed';
-    }
-    $today = date('Y-m-d');
-    if ($openDate && $today < $openDate) {
-        return 'closed';
-    }
-    if ($closeDate && $today > $closeDate) {
-        return 'closed';
-    }
-    return 'open';
-}
-
 function validatePostingQuestions($questionsRaw, $allowedTypes, $choiceTypes) {
     $questions = json_decode($questionsRaw, true);
     if (!is_array($questions)) {
