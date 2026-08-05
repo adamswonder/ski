@@ -53,7 +53,7 @@
 
         $conn->query("SET FOREIGN_KEY_CHECKS = 0");
 
-        $tables_to_drop = ['application_documents', 'activity_logs', 'applications', 'login_attempts', 'system_settings', 'stages', 'users'];
+        $tables_to_drop = ['application_answers', 'application_documents', 'activity_logs', 'applications', 'job_posting_questions', 'job_postings', 'applicants', 'user_permissions', 'permissions', 'login_attempts', 'system_settings', 'stages', 'users'];
         foreach ($tables_to_drop as $table) {
             if ($conn->query("DROP TABLE IF EXISTS `$table`")) {
                 echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Dropped table: ' . $table . '</div>';
@@ -91,7 +91,27 @@
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
         echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "users" created</div>';
 
-        // 2. stages (no FK dependencies)
+        // 2. permissions (no FK dependencies)
+        $conn->query("CREATE TABLE permissions (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            slug VARCHAR(50) NOT NULL UNIQUE,
+            label VARCHAR(100) NOT NULL,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "permissions" created</div>';
+
+        // 3. user_permissions (FK → users, permissions, both CASCADE)
+        $conn->query("CREATE TABLE user_permissions (
+            user_id INT NOT NULL,
+            permission_id INT NOT NULL,
+            granted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (user_id, permission_id),
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "user_permissions" created</div>';
+
+        // 4. stages (no FK dependencies)
         $conn->query("CREATE TABLE stages (
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(100) NOT NULL,
@@ -128,7 +148,59 @@
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
         echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "login_attempts" created</div>';
 
-        // 5. applications (FK → users, stages)
+        // 5. applicants (no FK dependencies) - separate auth table for candidates
+        $conn->query("CREATE TABLE applicants (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            full_name VARCHAR(150) NOT NULL,
+            email VARCHAR(150) NOT NULL UNIQUE,
+            password_hash VARCHAR(255) NOT NULL,
+            phone VARCHAR(20) DEFAULT NULL,
+            is_active BOOLEAN NOT NULL DEFAULT TRUE,
+            password_reset_token VARCHAR(255) DEFAULT NULL,
+            password_reset_expires DATETIME DEFAULT NULL,
+            last_login_at DATETIME DEFAULT NULL,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            INDEX idx_email (email),
+            INDEX idx_is_active (is_active)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "applicants" created</div>';
+
+        // 6. job_postings (FK → users)
+        $conn->query("CREATE TABLE job_postings (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            title VARCHAR(150) NOT NULL,
+            description TEXT NOT NULL,
+            department VARCHAR(100) DEFAULT NULL,
+            location VARCHAR(150) DEFAULT NULL,
+            open_date DATE DEFAULT NULL,
+            close_date DATE DEFAULT NULL,
+            status_override ENUM('auto', 'force_open', 'force_closed') NOT NULL DEFAULT 'auto',
+            created_by INT NOT NULL,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            INDEX idx_status_override (status_override),
+            INDEX idx_open_date (open_date),
+            INDEX idx_close_date (close_date),
+            FOREIGN KEY (created_by) REFERENCES users(id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "job_postings" created</div>';
+
+        // 7. job_posting_questions (FK → job_postings CASCADE) - dynamic apply-form builder
+        $conn->query("CREATE TABLE job_posting_questions (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            job_posting_id INT NOT NULL,
+            label VARCHAR(255) NOT NULL,
+            field_type ENUM('text', 'textarea', 'radio', 'dropdown', 'checkbox', 'file') NOT NULL,
+            options JSON DEFAULT NULL,
+            is_required BOOLEAN NOT NULL DEFAULT FALSE,
+            display_order INT NOT NULL DEFAULT 0,
+            INDEX idx_job_posting_id (job_posting_id),
+            FOREIGN KEY (job_posting_id) REFERENCES job_postings(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "job_posting_questions" created</div>';
+
+        // 8. applications (FK → users, stages, job_postings, applicants)
         $conn->query("CREATE TABLE applications (
             id INT AUTO_INCREMENT PRIMARY KEY,
             candidate_name VARCHAR(150) NOT NULL,
@@ -152,6 +224,8 @@
             notes TEXT DEFAULT NULL,
             assigned_to INT DEFAULT NULL,
             created_by INT NOT NULL,
+            job_posting_id INT DEFAULT NULL,
+            applicant_id INT DEFAULT NULL,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             INDEX idx_stage_id (stage_id),
@@ -161,14 +235,31 @@
             INDEX idx_next_action_date (next_action_date),
             INDEX idx_company (company),
             INDEX idx_position (position),
+            INDEX idx_job_posting_id (job_posting_id),
+            INDEX idx_applicant_id (applicant_id),
             FOREIGN KEY (stage_id) REFERENCES stages(id),
             FOREIGN KEY (status_id) REFERENCES stages(id),
             FOREIGN KEY (assigned_to) REFERENCES users(id),
-            FOREIGN KEY (created_by) REFERENCES users(id)
+            FOREIGN KEY (created_by) REFERENCES users(id),
+            FOREIGN KEY (job_posting_id) REFERENCES job_postings(id),
+            FOREIGN KEY (applicant_id) REFERENCES applicants(id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
         echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "applications" created</div>';
 
-        // 6. application_documents (FK → applications CASCADE, users RESTRICT)
+        // 9. application_answers (FK → applications CASCADE, job_posting_questions RESTRICT) - candidate's submitted form answers
+        $conn->query("CREATE TABLE application_answers (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            application_id INT NOT NULL,
+            question_id INT NOT NULL,
+            answer_value TEXT DEFAULT NULL,
+            INDEX idx_application_id (application_id),
+            INDEX idx_question_id (question_id),
+            FOREIGN KEY (application_id) REFERENCES applications(id) ON DELETE CASCADE,
+            FOREIGN KEY (question_id) REFERENCES job_posting_questions(id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "application_answers" created</div>';
+
+        // 10. application_documents (FK → applications CASCADE, users RESTRICT)
         $conn->query("CREATE TABLE application_documents (
             id INT AUTO_INCREMENT PRIMARY KEY,
             application_id INT NOT NULL,
@@ -186,7 +277,7 @@
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
         echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "application_documents" created</div>';
 
-        // 7. activity_logs (FK → users RESTRICT, applications SET NULL)
+        // 11. activity_logs (FK → users RESTRICT, applications SET NULL)
         $conn->query("CREATE TABLE activity_logs (
             id BIGINT AUTO_INCREMENT PRIMARY KEY,
             user_id INT NOT NULL,
@@ -219,10 +310,18 @@
         echo '<th style="padding:8px; text-align:left;">ON DELETE</th>';
         echo '</tr>';
         $fk_rows = [
+            ['user_permissions → user_id', 'users', 'CASCADE'],
+            ['user_permissions → permission_id', 'permissions', 'CASCADE'],
+            ['job_postings → created_by', 'users', 'RESTRICT'],
+            ['job_posting_questions → job_posting_id', 'job_postings', 'CASCADE'],
             ['applications → stage_id', 'stages', 'RESTRICT'],
             ['applications → status_id', 'stages', 'RESTRICT'],
             ['applications → assigned_to', 'users', 'RESTRICT'],
             ['applications → created_by', 'users', 'RESTRICT'],
+            ['applications → job_posting_id', 'job_postings', 'RESTRICT'],
+            ['applications → applicant_id', 'applicants', 'RESTRICT'],
+            ['application_answers → application_id', 'applications', 'CASCADE'],
+            ['application_answers → question_id', 'job_posting_questions', 'RESTRICT'],
             ['application_documents → application_id', 'applications', 'CASCADE'],
             ['application_documents → uploaded_by', 'users', 'RESTRICT'],
             ['activity_logs → user_id', 'users', 'RESTRICT'],
@@ -286,6 +385,23 @@
         // Insert default system setting
         $conn->query("INSERT INTO system_settings (setting_key, setting_value) VALUES ('allow_user_profile_uploads', '1')");
         echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Default settings created</div>';
+
+        // ====== INSERT DEFAULT PERMISSIONS ======
+        echo '<br><div class="log-item log-info"><i class="fas fa-user-lock"></i> <strong>Creating default permissions...</strong></div>';
+
+        $default_permissions = [
+            ['manage_postings', 'Manage Job Postings'],
+        ];
+        $insert_permission = $conn->prepare("INSERT INTO permissions (slug, label) VALUES (?, ?)");
+        $permissions_inserted = 0;
+        foreach ($default_permissions as $perm) {
+            $insert_permission->bind_param("ss", $perm[0], $perm[1]);
+            if ($insert_permission->execute()) {
+                $permissions_inserted++;
+            }
+        }
+        $insert_permission->close();
+        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Inserted ' . $permissions_inserted . ' default permissions</div>';
 
         // ====== INSERT DEFAULT STAGES & STATUSES ======
         echo '<br><div class="log-item log-info"><i class="fas fa-stream"></i> <strong>Creating default stages & statuses...</strong></div>';
@@ -464,11 +580,14 @@
         echo '<tr style="background:var(--navy-primary); color:white;"><th style="padding:8px; text-align:left;">Table</th><th style="padding:8px; text-align:left;">Records</th></tr>';
         $summary = [
             ['users', count($user_ids) . ' (1 admin + 39 users)'],
+            ['permissions', $permissions_inserted],
             ['stages', count($stage_ids) + count($status_ids) . ' (' . count($stage_ids) . ' pipeline + ' . count($status_ids) . ' status)'],
             ['applications', count($app_ids)],
             ['application_documents', $docs_inserted],
             ['activity_logs', $logs_inserted],
             ['system_settings', '1'],
+            ['applicants', '0 (self-registered via careers portal)'],
+            ['job_postings', '0 (created by admins)'],
         ];
         foreach ($summary as $i => $row) {
             $bg = $i % 2 === 0 ? '#f8f9fa' : 'white';
