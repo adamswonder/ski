@@ -68,6 +68,30 @@ function validateCSRFToken($token) {
     return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
 }
 
+// Permission check - admins implicitly have every permission, users need an explicit grant
+function hasPermission($user_id, $role, $permission_slug) {
+    if ($role === 'admin') {
+        return true;
+    }
+
+    try {
+        $conn = getDBConnection();
+        $stmt = $conn->prepare("SELECT 1 FROM user_permissions up
+                                 JOIN permissions p ON p.id = up.permission_id
+                                 WHERE up.user_id = ? AND p.slug = ?");
+        $stmt->bind_param("is", $user_id, $permission_slug);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $granted = $result->num_rows > 0;
+        $stmt->close();
+        $conn->close();
+        return $granted;
+    } catch (Exception $e) {
+        error_log("Permission check error: " . $e->getMessage());
+        return false;
+    }
+}
+
 // Session timeout check
 function checkSessionTimeout() {
     if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > SESSION_TIMEOUT)) {
