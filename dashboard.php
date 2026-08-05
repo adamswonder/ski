@@ -1,9 +1,4 @@
 <?php
-/**
- * Developed by Rameez Scripts
- * WhatsApp: https://wa.me/923224083545 (For Custom Projects)
- * YouTube: https://www.youtube.com/@rameezimdad (Subscribe for more!)
- */
 
 require_once 'config.php';
 
@@ -252,7 +247,7 @@ if (isset($_GET['action'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Command Center - Job Application Tracker</title>
+    <title>Dashboard - Job Application Tracker</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="styles.css?v=5.0">
@@ -923,7 +918,7 @@ if (isset($_GET['action'])) {
             <!-- Command Bar Header -->
             <div class="command-header">
                 <div class="command-header-left">
-                    <h1><i class="fas fa-th-large"></i> Recruitment Command Center</h1>
+                    <h1><i class="fas fa-th-large"></i> Dashboard</h1>
                 </div>
                 <div class="command-header-right">
                     <div class="cmd-search-box">
