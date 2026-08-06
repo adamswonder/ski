@@ -120,10 +120,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="mobile-web-app-capable" content="yes">
     <title>Login - Skyward Airlines</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.0">
+    <link rel="stylesheet" href="styles.css?v=5.3">
+    <?php echo generateBrandAccentCSS(); ?>
 </head>
 <body>
     <div class="login-container">
+        <div class="login-brand-panel">
+            <div class="login-brand-content">
+                <h1>Manage recruitment from one dashboard</h1>
+                <p>Sign in to review applications, move candidates through the pipeline, and keep every hiring decision organized.</p>
+                <div class="login-brand-features">
+                    <div><i class="fas fa-stream"></i> Pipeline Tracking</div>
+                    <div><i class="fas fa-users"></i> Team Access</div>
+                    <div><i class="fas fa-shield-alt"></i> Secure Sessions</div>
+                </div>
+            </div>
+        </div>
+        <div class="login-form-panel">
         <div class="login-box">
             <?php
             $loginLogo = getSetting('login_logo', '');
@@ -157,6 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="login-footer">
                 <p>&copy; 2026 Skyward Airlines. All rights reserved.</p>
             </div>
+        </div>
         </div>
 
         <!-- Theme Toggle Button -->

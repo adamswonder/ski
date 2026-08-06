@@ -78,10 +78,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Create Account - Careers</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.2">
+    <link rel="stylesheet" href="styles.css?v=5.3">
+    <?php echo generateBrandAccentCSS(); ?>
 </head>
 <body>
     <div class="login-container">
+        <div class="login-brand-panel">
+            <div class="login-brand-content">
+                <h1>Join the Skyward Airlines team</h1>
+                <p>Create an account to apply for open positions and keep track of every application from one place.</p>
+                <div class="login-brand-features">
+                    <div><i class="fas fa-route"></i> Track Progress</div>
+                    <div><i class="fas fa-bolt"></i> Fast Applications</div>
+                    <div><i class="fas fa-lock"></i> Secure Account</div>
+                </div>
+            </div>
+        </div>
+        <div class="login-form-panel">
         <div class="login-box">
             <?php
             $loginLogo = getSetting('login_logo', '');
@@ -133,6 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <p>Already have an account? <a href="applicant-login.php<?php echo $redirect !== 'careers.php' ? '?redirect=' . urlencode($redirect) : ''; ?>">Log in</a></p>
                 <p><a href="careers.php">&larr; Back to job listings</a></p>
             </div>
+        </div>
         </div>
 
         <button class="login-theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
