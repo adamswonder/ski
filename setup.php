@@ -223,7 +223,7 @@
             days_to_join INT GENERATED ALWAYS AS (DATEDIFF(joined_date, applied_date)) STORED,
             notes TEXT DEFAULT NULL,
             assigned_to INT DEFAULT NULL,
-            created_by INT NOT NULL,
+            created_by INT DEFAULT NULL,
             job_posting_id INT DEFAULT NULL,
             applicant_id INT DEFAULT NULL,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
