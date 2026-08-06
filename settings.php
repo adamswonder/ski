@@ -32,12 +32,14 @@ if (isset($_POST['action'])) {
         try {
             $allowUserUploads = getSetting('allow_user_profile_uploads', '1');
             $loginLogo = getSetting('login_logo', '');
+            $brandAccentColor = getBrandAccentColor();
 
             echo json_encode([
                 'success' => true,
                 'data' => [
                     'allow_user_profile_uploads' => $allowUserUploads,
-                    'login_logo' => $loginLogo
+                    'login_logo' => $loginLogo,
+                    'brand_accent_color' => $brandAccentColor
                 ]
             ]);
             exit();
@@ -50,14 +52,21 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] === 'saveSettings') {
         try {
             $allowUserUploads = isset($_POST['allow_user_profile_uploads']) ? $_POST['allow_user_profile_uploads'] : '0';
+            $brandAccentColor = isset($_POST['brand_accent_color']) ? trim($_POST['brand_accent_color']) : '#0074D9';
 
-            // Save setting
+            if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $brandAccentColor)) {
+                echo json_encode(['success' => false, 'message' => 'Invalid accent color format. Use a hex color like #E31E24']);
+                exit();
+            }
+
+            // Save settings
             $result = setSetting('allow_user_profile_uploads', $allowUserUploads);
+            $result = setSetting('brand_accent_color', $brandAccentColor) && $result;
 
             if ($result) {
                 // Log activity
                 $settingText = $allowUserUploads === '1' ? 'enabled' : 'disabled';
-                logActivity($user_id, 'UPDATE', "User profile uploads $settingText", ['module' => 'settings']);
+                logActivity($user_id, 'UPDATE', "User profile uploads $settingText, brand accent set to $brandAccentColor", ['module' => 'settings']);
 
                 echo json_encode([
                     'success' => true,
@@ -521,6 +530,36 @@ if (isset($_POST['action'])) {
                         </div>
                     </div>
 
+                    <!-- Card 7: Brand Accent Color -->
+                    <div class="settings-mega-card">
+                        <div class="settings-card-header">
+                            <div class="settings-card-icon" style="background: linear-gradient(135deg, #E31E24 0%, #a01319 100%);">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <div>
+                                <h3 class="settings-card-title">Brand Accent Color</h3>
+                                <p class="settings-card-subtitle">Fixed accent color used across the whole system</p>
+                            </div>
+                        </div>
+                        <div class="settings-card-body">
+                            <p class="settings-description">
+                                This accent color applies site-wide (buttons, links, highlights) for every user, including on the public careers pages and login screens. It overrides the accent slot in each user's personal theme customizer.
+                            </p>
+                            <div class="form-group">
+                                <label><i class="fas fa-square" id="brandAccentIcon"></i> Accent Color</label>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <input type="color" id="brand_accent_color" value="#0074D9" style="width: 60px; height: 45px; padding: 2px; cursor: pointer; border: 2px solid var(--border-color); border-radius: 4px;">
+                                    <input type="text" id="brand_accent_color_hex" value="#0074D9" maxlength="7" style="flex: 1; text-transform: uppercase;">
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                <button type="button" class="btn btn-primary" onclick="saveBrandAccentColor()">
+                                    <i class="fas fa-save"></i> Save Accent Color
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -530,6 +569,51 @@ if (isset($_POST['action'])) {
         $(document).ready(function() {
             loadSettings();
         });
+
+        document.getElementById('brand_accent_color').addEventListener('input', function() {
+            document.getElementById('brand_accent_color_hex').value = this.value.toUpperCase();
+            document.getElementById('brandAccentIcon').style.color = this.value;
+        });
+
+        document.getElementById('brand_accent_color_hex').addEventListener('input', function() {
+            if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) {
+                document.getElementById('brand_accent_color').value = this.value;
+                document.getElementById('brandAccentIcon').style.color = this.value;
+            }
+        });
+
+        function saveBrandAccentColor() {
+            const accentColor = document.getElementById('brand_accent_color_hex').value;
+            if (!/^#[0-9A-Fa-f]{6}$/.test(accentColor)) {
+                Swal.fire({ icon: 'error', title: 'Invalid Color', text: 'Please enter a valid hex color like #E31E24' });
+                return;
+            }
+
+            Swal.fire({ title: 'Saving...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            $.ajax({
+                url: '',
+                method: 'POST',
+                data: {
+                    action: 'saveSettings',
+                    allow_user_profile_uploads: document.getElementById('allowUserUploads').checked ? '1' : '0',
+                    brand_accent_color: accentColor
+                },
+                dataType: 'json',
+                success: function(response) {
+                    Swal.close();
+                    if (response.success) {
+                        Swal.fire({ icon: 'success', title: 'Saved!', text: 'Reload other pages to see the accent color everywhere.', timer: 2500, showConfirmButton: false });
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Error', text: response.message });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.close();
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Connection error: ' + error });
+                }
+            });
+        }
 
         function loadSettings() {
             // Show skeleton, hide content
@@ -559,6 +643,12 @@ if (isset($_POST['action'])) {
                         // Set logo preview
                         var defaultLogo = 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiGXxCe0WNNedmFqSWeF761f7Kshhc-NP5ChRQKz9fr97cO8VaarvD0KlCwqHojJVBWv-RAxfOqMI5rD4H78KnARyOc6QgwL1nRRFWf5xNQ1d9F9HfAoLPPGlTyP0GwNl4n-INMEsWLQ4Y7zJtz5bOdAnc2ePH9-uCRgshlo6BsS6gJEz6fhrxL-5U5O3sX/s160/channels4_profile.jpg';
                         document.getElementById('logoPreview').src = data.login_logo || defaultLogo;
+
+                        // Set brand accent color
+                        const brandAccent = data.brand_accent_color || '#0074D9';
+                        document.getElementById('brand_accent_color').value = brandAccent;
+                        document.getElementById('brand_accent_color_hex').value = brandAccent.toUpperCase();
+                        document.getElementById('brandAccentIcon').style.color = brandAccent;
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -583,6 +673,7 @@ if (isset($_POST['action'])) {
 
         function saveSettings() {
             const allowUserUploads = document.getElementById('allowUserUploads').checked ? '1' : '0';
+            const brandAccentColor = document.getElementById('brand_accent_color_hex').value;
 
             Swal.fire({
                 title: 'Saving Settings...',
@@ -597,7 +688,8 @@ if (isset($_POST['action'])) {
                 method: 'POST',
                 data: {
                     action: 'saveSettings',
-                    allow_user_profile_uploads: allowUserUploads
+                    allow_user_profile_uploads: allowUserUploads,
+                    brand_accent_color: brandAccentColor
                 },
                 dataType: 'json',
                 success: function(response) {
