@@ -622,11 +622,11 @@ if (isset($_GET['action'])) {
     <title>Applications - Dashboard System</title>
 
     <!-- CDN Dependencies -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.1">
+    <link rel="stylesheet" href="styles.css?v=5.4">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -648,19 +648,19 @@ if (isset($_GET['action'])) {
         <!-- Main Content -->
         <div class="main-content">
             <div class="header">
-                <h1><i class="fas fa-file-alt"></i> Applications</h1>
+                <h1><i class="ri-file-text-line"></i> Applications</h1>
                 <div>Welcome, <?php echo htmlspecialchars($username); ?></div>
             </div>
 
             <div class="data-section">
                 <div class="section-header">
-                    <h2><i class="fas fa-briefcase"></i> Job Applications</h2>
+                    <h2><i class="ri-briefcase-line"></i> Job Applications</h2>
                     <div style="display: flex; gap: 10px;">
                         <button class="btn btn-primary" onclick="loadApplications()">
-                            <i class="fas fa-sync"></i> Refresh
+                            <i class="ri-refresh-line"></i> Refresh
                         </button>
                         <button class="btn btn-success" onclick="openAddModal()">
-                            <i class="fas fa-plus"></i> Add Application
+                            <i class="ri-add-line"></i> Add Application
                         </button>
                     </div>
                 </div>
@@ -668,40 +668,40 @@ if (isset($_GET['action'])) {
                 <!-- Filters Section -->
                 <div class="filters-section" id="filtersSection" style="display: none;">
                     <div class="filters-header">
-                        <h3><i class="fas fa-filter"></i> Filters</h3>
+                        <h3><i class="ri-filter-line"></i> Filters</h3>
                         <button class="btn btn-secondary btn-sm" onclick="clearFilters()">
-                            <i class="fas fa-times-circle"></i> Clear All
+                            <i class="ri-close-circle-line"></i> Clear All
                         </button>
                     </div>
                     <div class="filters-grid">
                         <div class="filter-group">
-                            <label><i class="fas fa-calendar-alt"></i> Applied From</label>
+                            <label><i class="ri-calendar-line"></i> Applied From</label>
                             <input type="date" id="filterDateFrom" class="filter-input">
                         </div>
                         <div class="filter-group">
-                            <label><i class="fas fa-calendar-alt"></i> Applied To</label>
+                            <label><i class="ri-calendar-line"></i> Applied To</label>
                             <input type="date" id="filterDateTo" class="filter-input">
                         </div>
                         <div class="filter-group">
-                            <label><i class="fas fa-stream"></i> Stage</label>
+                            <label><i class="ri-list-unordered"></i> Stage</label>
                             <select id="filterStage" class="filter-input">
                                 <option value="">All Stages</option>
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label><i class="fas fa-tags"></i> Status</label>
+                            <label><i class="ri-price-tag-3-line"></i> Status</label>
                             <select id="filterStatus" class="filter-input">
                                 <option value="">All Statuses</option>
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label><i class="fas fa-building"></i> Department</label>
+                            <label><i class="ri-building-line"></i> Department</label>
                             <select id="filterCompany" class="filter-input">
                                 <option value="">All Departments</option>
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label><i class="fas fa-user-tie"></i> Assigned To</label>
+                            <label><i class="ri-user-3-line"></i> Assigned To</label>
                             <select id="filterAssigned" class="filter-input">
                                 <option value="">All</option>
                             </select>
@@ -710,7 +710,7 @@ if (isset($_GET['action'])) {
                 </div>
 
                 <div class="table-scroll-hint">
-                    <i class="fas fa-arrows-alt-h"></i> Swipe left/right to see all columns
+                    <i class="ri-arrow-left-right-line"></i> Swipe left/right to see all columns
                 </div>
                 <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
                     <table id="applicationsTable" class="display" style="width:100%"></table>
@@ -723,9 +723,9 @@ if (isset($_GET['action'])) {
     <div class="modal-overlay" id="appModal">
         <div class="modal" onclick="event.stopPropagation()" style="max-width: 900px;">
             <div class="modal-header">
-                <h3 id="modalTitle"><i class="fas fa-plus-circle"></i> Add Application</h3>
+                <h3 id="modalTitle"><i class="ri-add-circle-line"></i> Add Application</h3>
                 <button class="close-btn" onclick="closeModal()">
-                    <i class="fas fa-times"></i>
+                    <i class="ri-close-line"></i>
                 </button>
             </div>
             <div class="modal-body">
@@ -733,56 +733,56 @@ if (isset($_GET['action'])) {
                     <input type="hidden" id="appId" name="id">
 
                     <!-- Candidate Info -->
-                    <h4 class="form-section-title"><i class="fas fa-user"></i> Candidate Information</h4>
+                    <h4 class="form-section-title"><i class="ri-user-line"></i> Candidate Information</h4>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label><i class="fas fa-user"></i> Candidate Name *</label>
+                            <label><i class="ri-user-line"></i> Candidate Name *</label>
                             <input type="text" id="candidateName" name="candidate_name" required maxlength="150">
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-envelope"></i> Email *</label>
+                            <label><i class="ri-mail-line"></i> Email *</label>
                             <input type="email" id="appEmail" name="email" required maxlength="150">
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-phone"></i> Contact Number</label>
+                            <label><i class="ri-phone-line"></i> Contact Number</label>
                             <input type="text" id="contactNumber" name="contact_number" maxlength="20">
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-flag"></i> Nationality</label>
+                            <label><i class="ri-flag-line"></i> Nationality</label>
                             <input type="text" id="nationality" name="nationality" maxlength="80">
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-map-marker-alt"></i> Current Location</label>
+                            <label><i class="ri-map-pin-line"></i> Current Location</label>
                             <input type="text" id="currentLocation" name="current_location" maxlength="150">
                         </div>
                     </div>
 
                     <!-- Job Details -->
-                    <h4 class="form-section-title"><i class="fas fa-briefcase"></i> Job Details</h4>
+                    <h4 class="form-section-title"><i class="ri-briefcase-line"></i> Job Details</h4>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label><i class="fas fa-id-badge"></i> Position *</label>
+                            <label><i class="ri-id-card-line"></i> Position *</label>
                             <input type="text" id="position" name="position" required maxlength="150">
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-building"></i> Department</label>
+                            <label><i class="ri-building-line"></i> Department</label>
                             <input type="text" id="company" name="company" maxlength="150" placeholder="e.g. Marketing, IT, HR">
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-clock"></i> Experience</label>
+                            <label><i class="ri-time-line"></i> Experience</label>
                             <input type="text" id="experience" name="experience" maxlength="100" placeholder="e.g. 3 years, 5+ years">
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-money-bill-wave"></i> Expected Salary</label>
+                            <label><i class="ri-money-dollar-circle-line"></i> Expected Salary</label>
                             <input type="text" id="expectedSalary" name="expected_salary" maxlength="50" placeholder="e.g. 50,000 PKR">
                         </div>
                     </div>
 
                     <!-- Qualifications -->
-                    <h4 class="form-section-title"><i class="fas fa-graduation-cap"></i> Qualifications</h4>
+                    <h4 class="form-section-title"><i class="ri-graduation-cap-line"></i> Qualifications</h4>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label><i class="fas fa-graduation-cap"></i> Academic Qualification</label>
+                            <label><i class="ri-graduation-cap-line"></i> Academic Qualification</label>
                             <div class="checkbox-group" id="academicCheckboxes">
                                 <label class="checkbox-item"><input type="checkbox" name="academic_qualification[]" value="Matric"> Matric</label>
                                 <label class="checkbox-item"><input type="checkbox" name="academic_qualification[]" value="Intermediate"> Intermediate</label>
@@ -794,32 +794,32 @@ if (isset($_GET['action'])) {
                             </div>
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-laptop-code"></i> Technical Qualification</label>
+                            <label><i class="ri-terminal-window-line"></i> Technical Qualification</label>
                             <div class="checkbox-group" id="technicalCheckboxes">
                                 <p style="color: #999; text-align: center; padding: 20px;">
-                                    <i class="fas fa-spinner fa-spin"></i> Loading skills...
+                                    <i class="ri-loader-4-line ri-spin"></i> Loading skills...
                                 </p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Pipeline & Status -->
-                    <h4 class="form-section-title"><i class="fas fa-stream"></i> Pipeline & Status</h4>
+                    <h4 class="form-section-title"><i class="ri-list-unordered"></i> Pipeline & Status</h4>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label><i class="fas fa-stream"></i> Pipeline Stage *</label>
+                            <label><i class="ri-list-unordered"></i> Pipeline Stage *</label>
                             <select id="stageId" name="stage_id" required>
                                 <option value="">Select Stage</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-tags"></i> Status *</label>
+                            <label><i class="ri-price-tag-3-line"></i> Status *</label>
                             <select id="statusId" name="status_id" required>
                                 <option value="">Select Status</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-user-tie"></i> Assigned To</label>
+                            <label><i class="ri-user-3-line"></i> Assigned To</label>
                             <select id="assignedTo" name="assigned_to">
                                 <option value="">Unassigned</option>
                             </select>
@@ -827,37 +827,37 @@ if (isset($_GET['action'])) {
                     </div>
 
                     <!-- Dates & Actions -->
-                    <h4 class="form-section-title"><i class="fas fa-calendar-alt"></i> Dates & Next Action</h4>
+                    <h4 class="form-section-title"><i class="ri-calendar-line"></i> Dates & Next Action</h4>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label><i class="fas fa-calendar-plus"></i> Applied Date *</label>
+                            <label><i class="ri-calendar-event-line"></i> Applied Date *</label>
                             <input type="date" id="appliedDate" name="applied_date" required>
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-calendar-check"></i> Joined Date</label>
+                            <label><i class="ri-calendar-check-line"></i> Joined Date</label>
                             <input type="date" id="joinedDate" name="joined_date">
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-tasks"></i> Next Action</label>
+                            <label><i class="ri-checkbox-multiple-line"></i> Next Action</label>
                             <input type="text" id="nextAction" name="next_action" maxlength="255" placeholder="e.g. Schedule Interview">
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-calendar-day"></i> Next Action Date</label>
+                            <label><i class="ri-calendar-todo-line"></i> Next Action Date</label>
                             <input type="date" id="nextActionDate" name="next_action_date">
                         </div>
                     </div>
 
                     <!-- Notes -->
                     <div class="form-group">
-                        <label><i class="fas fa-sticky-note"></i> Notes</label>
+                        <label><i class="ri-sticky-note-line"></i> Notes</label>
                         <textarea id="notes" name="notes" rows="3" placeholder="Additional notes about this application..."></textarea>
                     </div>
 
                     <!-- Attach Document (Optional) -->
-                    <h4 class="form-section-title"><i class="fas fa-paperclip"></i> Attach Document (Optional)</h4>
+                    <h4 class="form-section-title"><i class="ri-attachment-line"></i> Attach Document (Optional)</h4>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label><i class="fas fa-tag"></i> Document Label</label>
+                            <label><i class="ri-price-tag-line"></i> Document Label</label>
                             <select id="inlineDocLabel">
                                 <option value="CV">CV / Resume</option>
                                 <option value="Cover Letter">Cover Letter</option>
@@ -869,24 +869,24 @@ if (isset($_GET['action'])) {
                             </select>
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-file"></i> Select File</label>
+                            <label><i class="ri-file-line"></i> Select File</label>
                             <input type="file" id="inlineDocFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.webp">
                         </div>
                     </div>
-                    <p style="font-size: 13px; color: #888; margin-bottom: 15px;"><i class="fas fa-info-circle"></i> Allowed: PDF, DOC, DOCX, JPG, PNG, GIF, WEBP (Max 15MB). Document will be uploaded after saving.</p>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 15px;"><i class="ri-information-line"></i> Allowed: PDF, DOC, DOCX, JPG, PNG, GIF, WEBP (Max 15MB). Document will be uploaded after saving.</p>
 
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Save
+                            <i class="ri-save-line"></i> Save
                         </button>
 
                         <!-- Upload Documents Button (visible only in edit mode) -->
                         <button type="button" class="btn btn-success" id="uploadDocsBtn" style="display: none;" onclick="openDocsModalFromForm()">
-                            <i class="fas fa-paperclip"></i> Upload
+                            <i class="ri-attachment-line"></i> Upload
                         </button>
 
                         <button type="button" class="btn btn-secondary" onclick="closeModal()">
-                            <i class="fas fa-times"></i> Cancel
+                            <i class="ri-close-line"></i> Cancel
                         </button>
                     </div>
                 </form>
@@ -898,9 +898,9 @@ if (isset($_GET['action'])) {
     <div class="modal-overlay" id="viewModal">
         <div class="modal" onclick="event.stopPropagation()" style="max-width: 800px;">
             <div class="modal-header">
-                <h3><i class="fas fa-eye"></i> Application Details</h3>
+                <h3><i class="ri-eye-line"></i> Application Details</h3>
                 <button class="close-btn" onclick="closeViewModal()">
-                    <i class="fas fa-times"></i>
+                    <i class="ri-close-line"></i>
                 </button>
             </div>
             <div class="modal-body" id="viewModalBody">
@@ -913,20 +913,20 @@ if (isset($_GET['action'])) {
     <div class="modal-overlay" id="docsModal">
         <div class="modal" onclick="event.stopPropagation()" style="max-width: 700px;">
             <div class="modal-header">
-                <h3><i class="fas fa-paperclip"></i> Documents - <span id="docsModalName"></span></h3>
+                <h3><i class="ri-attachment-line"></i> Documents - <span id="docsModalName"></span></h3>
                 <button class="close-btn" onclick="closeDocsModal()">
-                    <i class="fas fa-times"></i>
+                    <i class="ri-close-line"></i>
                 </button>
             </div>
             <div class="modal-body">
                 <!-- Upload Section -->
                 <div class="doc-upload-section">
-                    <h4 style="margin-bottom: 15px; color: var(--navy-primary);"><i class="fas fa-cloud-upload-alt"></i> Upload Document</h4>
+                    <h4 style="margin-bottom: 15px; color: var(--navy-primary);"><i class="ri-upload-cloud-2-line"></i> Upload Document</h4>
                     <form id="docUploadForm" enctype="multipart/form-data">
                         <input type="hidden" id="docAppId" name="application_id">
                         <div class="form-grid">
                             <div class="form-group">
-                                <label><i class="fas fa-tag"></i> Document Label</label>
+                                <label><i class="ri-price-tag-line"></i> Document Label</label>
                                 <select id="docLabel" name="document_label">
                                     <option value="CV">CV / Resume</option>
                                     <option value="Cover Letter">Cover Letter</option>
@@ -938,20 +938,20 @@ if (isset($_GET['action'])) {
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label><i class="fas fa-file"></i> Select File *</label>
+                                <label><i class="ri-file-line"></i> Select File *</label>
                                 <input type="file" id="docFile" name="document" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.webp" required>
                             </div>
                         </div>
-                        <p class="doc-upload-hint"><i class="fas fa-info-circle"></i> Allowed: PDF, DOC, DOCX, JPG, PNG, GIF, WEBP (Max 15MB)</p>
+                        <p class="doc-upload-hint"><i class="ri-information-line"></i> Allowed: PDF, DOC, DOCX, JPG, PNG, GIF, WEBP (Max 15MB)</p>
                         <button type="submit" class="btn btn-primary" id="docUploadBtn" style="margin-top: 10px;">
-                            <i class="fas fa-upload"></i> Upload
+                            <i class="ri-upload-line"></i> Upload
                         </button>
                     </form>
                 </div>
 
                 <!-- Documents List -->
                 <div id="docsListContainer" style="margin-top: 25px;">
-                    <h4 style="margin-bottom: 15px; color: var(--navy-primary);"><i class="fas fa-folder-open"></i> Uploaded Documents <span class="docs-count-badge" id="docsCount">0</span></h4>
+                    <h4 style="margin-bottom: 15px; color: var(--navy-primary);"><i class="ri-folder-open-line"></i> Uploaded Documents <span class="docs-count-badge" id="docsCount">0</span></h4>
                     <div id="docsList">
                         <p style="color: #999; text-align: center; padding: 20px;">Loading documents...</p>
                     </div>
@@ -960,8 +960,8 @@ if (isset($_GET['action'])) {
                 <!-- Document Preview Area -->
                 <div id="docPreviewArea" style="display: none; margin-top: 20px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid var(--navy-primary);">
-                        <h4 style="color: var(--navy-primary); margin: 0;"><i class="fas fa-eye"></i> Document Preview - <span id="previewDocName"></span></h4>
-                        <button class="btn btn-secondary" onclick="closeDocPreview()" style="padding: 6px 14px; font-size: 13px;"><i class="fas fa-times"></i> Close Preview</button>
+                        <h4 style="color: var(--navy-primary); margin: 0;"><i class="ri-eye-line"></i> Document Preview - <span id="previewDocName"></span></h4>
+                        <button class="btn btn-secondary" onclick="closeDocPreview()" style="padding: 6px 14px; font-size: 13px;"><i class="ri-close-line"></i> Close Preview</button>
                     </div>
                     <div id="docPreviewContent" style="border: 1px solid #dee2e6; border-radius: 4px; overflow: hidden; background: #f8f9fa;"></div>
                 </div>
@@ -972,8 +972,8 @@ if (isset($_GET['action'])) {
     <!-- Print Overlay (Same-Tab View) -->
     <div id="printOverlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 2000; background: #e8e8e8; overflow-y: auto;">
         <div id="printOverlayActions" style="position: sticky; top: 0; z-index: 10; background: var(--navy-primary); padding: 12px 20px; display: flex; justify-content: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
-            <button onclick="printOverlayContent()" class="btn btn-primary" style="background: #fff; color: var(--navy-primary); font-weight: 600;"><i class="fas fa-print"></i> Print Document</button>
-            <button onclick="closePrintOverlay()" class="btn btn-secondary"><i class="fas fa-times"></i> Close</button>
+            <button onclick="printOverlayContent()" class="btn btn-primary" style="background: #fff; color: var(--navy-primary); font-weight: 600;"><i class="ri-printer-line"></i> Print Document</button>
+            <button onclick="closePrintOverlay()" class="btn btn-secondary"><i class="ri-close-line"></i> Close</button>
         </div>
         <div id="printOverlayContent" style="padding: 20px 0;"></div>
     </div>
@@ -1095,7 +1095,7 @@ if (isset($_GET['action'])) {
                             title: 'Stage',
                             render: function(data, type, row) {
                                 if (!row.stage_name) return '-';
-                                var icon = row.stage_icon ? '<i class="fas ' + row.stage_icon + '"></i> ' : '';
+                                var icon = row.stage_icon ? '<i class="' + row.stage_icon + '"></i> ' : '';
                                 return '<span class="stage-badge" style="background:' + (row.stage_color || '#6B7280') + '">' + icon + row.stage_name + '</span>';
                             }
                         },
@@ -1104,7 +1104,7 @@ if (isset($_GET['action'])) {
                             title: 'Status',
                             render: function(data, type, row) {
                                 if (!row.status_name) return '-';
-                                var icon = row.status_icon ? '<i class="fas ' + row.status_icon + '"></i> ' : '';
+                                var icon = row.status_icon ? '<i class="' + row.status_icon + '"></i> ' : '';
                                 return '<span class="stage-badge" style="background:' + (row.status_color || '#6B7280') + '">' + icon + row.status_name + '</span>';
                             }
                         },
@@ -1117,11 +1117,11 @@ if (isset($_GET['action'])) {
                             render: function(data, type, row) {
                                 if (data === null || data === undefined) return '-';
                                 var color = '#34a853';
-                                var icon = 'fa-clock';
-                                if (data > 60) { color = '#ea4335'; icon = 'fa-exclamation-circle'; }
-                                else if (data > 30) { color = '#fbbc04'; icon = 'fa-hourglass-half'; }
+                                var icon = 'ri-time-line';
+                                if (data > 60) { color = '#ea4335'; icon = 'ri-error-warning-line'; }
+                                else if (data > 30) { color = '#fbbc04'; icon = 'ri-hourglass-line'; }
                                 var isJoined = row.joined_date ? ' title="Applied to Joined"' : ' title="Days in pipeline"';
-                                return '<span class="days-badge" style="background:' + color + ';"' + isJoined + '><i class="fas ' + icon + '"></i> ' + data + '</span>';
+                                return '<span class="days-badge" style="background:' + color + ';"' + isJoined + '><i class="' + icon + '"></i> ' + data + '</span>';
                             }
                         },
                         { data: 'assigned_to_name', title: 'Assigned To', defaultContent: '<span style="color:#999">Unassigned</span>' },
@@ -1135,7 +1135,7 @@ if (isset($_GET['action'])) {
                             render: function(data, type, row) {
                                 var count = row.document_count || 0;
                                 var badge = count > 0 ? '<span class="doc-count-badge">' + count + '</span>' : '';
-                                return '<button class="action-icon btn-docs-app" data-id="' + row.id + '" title="Documents" style="color: var(--navy-primary); position: relative;"><i class="fas fa-paperclip"></i>' + badge + '</button>';
+                                return '<button class="action-icon btn-docs-app" data-id="' + row.id + '" title="Documents" style="color: var(--navy-primary); position: relative;"><i class="ri-attachment-line"></i>' + badge + '</button>';
                             }
                         },
                         {
@@ -1143,10 +1143,10 @@ if (isset($_GET['action'])) {
                             title: 'Actions',
                             orderable: false,
                             render: function(data, type, row) {
-                                var actions = '<button class="action-icon btn-view-app" data-id="' + row.id + '" title="View" style="color: var(--navy-accent);"><i class="fas fa-eye"></i></button>' +
-                                    '<button class="action-icon edit-icon btn-edit-app" data-id="' + row.id + '" title="Edit"><i class="fas fa-edit"></i></button>';
+                                var actions = '<button class="action-icon btn-view-app" data-id="' + row.id + '" title="View" style="color: var(--navy-accent);"><i class="ri-eye-line"></i></button>' +
+                                    '<button class="action-icon edit-icon btn-edit-app" data-id="' + row.id + '" title="Edit"><i class="ri-edit-line"></i></button>';
                                 if (userRole === 'admin') {
-                                    actions += '<button class="action-icon delete-icon btn-delete-app" data-id="' + row.id + '" title="Delete"><i class="fas fa-trash"></i></button>';
+                                    actions += '<button class="action-icon delete-icon btn-delete-app" data-id="' + row.id + '" title="Delete"><i class="ri-delete-bin-line"></i></button>';
                                 }
                                 return actions;
                             }
@@ -1157,9 +1157,9 @@ if (isset($_GET['action'])) {
                     responsive: true,
                     dom: 'Blfrtip',
                     buttons: [
-                        { extend: 'csv', text: '<i class="fas fa-file-csv"></i> CSV', exportOptions: { columns: [0,1,2,3,4,5,6,7,8,9] } },
-                        { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF', exportOptions: { columns: [0,1,2,3,4,5,6,7,8,9] } },
-                        { extend: 'print', text: '<i class="fas fa-print"></i> Print', exportOptions: { columns: [0,1,2,3,4,5,6,7,8,9] } }
+                        { extend: 'csv', text: '<i class="ri-file-excel-2-line"></i> CSV', exportOptions: { columns: [0,1,2,3,4,5,6,7,8,9] } },
+                        { extend: 'pdf', text: '<i class="ri-file-pdf-line"></i> PDF', exportOptions: { columns: [0,1,2,3,4,5,6,7,8,9] } },
+                        { extend: 'print', text: '<i class="ri-printer-line"></i> Print', exportOptions: { columns: [0,1,2,3,4,5,6,7,8,9] } }
                     ],
                     order: [[0, 'desc']]
                 });
@@ -1282,7 +1282,7 @@ if (isset($_GET['action'])) {
 
         function openAddModal() {
             isEditMode = false;
-            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle"></i> Add Application';
+            document.getElementById('modalTitle').innerHTML = '<i class="ri-add-circle-line"></i> Add Application';
             document.getElementById('appForm').reset();
             document.getElementById('appId').value = '';
             // Set default applied date to today
@@ -1304,7 +1304,7 @@ if (isset($_GET['action'])) {
         function editApplication(app) {
             isEditMode = true;
             currentFormAppId = app.id; // Set current app ID for upload button
-            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> Edit Application';
+            document.getElementById('modalTitle').innerHTML = '<i class="ri-edit-line"></i> Edit Application';
             document.getElementById('appId').value = app.id;
 
             // Reset inline document upload
@@ -1447,7 +1447,7 @@ if (isset($_GET['action'])) {
             html += '<html lang="en"><head><meta charset="UTF-8">';
             html += '<meta name="viewport" content="width=device-width, initial-scale=1.0">';
             html += '<title>Application - ' + (app.candidate_name || 'Unknown') + '</title>';
-            html += '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">';
+            html += '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">';
             html += '<style>';
 
             // A4 Print Document Styles
@@ -1522,8 +1522,8 @@ if (isset($_GET['action'])) {
 
             // Action buttons bar (visible on screen only)
             html += '<div class="doc-action-bar">';
-            html += '<button class="doc-action-btn doc-action-btn-print" onclick="window.print()"><i class="fas fa-print"></i> Print Document</button>';
-            html += '<button class="doc-action-btn doc-action-btn-close" onclick="window.close()"><i class="fas fa-times"></i> Close</button>';
+            html += '<button class="doc-action-btn doc-action-btn-print" onclick="window.print()"><i class="ri-printer-line"></i> Print Document</button>';
+            html += '<button class="doc-action-btn doc-action-btn-close" onclick="window.close()"><i class="ri-close-line"></i> Close</button>';
             html += '</div>';
 
             // A4 Page
@@ -1532,7 +1532,7 @@ if (isset($_GET['action'])) {
             // Header / Letterhead
             html += '<div class="doc-header">';
             html += '<div class="doc-header-left">';
-            html += '<h1><i class="fas fa-briefcase" style="color:#0074D9;font-size:20px;"></i> Job Application Form</h1>';
+            html += '<h1><i class="ri-briefcase-line" style="color:#0074D9;font-size:20px;"></i> Job Application Form</h1>';
             html += '<p>Recruitment Management System</p>';
             html += '</div>';
             html += '<div class="doc-header-right">';
@@ -1544,13 +1544,13 @@ if (isset($_GET['action'])) {
 
             // Title Bar
             html += '<div class="doc-title-bar">';
-            html += '<h2><i class="fas fa-file-alt"></i> Application Details</h2>';
+            html += '<h2><i class="ri-file-text-line"></i> Application Details</h2>';
             html += '<span class="doc-id">REF: APP-' + String(app.id || 0).padStart(4, '0') + '</span>';
             html += '</div>';
 
             // Section: Candidate Information
             html += '<div class="doc-section">';
-            html += '<div class="doc-section-title"><i class="fas fa-user"></i> Candidate Information</div>';
+            html += '<div class="doc-section-title"><i class="ri-user-line"></i> Candidate Information</div>';
             html += '<table class="doc-fields">';
             html += '<tr><td class="field-label">Full Name</td><td class="field-value" colspan="3"><strong>' + (app.candidate_name || '-') + '</strong></td></tr>';
             html += '<tr><td class="field-label">Email</td><td class="field-value">' + (app.email || '-') + '</td>';
@@ -1562,7 +1562,7 @@ if (isset($_GET['action'])) {
 
             // Section: Position Details
             html += '<div class="doc-section">';
-            html += '<div class="doc-section-title"><i class="fas fa-briefcase"></i> Position Details</div>';
+            html += '<div class="doc-section-title"><i class="ri-briefcase-line"></i> Position Details</div>';
             html += '<table class="doc-fields">';
             html += '<tr><td class="field-label">Position</td><td class="field-value"><strong>' + (app.position || '-') + '</strong></td>';
             html += '<td class="field-label">Department</td><td class="field-value">' + (app.company || '<span class="empty-val">N/A</span>') + '</td></tr>';
@@ -1573,7 +1573,7 @@ if (isset($_GET['action'])) {
 
             // Section: Qualifications
             html += '<div class="doc-section">';
-            html += '<div class="doc-section-title"><i class="fas fa-graduation-cap"></i> Qualifications</div>';
+            html += '<div class="doc-section-title"><i class="ri-graduation-cap-line"></i> Qualifications</div>';
             html += '<table class="doc-fields">';
             html += '<tr><td class="field-label">Academic</td><td class="field-value" colspan="3">' + qualList(app.academic_qualification) + '</td></tr>';
             html += '<tr><td class="field-label">Technical</td><td class="field-value" colspan="3">' + qualList(app.technical_qualification) + '</td></tr>';
@@ -1582,7 +1582,7 @@ if (isset($_GET['action'])) {
 
             // Section: Pipeline & Status
             html += '<div class="doc-section">';
-            html += '<div class="doc-section-title"><i class="fas fa-stream"></i> Pipeline & Status</div>';
+            html += '<div class="doc-section-title"><i class="ri-list-unordered"></i> Pipeline & Status</div>';
             html += '<table class="doc-fields">';
             html += '<tr><td class="field-label">Stage</td><td class="field-value">' + stageHtml + '</td>';
             html += '<td class="field-label">Status</td><td class="field-value">' + statusHtml + '</td></tr>';
@@ -1593,7 +1593,7 @@ if (isset($_GET['action'])) {
 
             // Section: Timeline & Dates
             html += '<div class="doc-section">';
-            html += '<div class="doc-section-title"><i class="fas fa-calendar-alt"></i> Timeline</div>';
+            html += '<div class="doc-section-title"><i class="ri-calendar-line"></i> Timeline</div>';
             html += '<table class="doc-fields">';
             html += '<tr><td class="field-label">Applied Date</td><td class="field-value">' + (app.applied_date_display || '-') + '</td>';
             html += '<td class="field-label">Joined Date</td><td class="field-value">' + (app.joined_date_display || '<span class="empty-val">N/A</span>') + '</td></tr>';
@@ -1605,7 +1605,7 @@ if (isset($_GET['action'])) {
 
             // Section: Notes
             html += '<div class="doc-section">';
-            html += '<div class="doc-section-title"><i class="fas fa-sticky-note"></i> Notes / Remarks</div>';
+            html += '<div class="doc-section-title"><i class="ri-sticky-note-line"></i> Notes / Remarks</div>';
             html += '<div class="doc-notes">' + (app.notes || '<span class="empty-val">No notes recorded.</span>') + '</div>';
             html += '</div>';
 
@@ -1639,7 +1639,7 @@ if (isset($_GET['action'])) {
             // Header
             html += '<div class="po-header">';
             html += '<div class="po-header-left">';
-            html += '<h1><i class="fas fa-briefcase" style="color:#0074D9;font-size:20px;"></i> Job Application Form</h1>';
+            html += '<h1><i class="ri-briefcase-line" style="color:#0074D9;font-size:20px;"></i> Job Application Form</h1>';
             html += '<p>Recruitment Management System</p>';
             html += '</div>';
             html += '<div class="po-header-right">';
@@ -1651,13 +1651,13 @@ if (isset($_GET['action'])) {
 
             // Title Bar
             html += '<div class="po-title-bar">';
-            html += '<h2><i class="fas fa-file-alt"></i> Application Details</h2>';
+            html += '<h2><i class="ri-file-text-line"></i> Application Details</h2>';
             html += '<span>REF: APP-' + String(app.id || 0).padStart(4, '0') + '</span>';
             html += '</div>';
 
             // Candidate Information
             html += '<div class="po-section">';
-            html += '<div class="po-section-title"><i class="fas fa-user"></i> Candidate Information</div>';
+            html += '<div class="po-section-title"><i class="ri-user-line"></i> Candidate Information</div>';
             html += '<table class="po-fields">';
             html += '<tr><td class="po-label">Full Name</td><td class="po-value" colspan="3"><strong>' + (app.candidate_name || '-') + '</strong></td></tr>';
             html += '<tr><td class="po-label">Email</td><td class="po-value">' + (app.email || '-') + '</td>';
@@ -1668,7 +1668,7 @@ if (isset($_GET['action'])) {
 
             // Position Details
             html += '<div class="po-section">';
-            html += '<div class="po-section-title"><i class="fas fa-briefcase"></i> Position Details</div>';
+            html += '<div class="po-section-title"><i class="ri-briefcase-line"></i> Position Details</div>';
             html += '<table class="po-fields">';
             html += '<tr><td class="po-label">Position</td><td class="po-value"><strong>' + (app.position || '-') + '</strong></td>';
             html += '<td class="po-label">Department</td><td class="po-value">' + (app.company || '<span class="empty-val">N/A</span>') + '</td></tr>';
@@ -1678,7 +1678,7 @@ if (isset($_GET['action'])) {
 
             // Qualifications
             html += '<div class="po-section">';
-            html += '<div class="po-section-title"><i class="fas fa-graduation-cap"></i> Qualifications</div>';
+            html += '<div class="po-section-title"><i class="ri-graduation-cap-line"></i> Qualifications</div>';
             html += '<table class="po-fields">';
             html += '<tr><td class="po-label">Academic</td><td class="po-value" colspan="3">' + qualList(app.academic_qualification) + '</td></tr>';
             html += '<tr><td class="po-label">Technical</td><td class="po-value" colspan="3">' + qualList(app.technical_qualification) + '</td></tr>';
@@ -1686,7 +1686,7 @@ if (isset($_GET['action'])) {
 
             // Pipeline & Status
             html += '<div class="po-section">';
-            html += '<div class="po-section-title"><i class="fas fa-stream"></i> Pipeline & Status</div>';
+            html += '<div class="po-section-title"><i class="ri-list-unordered"></i> Pipeline & Status</div>';
             html += '<table class="po-fields">';
             html += '<tr><td class="po-label">Stage</td><td class="po-value">' + stageHtml + '</td>';
             html += '<td class="po-label">Status</td><td class="po-value">' + statusHtml + '</td></tr>';
@@ -1696,7 +1696,7 @@ if (isset($_GET['action'])) {
 
             // Timeline
             html += '<div class="po-section">';
-            html += '<div class="po-section-title"><i class="fas fa-calendar-alt"></i> Timeline</div>';
+            html += '<div class="po-section-title"><i class="ri-calendar-line"></i> Timeline</div>';
             html += '<table class="po-fields">';
             html += '<tr><td class="po-label">Applied Date</td><td class="po-value">' + (app.applied_date_display || '-') + '</td>';
             html += '<td class="po-label">Joined Date</td><td class="po-value">' + (app.joined_date_display || '<span class="empty-val">N/A</span>') + '</td></tr>';
@@ -1707,7 +1707,7 @@ if (isset($_GET['action'])) {
 
             // Notes
             html += '<div class="po-section">';
-            html += '<div class="po-section-title"><i class="fas fa-sticky-note"></i> Notes / Remarks</div>';
+            html += '<div class="po-section-title"><i class="ri-sticky-note-line"></i> Notes / Remarks</div>';
             html += '<div class="po-notes">' + (app.notes || '<span class="empty-val">No notes recorded.</span>') + '</div>';
             html += '</div>';
 
@@ -1863,7 +1863,7 @@ if (isset($_GET['action'])) {
         });
 
         function loadDocuments(appId) {
-            document.getElementById('docsList').innerHTML = '<p style="color: #999; text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Loading...</p>';
+            document.getElementById('docsList').innerHTML = '<p style="color: #999; text-align: center; padding: 20px;"><i class="ri-loader-4-line ri-spin"></i> Loading...</p>';
 
             $.ajax({
                 url: '?action=getDocuments&application_id=' + appId,
@@ -1886,7 +1886,7 @@ if (isset($_GET['action'])) {
         function renderDocumentsList(docs) {
             var container = document.getElementById('docsList');
             if (docs.length === 0) {
-                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;"><i class="fas fa-folder-open"></i> No documents uploaded yet.</p>';
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;"><i class="ri-folder-open-line"></i> No documents uploaded yet.</p>';
                 return;
             }
 
@@ -1907,12 +1907,12 @@ if (isset($_GET['action'])) {
                 // Add preview button for viewable file types (PDF, images)
                 var isViewable = doc.file_type && (doc.file_type.indexOf('pdf') !== -1 || doc.file_type.indexOf('image') !== -1);
                 if (isViewable) {
-                    html += '<button class="action-icon" onclick="previewDocument(\'' + doc.file_path.replace(/'/g, "\\'") + '\', \'' + (doc.file_type || '').replace(/'/g, "\\'") + '\', \'' + (doc.file_name || '').replace(/'/g, "\\'") + '\')" title="Preview in page" style="color: var(--navy-primary);"><i class="fas fa-eye"></i></button>';
+                    html += '<button class="action-icon" onclick="previewDocument(\'' + doc.file_path.replace(/'/g, "\\'") + '\', \'' + (doc.file_type || '').replace(/'/g, "\\'") + '\', \'' + (doc.file_name || '').replace(/'/g, "\\'") + '\')" title="Preview in page" style="color: var(--navy-primary);"><i class="ri-eye-line"></i></button>';
                 }
-                html += '<a href="' + doc.file_path + '" target="_blank" class="action-icon" title="Open in new tab" style="color: var(--navy-accent);"><i class="fas fa-external-link-alt"></i></a>';
-                html += '<a href="' + doc.file_path + '" download class="action-icon" title="Download" style="color: #34a853;"><i class="fas fa-download"></i></a>';
+                html += '<a href="' + doc.file_path + '" target="_blank" class="action-icon" title="Open in new tab" style="color: var(--navy-accent);"><i class="ri-external-link-line"></i></a>';
+                html += '<a href="' + doc.file_path + '" download class="action-icon" title="Download" style="color: #34a853;"><i class="ri-download-line"></i></a>';
                 if (userRole === 'admin') {
-                    html += '<button class="action-icon delete-icon" onclick="deleteDocument(' + doc.id + ')" title="Delete"><i class="fas fa-trash"></i></button>';
+                    html += '<button class="action-icon delete-icon" onclick="deleteDocument(' + doc.id + ')" title="Delete"><i class="ri-delete-bin-line"></i></button>';
                 }
                 html += '</div>';
                 html += '</div>';
@@ -1921,11 +1921,11 @@ if (isset($_GET['action'])) {
         }
 
         function getFileIcon(mimeType) {
-            if (!mimeType) return '<i class="fas fa-file" style="color: #6B7280;"></i>';
-            if (mimeType.indexOf('pdf') !== -1) return '<i class="fas fa-file-pdf" style="color: #ea4335;"></i>';
-            if (mimeType.indexOf('word') !== -1 || mimeType.indexOf('msword') !== -1) return '<i class="fas fa-file-word" style="color: #2b579a;"></i>';
-            if (mimeType.indexOf('image') !== -1) return '<i class="fas fa-file-image" style="color: #34a853;"></i>';
-            return '<i class="fas fa-file" style="color: #6B7280;"></i>';
+            if (!mimeType) return '<i class="ri-file-line" style="color: #6B7280;"></i>';
+            if (mimeType.indexOf('pdf') !== -1) return '<i class="ri-file-pdf-line" style="color: #ea4335;"></i>';
+            if (mimeType.indexOf('word') !== -1 || mimeType.indexOf('msword') !== -1) return '<i class="ri-file-word-2-line" style="color: #2b579a;"></i>';
+            if (mimeType.indexOf('image') !== -1) return '<i class="ri-file-image-line" style="color: #34a853;"></i>';
+            return '<i class="ri-file-line" style="color: #6B7280;"></i>';
         }
 
         function previewDocument(filePath, fileType, fileName) {
@@ -1962,7 +1962,7 @@ if (isset($_GET['action'])) {
             var formData = new FormData(this);
             var uploadBtn = document.getElementById('docUploadBtn');
             uploadBtn.disabled = true;
-            uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+            uploadBtn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Uploading...';
 
             $.ajax({
                 url: '?action=uploadDocument',
@@ -1973,7 +1973,7 @@ if (isset($_GET['action'])) {
                 dataType: 'json',
                 success: function(response) {
                     uploadBtn.disabled = false;
-                    uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload';
+                    uploadBtn.innerHTML = '<i class="ri-upload-line"></i> Upload';
 
                     if (response.success) {
                         Swal.fire({ icon: 'success', title: 'Uploaded!', text: response.message, timer: 2000, showConfirmButton: false });
@@ -1988,7 +1988,7 @@ if (isset($_GET['action'])) {
                 },
                 error: function(xhr, status, error) {
                     uploadBtn.disabled = false;
-                    uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload';
+                    uploadBtn.innerHTML = '<i class="ri-upload-line"></i> Upload';
                     Swal.fire({ icon: 'error', title: 'Error', text: 'Connection error: ' + error });
                 }
             });

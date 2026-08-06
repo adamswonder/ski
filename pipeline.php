@@ -144,8 +144,8 @@ if (isset($_GET['action'])) {
     <meta name="mobile-web-app-capable" content="yes">
     <title>Pipeline - Job Application Tracker</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
+    <link rel="stylesheet" href="styles.css?v=5.4">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -363,20 +363,20 @@ if (isset($_GET['action'])) {
 
         <div class="main-content">
             <div class="header">
-                <h1><i class="fas fa-columns"></i> Pipeline</h1>
+                <h1><i class="ri-layout-column-line"></i> Pipeline</h1>
                 <div>Welcome, <?php echo htmlspecialchars($username); ?></div>
             </div>
 
             <div class="data-section">
                 <div class="section-header">
-                    <h2><i class="fas fa-stream"></i> Kanban Board</h2>
+                    <h2><i class="ri-list-unordered"></i> Kanban Board</h2>
                     <button class="btn btn-primary" onclick="loadPipeline()">
-                        <i class="fas fa-sync"></i> Refresh
+                        <i class="ri-refresh-line"></i> Refresh
                     </button>
                 </div>
 
                 <div class="kanban-scroll-hint">
-                    <i class="fas fa-arrows-alt-h"></i> Swipe left/right to see all stages
+                    <i class="ri-arrow-left-right-line"></i> Swipe left/right to see all stages
                 </div>
 
                 <!-- Skeleton -->
@@ -443,7 +443,7 @@ if (isset($_GET['action'])) {
                 column.innerHTML =
                     '<div class="kanban-column-header" style="background:' + (stage.color || '#6B7280') + ';">' +
                         '<div class="column-title">' +
-                            (stage.icon ? '<i class="fas ' + stage.icon + '"></i>' : '') +
+                            (stage.icon ? '<i class="' + stage.icon + '"></i>' : '') +
                             '<span>' + escapeHtml(stage.name) + '</span>' +
                         '</div>' +
                         '<span class="kanban-count">' + stageApps.length + '</span>' +
@@ -453,7 +453,7 @@ if (isset($_GET['action'])) {
                 var cardsContainer = column.querySelector('.kanban-cards');
 
                 if (stageApps.length === 0) {
-                    cardsContainer.innerHTML = '<div class="kanban-empty"><i class="fas fa-inbox"></i>No applications</div>';
+                    cardsContainer.innerHTML = '<div class="kanban-empty"><i class="ri-inbox-line"></i>No applications</div>';
                 } else {
                     stageApps.forEach(function(app) {
                         var card = document.createElement('div');
@@ -468,7 +468,7 @@ if (isset($_GET['action'])) {
 
                         var companyHtml = '';
                         if (app.company) {
-                            companyHtml = '<span class="kanban-card-company"><i class="fas fa-building"></i> ' + escapeHtml(app.company) + '</span>';
+                            companyHtml = '<span class="kanban-card-company"><i class="ri-building-line"></i> ' + escapeHtml(app.company) + '</span>';
                         }
 
                         var actionHtml = '';
@@ -478,27 +478,27 @@ if (isset($_GET['action'])) {
                                 var d = new Date(app.next_action_date);
                                 dateStr = ' · ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                             }
-                            actionHtml = '<div class="kanban-card-action"><i class="fas fa-tasks"></i> ' + escapeHtml(app.next_action) + dateStr + '</div>';
+                            actionHtml = '<div class="kanban-card-action"><i class="ri-checkbox-multiple-line"></i> ' + escapeHtml(app.next_action) + dateStr + '</div>';
                         }
 
                         // Build contact details HTML
                         var contactDetailsHtml = '';
 
                         if (app.experience) {
-                            contactDetailsHtml += '<div class="kanban-card-detail"><i class="fas fa-clock"></i> ' + escapeHtml(app.experience) + '</div>';
+                            contactDetailsHtml += '<div class="kanban-card-detail"><i class="ri-time-line"></i> ' + escapeHtml(app.experience) + '</div>';
                         }
 
                         if (app.contact_number) {
-                            contactDetailsHtml += '<div class="kanban-card-detail"><i class="fas fa-phone"></i> ' + escapeHtml(app.contact_number) + '</div>';
+                            contactDetailsHtml += '<div class="kanban-card-detail"><i class="ri-phone-line"></i> ' + escapeHtml(app.contact_number) + '</div>';
                         }
 
                         if (app.email) {
-                            contactDetailsHtml += '<div class="kanban-card-detail"><i class="fas fa-envelope"></i> ' + escapeHtml(app.email) + '</div>';
+                            contactDetailsHtml += '<div class="kanban-card-detail"><i class="ri-mail-line"></i> ' + escapeHtml(app.email) + '</div>';
                         }
 
                         card.innerHTML =
                             '<div class="kanban-card-name">' + escapeHtml(app.candidate_name) + '</div>' +
-                            '<div class="kanban-card-position"><i class="fas fa-id-badge"></i> ' + escapeHtml(app.position) + '</div>' +
+                            '<div class="kanban-card-position"><i class="ri-id-card-line"></i> ' + escapeHtml(app.position) + '</div>' +
                             contactDetailsHtml +
                             '<div class="kanban-card-meta">' + companyHtml + statusHtml + '</div>' +
                             actionHtml;

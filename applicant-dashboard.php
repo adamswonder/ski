@@ -40,37 +40,37 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>My Applications - Careers</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.3">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
+    <link rel="stylesheet" href="styles.css?v=5.4">
     <?php echo generateBrandAccentCSS(); ?>
 </head>
 <body>
     <div style="max-width: 900px; margin: 0 auto; padding: 30px 20px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
-            <h1 style="margin:0;"><i class="fas fa-user"></i> My Applications</h1>
+            <h1 style="margin:0;"><i class="ri-user-line"></i> My Applications</h1>
             <div>
-                <a href="careers.php" class="btn btn-secondary btn-sm"><i class="fas fa-briefcase"></i> Browse Openings</a>
-                <a href="applicant-logout.php" class="btn btn-secondary btn-sm"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                <a href="careers.php" class="btn btn-secondary btn-sm"><i class="ri-briefcase-line"></i> Browse Openings</a>
+                <a href="applicant-logout.php" class="btn btn-secondary btn-sm"><i class="ri-logout-box-line"></i> Logout</a>
             </div>
         </div>
 
         <?php if ($submitted): ?>
             <div class="log-item log-success" style="margin-bottom: 20px;">
-                <i class="fas fa-check-circle"></i> Your application was submitted successfully.
+                <i class="ri-checkbox-circle-line"></i> Your application was submitted successfully.
             </div>
         <?php endif; ?>
 
         <?php if (empty($applications)): ?>
             <div class="data-section" style="text-align:center; padding: 60px 20px;">
-                <i class="fas fa-inbox" style="font-size: 48px; opacity: 0.4;"></i>
+                <i class="ri-inbox-line" style="font-size: 48px; opacity: 0.4;"></i>
                 <p style="margin-top: 16px;">You haven't applied to any positions yet.</p>
                 <a href="careers.php" class="btn btn-primary" style="margin-top: 12px;">
-                    <i class="fas fa-briefcase"></i> Browse Job Openings
+                    <i class="ri-briefcase-line"></i> Browse Job Openings
                 </a>
             </div>
         <?php else: ?>
             <div class="table-scroll-hint">
-                <i class="fas fa-arrows-alt-h"></i> Swipe left/right to see all columns
+                <i class="ri-arrow-left-right-line"></i> Swipe left/right to see all columns
             </div>
             <div class="data-section" style="overflow-x:auto;">
                 <table style="width:100%; border-collapse: collapse;">

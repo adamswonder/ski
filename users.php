@@ -355,11 +355,11 @@ if (isset($_GET['action'])) {
     <title>User Management - Dashboard System</title>
 
     <!-- CDN Dependencies -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-    <link rel="stylesheet" href="styles.css?v=4.0">
+    <link rel="stylesheet" href="styles.css?v=5.4">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -381,19 +381,19 @@ if (isset($_GET['action'])) {
         <!-- Main Content -->
         <div class="main-content">
             <div class="header">
-                <h1><i class="fas fa-users"></i> User Management</h1>
+                <h1><i class="ri-group-line"></i> User Management</h1>
                 <div>Welcome, <?php echo htmlspecialchars($username); ?></div>
             </div>
 
             <div class="data-section">
                 <div class="section-header">
-                    <h2><i class="fas fa-table"></i> Users</h2>
+                    <h2><i class="ri-table-line"></i> Users</h2>
                     <div style="display: flex; gap: 10px;">
                         <button class="btn btn-primary" onclick="loadUsers()">
-                            <i class="fas fa-sync"></i> Refresh
+                            <i class="ri-refresh-line"></i> Refresh
                         </button>
                         <button class="btn btn-success" onclick="openAddModal()">
-                            <i class="fas fa-plus"></i> Add User
+                            <i class="ri-add-line"></i> Add User
                         </button>
                     </div>
                 </div>
@@ -401,22 +401,22 @@ if (isset($_GET['action'])) {
                 <!-- Filters Section -->
                 <div class="filters-section" id="filtersSection" style="display: none;">
                     <div class="filters-header">
-                        <h3><i class="fas fa-filter"></i> Filters</h3>
+                        <h3><i class="ri-filter-line"></i> Filters</h3>
                         <button class="btn btn-secondary btn-sm" onclick="clearFilters()">
-                            <i class="fas fa-times-circle"></i> Clear All
+                            <i class="ri-close-circle-line"></i> Clear All
                         </button>
                     </div>
                     <div class="filters-grid">
                         <div class="filter-group">
-                            <label><i class="fas fa-calendar-alt"></i> Date From</label>
+                            <label><i class="ri-calendar-line"></i> Date From</label>
                             <input type="date" id="filterDateFrom" class="filter-input">
                         </div>
                         <div class="filter-group">
-                            <label><i class="fas fa-calendar-alt"></i> Date To</label>
+                            <label><i class="ri-calendar-line"></i> Date To</label>
                             <input type="date" id="filterDateTo" class="filter-input">
                         </div>
                         <div class="filter-group">
-                            <label><i class="fas fa-user-tag"></i> Role</label>
+                            <label><i class="ri-user-settings-line"></i> Role</label>
                             <select id="filterRole" class="filter-input">
                                 <option value="">All Roles</option>
                                 <option value="admin">Admin</option>
@@ -424,7 +424,7 @@ if (isset($_GET['action'])) {
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label><i class="fas fa-toggle-on"></i> Status</label>
+                            <label><i class="ri-toggle-line"></i> Status</label>
                             <select id="filterStatus" class="filter-input">
                                 <option value="">All Status</option>
                                 <option value="Active">Active</option>
@@ -435,7 +435,7 @@ if (isset($_GET['action'])) {
                 </div>
 
                 <div class="table-scroll-hint">
-                    <i class="fas fa-arrows-alt-h"></i> Swipe left/right to see all columns
+                    <i class="ri-arrow-left-right-line"></i> Swipe left/right to see all columns
                 </div>
                 <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
                     <table id="usersTable" class="display" style="width:100%"></table>
@@ -448,9 +448,9 @@ if (isset($_GET['action'])) {
     <div class="modal-overlay" id="userModal">
         <div class="modal" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <h3 id="modalTitle"><i class="fas fa-user-plus"></i> Add User</h3>
+                <h3 id="modalTitle"><i class="ri-user-add-line"></i> Add User</h3>
                 <button class="close-btn" onclick="closeModal()">
-                    <i class="fas fa-times"></i>
+                    <i class="ri-close-line"></i>
                 </button>
             </div>
             <div class="modal-body">
@@ -459,22 +459,22 @@ if (isset($_GET['action'])) {
 
                     <div class="form-grid">
                         <div class="form-group">
-                            <label><i class="fas fa-user"></i> Full Name *</label>
+                            <label><i class="ri-user-line"></i> Full Name *</label>
                             <input type="text" id="fullName" name="full_name" required maxlength="100">
                         </div>
 
                         <div class="form-group">
-                            <label><i class="fas fa-envelope"></i> Email *</label>
+                            <label><i class="ri-mail-line"></i> Email *</label>
                             <input type="email" id="email" name="email" required maxlength="150">
                         </div>
 
                         <div class="form-group">
-                            <label><i class="fas fa-lock"></i> Password <span id="passwordHint" style="display:none;">(Leave empty to keep current)</span></label>
+                            <label><i class="ri-lock-line"></i> Password <span id="passwordHint" style="display:none;">(Leave empty to keep current)</span></label>
                             <input type="password" id="password" name="password" minlength="6">
                         </div>
 
                         <div class="form-group">
-                            <label><i class="fas fa-user-tag"></i> Role *</label>
+                            <label><i class="ri-user-settings-line"></i> Role *</label>
                             <select id="role" name="role" required>
                                 <option value="user">User</option>
                                 <option value="admin">Admin</option>
@@ -482,7 +482,7 @@ if (isset($_GET['action'])) {
                         </div>
 
                         <div class="form-group">
-                            <label><i class="fas fa-toggle-on"></i> Account Status *</label>
+                            <label><i class="ri-toggle-line"></i> Account Status *</label>
                             <select id="isActive" name="is_active" required>
                                 <option value="1">Active</option>
                                 <option value="0">Inactive</option>
@@ -493,17 +493,17 @@ if (isset($_GET['action'])) {
                     <div class="form-group" id="managePostingsGroup">
                         <label style="display:flex; align-items:center; gap:8px; font-weight:normal;">
                             <input type="checkbox" id="canManagePostings" name="can_manage_postings" value="1" style="width:18px; height:18px;">
-                            <i class="fas fa-bullhorn"></i> Can Manage Job Postings
+                            <i class="ri-megaphone-line"></i> Can Manage Job Postings
                         </label>
                         <small class="help-text" style="color: var(--text-muted); margin-top: 5px; display: block;">Grants access to create and edit job postings without full admin rights.</small>
                     </div>
 
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Save
+                            <i class="ri-save-line"></i> Save
                         </button>
                         <button type="button" class="btn btn-secondary" onclick="closeModal()">
-                            <i class="fas fa-times"></i> Cancel
+                            <i class="ri-close-line"></i> Cancel
                         </button>
                     </div>
                 </form>
@@ -591,16 +591,16 @@ if (isset($_GET['action'])) {
                             orderable: false,
                             render: function(data, type, row) {
                                 const toggleIcon = row.is_active
-                                    ? '<button class="action-icon delete-icon" onclick="toggleActive(' + row.id + ', 0)" title="Deactivate"><i class="fas fa-ban"></i></button>'
-                                    : '<button class="action-icon edit-icon" onclick="toggleActive(' + row.id + ', 1)" title="Activate"><i class="fas fa-check-circle"></i></button>';
+                                    ? '<button class="action-icon delete-icon" onclick="toggleActive(' + row.id + ', 0)" title="Deactivate"><i class="ri-forbid-line"></i></button>'
+                                    : '<button class="action-icon edit-icon" onclick="toggleActive(' + row.id + ', 1)" title="Activate"><i class="ri-checkbox-circle-line"></i></button>';
 
                                 return `
                                     <button class="action-icon edit-icon" onclick='editUser(${JSON.stringify(row)})' title="Edit">
-                                        <i class="fas fa-edit"></i>
+                                        <i class="ri-edit-line"></i>
                                     </button>
                                     ${toggleIcon}
                                     <button class="action-icon delete-icon" onclick="deleteUser(${row.id})" title="Delete">
-                                        <i class="fas fa-trash"></i>
+                                        <i class="ri-delete-bin-line"></i>
                                     </button>
                                 `;
                             }
@@ -613,17 +613,17 @@ if (isset($_GET['action'])) {
                     buttons: [
                         {
                             extend: 'csv',
-                            text: '<i class="fas fa-file-csv"></i> CSV',
+                            text: '<i class="ri-file-excel-2-line"></i> CSV',
                             exportOptions: { columns: ':not(:last-child)' }
                         },
                         {
                             extend: 'pdf',
-                            text: '<i class="fas fa-file-pdf"></i> PDF',
+                            text: '<i class="ri-file-pdf-line"></i> PDF',
                             exportOptions: { columns: ':not(:last-child)' }
                         },
                         {
                             extend: 'print',
-                            text: '<i class="fas fa-print"></i> Print',
+                            text: '<i class="ri-printer-line"></i> Print',
                             exportOptions: { columns: ':not(:last-child)' }
                         }
                     ],
@@ -708,7 +708,7 @@ if (isset($_GET['action'])) {
 
         function openAddModal() {
             isEditMode = false;
-            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-user-plus"></i> Add User';
+            document.getElementById('modalTitle').innerHTML = '<i class="ri-user-add-line"></i> Add User';
             document.getElementById('userForm').reset();
             document.getElementById('userId').value = '';
             document.getElementById('passwordHint').style.display = 'none';
@@ -721,7 +721,7 @@ if (isset($_GET['action'])) {
 
         function editUser(user) {
             isEditMode = true;
-            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> Edit User';
+            document.getElementById('modalTitle').innerHTML = '<i class="ri-edit-line"></i> Edit User';
             document.getElementById('userId').value = user.id;
             document.getElementById('fullName').value = user.full_name;
             document.getElementById('email').value = user.email;

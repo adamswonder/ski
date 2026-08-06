@@ -219,28 +219,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Apply - <?php echo htmlspecialchars($posting['title']); ?></title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.3">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
+    <link rel="stylesheet" href="styles.css?v=5.4">
     <?php echo generateBrandAccentCSS(); ?>
 </head>
 <body>
     <div style="max-width: 800px; margin: 0 auto; padding: 30px 20px;">
         <a href="careers-job.php?id=<?php echo $jobPostingId; ?>" style="display:inline-block; margin-bottom: 20px;">
-            <i class="fas fa-arrow-left"></i> Back to posting
+            <i class="ri-arrow-left-line"></i> Back to posting
         </a>
 
         <div class="data-section" style="padding: 30px;">
-            <h1 style="margin-top:0;"><i class="fas fa-paper-plane"></i> Apply: <?php echo htmlspecialchars($posting['title']); ?></h1>
+            <h1 style="margin-top:0;"><i class="ri-send-plane-line"></i> Apply: <?php echo htmlspecialchars($posting['title']); ?></h1>
 
             <?php if ($error): ?>
-                <div class="error"><i class="fas fa-exclamation-circle"></i> <?php echo htmlspecialchars($error); ?></div>
+                <div class="error"><i class="ri-error-warning-line"></i> <?php echo htmlspecialchars($error); ?></div>
             <?php endif; ?>
 
             <form method="POST" action="apply.php?job_posting_id=<?php echo $jobPostingId; ?>" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                 <input type="hidden" name="job_posting_id" value="<?php echo $jobPostingId; ?>">
 
-                <h3><i class="fas fa-user"></i> Your Details</h3>
+                <h3><i class="ri-user-line"></i> Your Details</h3>
 
                 <div class="form-group">
                     <label>Full Name</label>
@@ -308,7 +308,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <?php if (!empty($questions)): ?>
                     <hr>
-                    <h3><i class="fas fa-list-ol"></i> Position Questions</h3>
+                    <h3><i class="ri-list-ordered"></i> Position Questions</h3>
 
                     <?php foreach ($questions as $q): ?>
                         <div class="form-group">
@@ -362,7 +362,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-paper-plane"></i> Submit Application
+                        <i class="ri-send-plane-line"></i> Submit Application
                     </button>
                 </div>
             </form>

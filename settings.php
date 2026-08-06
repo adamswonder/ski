@@ -188,8 +188,8 @@ if (isset($_POST['action'])) {
     <title>System Settings - Dashboard System</title>
 
     <!-- CDN Dependencies -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=4.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
+    <link rel="stylesheet" href="styles.css?v=5.4">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -203,7 +203,7 @@ if (isset($_POST['action'])) {
         <!-- Main Content -->
         <div class="main-content">
             <div class="header">
-                <h1><i class="fas fa-cog"></i> System Settings</h1>
+                <h1><i class="ri-settings-3-line"></i> System Settings</h1>
                 <div>Welcome, <?php echo htmlspecialchars($username); ?></div>
             </div>
 
@@ -239,10 +239,10 @@ if (isset($_POST['action'])) {
                 <!-- Quick Actions -->
                 <div style="margin-bottom: 25px; display: flex; gap: 10px; justify-content: flex-end;">
                     <button class="btn btn-success" onclick="saveSettings()">
-                        <i class="fas fa-save"></i> Save Settings
+                        <i class="ri-save-line"></i> Save Settings
                     </button>
                     <button class="btn btn-secondary" onclick="loadSettings()">
-                        <i class="fas fa-sync"></i> Reload
+                        <i class="ri-refresh-line"></i> Reload
                     </button>
                 </div>
 
@@ -253,7 +253,7 @@ if (isset($_POST['action'])) {
                     <div class="settings-mega-card">
                         <div class="settings-card-header">
                             <div class="settings-card-icon" style="background: linear-gradient(135deg, var(--navy-primary) 0%, var(--navy-light) 100%);">
-                                <i class="fas fa-server"></i>
+                                <i class="ri-server-line"></i>
                             </div>
                             <div>
                                 <h3 class="settings-card-title">System Overview</h3>
@@ -263,7 +263,7 @@ if (isset($_POST['action'])) {
                         <div class="settings-card-body">
                             <div class="stat-item-inline">
                                 <div class="stat-item-icon" style="background: rgba(52, 168, 83, 0.1); color: var(--success);">
-                                    <i class="fas fa-database"></i>
+                                    <i class="ri-database-2-line"></i>
                                 </div>
                                 <div class="stat-item-content">
                                     <div class="stat-item-label">Database</div>
@@ -272,7 +272,7 @@ if (isset($_POST['action'])) {
                             </div>
                             <div class="stat-item-inline">
                                 <div class="stat-item-icon" style="background: rgba(0, 116, 217, 0.1); color: var(--navy-accent);">
-                                    <i class="fas fa-clock"></i>
+                                    <i class="ri-time-line"></i>
                                 </div>
                                 <div class="stat-item-content">
                                     <div class="stat-item-label">Session Timeout</div>
@@ -281,7 +281,7 @@ if (isset($_POST['action'])) {
                             </div>
                             <div class="stat-item-inline">
                                 <div class="stat-item-icon" style="background: rgba(251, 188, 4, 0.1); color: var(--warning);">
-                                    <i class="fas fa-shield-alt"></i>
+                                    <i class="ri-shield-check-line"></i>
                                 </div>
                                 <div class="stat-item-content">
                                     <div class="stat-item-label">Max Login Attempts</div>
@@ -290,7 +290,7 @@ if (isset($_POST['action'])) {
                             </div>
                             <div class="stat-item-inline">
                                 <div class="stat-item-icon" style="background: rgba(234, 67, 53, 0.1); color: var(--danger);">
-                                    <i class="fas fa-lock"></i>
+                                    <i class="ri-lock-line"></i>
                                 </div>
                                 <div class="stat-item-content">
                                     <div class="stat-item-label">Lockout Duration</div>
@@ -304,7 +304,7 @@ if (isset($_POST['action'])) {
                     <div class="settings-mega-card">
                         <div class="settings-card-header">
                             <div class="settings-card-icon" style="background: linear-gradient(135deg, #34a853 0%, #2d9148 100%);">
-                                <i class="fas fa-users-cog"></i>
+                                <i class="ri-group-2-line"></i>
                             </div>
                             <div>
                                 <h3 class="settings-card-title">User Management</h3>
@@ -315,7 +315,7 @@ if (isset($_POST['action'])) {
                             <div class="control-group">
                                 <div class="control-group-header">
                                     <div class="control-icon">
-                                        <i class="fas fa-image"></i>
+                                        <i class="ri-image-line"></i>
                                     </div>
                                     <div class="control-info">
                                         <div class="control-title">Profile Image Uploads</div>
@@ -336,7 +336,7 @@ if (isset($_POST['action'])) {
                                 </div>
                             </div>
                             <div class="info-banner">
-                                <i class="fas fa-info-circle"></i>
+                                <i class="ri-information-line"></i>
                                 <span>When disabled, only administrators can manage all profile images</span>
                             </div>
                         </div>
@@ -346,7 +346,7 @@ if (isset($_POST['action'])) {
                     <div class="settings-mega-card">
                         <div class="settings-card-header">
                             <div class="settings-card-icon" style="background: linear-gradient(135deg, #0074D9 0%, #0056a8 100%);">
-                                <i class="fas fa-shield-alt"></i>
+                                <i class="ri-shield-check-line"></i>
                             </div>
                             <div>
                                 <h3 class="settings-card-title">Security Status</h3>
@@ -356,50 +356,50 @@ if (isset($_POST['action'])) {
                         <div class="settings-card-body">
                             <div class="security-feature">
                                 <div class="security-feature-icon">
-                                    <i class="fas fa-check-circle"></i>
+                                    <i class="ri-checkbox-circle-line"></i>
                                 </div>
                                 <div class="security-feature-content">
                                     <div class="security-feature-name">Session Security</div>
                                     <div class="security-feature-desc">HTTPOnly cookies & Strict SameSite</div>
                                 </div>
                                 <div class="security-feature-badge active">
-                                    <i class="fas fa-shield-alt"></i> Active
+                                    <i class="ri-shield-check-line"></i> Active
                                 </div>
                             </div>
                             <div class="security-feature">
                                 <div class="security-feature-icon">
-                                    <i class="fas fa-lock"></i>
+                                    <i class="ri-lock-line"></i>
                                 </div>
                                 <div class="security-feature-content">
                                     <div class="security-feature-name">Password Encryption</div>
                                     <div class="security-feature-desc">Bcrypt (PASSWORD_DEFAULT)</div>
                                 </div>
                                 <div class="security-feature-badge active">
-                                    <i class="fas fa-shield-alt"></i> Active
+                                    <i class="ri-shield-check-line"></i> Active
                                 </div>
                             </div>
                             <div class="security-feature">
                                 <div class="security-feature-icon">
-                                    <i class="fas fa-user-clock"></i>
+                                    <i class="ri-time-line"></i>
                                 </div>
                                 <div class="security-feature-content">
                                     <div class="security-feature-name">Rate Limiting</div>
                                     <div class="security-feature-desc">User & IP tracking enabled</div>
                                 </div>
                                 <div class="security-feature-badge active">
-                                    <i class="fas fa-shield-alt"></i> Active
+                                    <i class="ri-shield-check-line"></i> Active
                                 </div>
                             </div>
                             <div class="security-feature">
                                 <div class="security-feature-icon">
-                                    <i class="fas fa-code"></i>
+                                    <i class="ri-code-line"></i>
                                 </div>
                                 <div class="security-feature-content">
                                     <div class="security-feature-name">CSRF Protection</div>
                                     <div class="security-feature-desc">Token-based validation</div>
                                 </div>
                                 <div class="security-feature-badge active">
-                                    <i class="fas fa-shield-alt"></i> Active
+                                    <i class="ri-shield-check-line"></i> Active
                                 </div>
                             </div>
                         </div>
@@ -409,7 +409,7 @@ if (isset($_POST['action'])) {
                     <div class="settings-mega-card">
                         <div class="settings-card-header">
                             <div class="settings-card-icon" style="background: linear-gradient(135deg, #fbbc04 0%, #e0a800 100%);">
-                                <i class="fas fa-server"></i>
+                                <i class="ri-server-line"></i>
                             </div>
                             <div>
                                 <h3 class="settings-card-title">Server Information</h3>
@@ -419,21 +419,21 @@ if (isset($_POST['action'])) {
                         <div class="settings-card-body">
                             <div class="server-info-item">
                                 <div class="server-info-label">
-                                    <i class="fas fa-database"></i>
+                                    <i class="ri-database-2-line"></i>
                                     <span>Database Host</span>
                                 </div>
                                 <div class="server-info-value"><?php echo DB_HOST; ?></div>
                             </div>
                             <div class="server-info-item">
                                 <div class="server-info-label">
-                                    <i class="fas fa-user"></i>
+                                    <i class="ri-user-line"></i>
                                     <span>Database User</span>
                                 </div>
                                 <div class="server-info-value"><?php echo DB_USER; ?></div>
                             </div>
                             <div class="server-info-item">
                                 <div class="server-info-label">
-                                    <i class="fas fa-code"></i>
+                                    <i class="ri-code-line"></i>
                                     <span>PHP Version</span>
                                 </div>
                                 <div class="server-info-value">
@@ -442,7 +442,7 @@ if (isset($_POST['action'])) {
                             </div>
                             <div class="server-info-item">
                                 <div class="server-info-label">
-                                    <i class="fas fa-hdd"></i>
+                                    <i class="ri-hard-drive-line"></i>
                                     <span>Max Upload</span>
                                 </div>
                                 <div class="server-info-value">
@@ -451,7 +451,7 @@ if (isset($_POST['action'])) {
                             </div>
                             <div class="server-info-item">
                                 <div class="server-info-label">
-                                    <i class="fas fa-clock"></i>
+                                    <i class="ri-time-line"></i>
                                     <span>Server Time</span>
                                 </div>
                                 <div class="server-info-value time-value"><?php echo date('Y-m-d H:i:s'); ?></div>
@@ -463,7 +463,7 @@ if (isset($_POST['action'])) {
                     <div class="settings-mega-card">
                         <div class="settings-card-header">
                             <div class="settings-card-icon" style="background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);">
-                                <i class="fas fa-laptop-code"></i>
+                                <i class="ri-terminal-window-line"></i>
                             </div>
                             <div>
                                 <h3 class="settings-card-title">Technical Skills Management</h3>
@@ -477,20 +477,20 @@ if (isset($_POST['action'])) {
 
                             <div id="skillsList" class="skills-list">
                                 <div style="text-align:center;padding:20px;color:#999;">
-                                    <i class="fas fa-spinner fa-spin"></i> Loading skills...
+                                    <i class="ri-loader-4-line ri-spin"></i> Loading skills...
                                 </div>
                             </div>
 
                             <div class="add-skill-section">
                                 <input type="text" id="newSkillInput" class="filter-input" placeholder="Enter new skill name..." style="flex:1;">
                                 <button type="button" class="btn btn-success" onclick="addSkill()">
-                                    <i class="fas fa-plus"></i> Add Skill
+                                    <i class="ri-add-line"></i> Add Skill
                                 </button>
                             </div>
 
                             <div style="margin-top:15px;">
                                 <button type="button" class="btn btn-secondary btn-sm" onclick="restoreDefaultSkills()">
-                                    <i class="fas fa-undo"></i> Restore Defaults
+                                    <i class="ri-arrow-go-back-line"></i> Restore Defaults
                                 </button>
                             </div>
                         </div>
@@ -500,7 +500,7 @@ if (isset($_POST['action'])) {
                     <div class="settings-mega-card">
                         <div class="settings-card-header">
                             <div class="settings-card-icon" style="background: linear-gradient(135deg, #ea4335 0%, #c62828 100%);">
-                                <i class="fas fa-image"></i>
+                                <i class="ri-image-line"></i>
                             </div>
                             <div>
                                 <h3 class="settings-card-title">Login Page Branding</h3>
@@ -515,16 +515,16 @@ if (isset($_POST['action'])) {
                                 <img id="logoPreview" src="" alt="Login Logo" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--navy-primary); box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
                             </div>
                             <div class="form-group" style="margin-bottom: 15px;">
-                                <label><i class="fas fa-upload"></i> Upload New Logo</label>
+                                <label><i class="ri-upload-line"></i> Upload New Logo</label>
                                 <input type="file" id="logoFileInput" accept=".jpg,.jpeg,.png,.gif,.webp" class="filter-input">
-                                <p style="margin-top: 8px; font-size: 13px; color: #888;"><i class="fas fa-info-circle"></i> Allowed: JPG, PNG, GIF, WEBP (Max 2MB)</p>
+                                <p style="margin-top: 8px; font-size: 13px; color: #888;"><i class="ri-information-line"></i> Allowed: JPG, PNG, GIF, WEBP (Max 2MB)</p>
                             </div>
                             <div style="display: flex; gap: 10px;">
                                 <button type="button" class="btn btn-primary" onclick="uploadLogo()">
-                                    <i class="fas fa-upload"></i> Upload Logo
+                                    <i class="ri-upload-line"></i> Upload Logo
                                 </button>
                                 <button type="button" class="btn btn-secondary" onclick="resetLogo()">
-                                    <i class="fas fa-undo"></i> Reset to Default
+                                    <i class="ri-arrow-go-back-line"></i> Reset to Default
                                 </button>
                             </div>
                         </div>
@@ -534,7 +534,7 @@ if (isset($_POST['action'])) {
                     <div class="settings-mega-card">
                         <div class="settings-card-header">
                             <div class="settings-card-icon" style="background: linear-gradient(135deg, #E31E24 0%, #a01319 100%);">
-                                <i class="fas fa-palette"></i>
+                                <i class="ri-palette-line"></i>
                             </div>
                             <div>
                                 <h3 class="settings-card-title">Brand Accent Color</h3>
@@ -546,7 +546,7 @@ if (isset($_POST['action'])) {
                                 This accent color applies site-wide (buttons, links, highlights) for every user, including on the public careers pages and login screens. It overrides the accent slot in each user's personal theme customizer.
                             </p>
                             <div class="form-group">
-                                <label><i class="fas fa-square" id="brandAccentIcon"></i> Accent Color</label>
+                                <label><i class="ri-square-line" id="brandAccentIcon"></i> Accent Color</label>
                                 <div style="display: flex; gap: 10px; align-items: center;">
                                     <input type="color" id="brand_accent_color" value="#0074D9" style="width: 60px; height: 45px; padding: 2px; cursor: pointer; border: 2px solid var(--border-color); border-radius: 4px;">
                                     <input type="text" id="brand_accent_color_hex" value="#0074D9" maxlength="7" style="flex: 1; text-transform: uppercase;">
@@ -554,7 +554,7 @@ if (isset($_POST['action'])) {
                             </div>
                             <div style="display: flex; gap: 10px; margin-top: 15px;">
                                 <button type="button" class="btn btn-primary" onclick="saveBrandAccentColor()">
-                                    <i class="fas fa-save"></i> Save Accent Color
+                                    <i class="ri-save-line"></i> Save Accent Color
                                 </button>
                             </div>
                         </div>
@@ -781,7 +781,7 @@ if (isset($_POST['action'])) {
                 <div class="skill-item">
                     <span class="skill-name">${escapeHtml(skill)}</span>
                     <button type="button" class="skill-delete-btn" onclick="deleteSkill(${index})" title="Delete skill">
-                        <i class="fas fa-trash"></i>
+                        <i class="ri-delete-bin-line"></i>
                     </button>
                 </div>
             `).join('');

@@ -249,8 +249,8 @@ if (isset($_GET['action'])) {
     <meta name="mobile-web-app-capable" content="yes">
     <title>Dashboard - Job Application Tracker</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
+    <link rel="stylesheet" href="styles.css?v=5.4">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -918,18 +918,18 @@ if (isset($_GET['action'])) {
             <!-- Command Bar Header -->
             <div class="command-header">
                 <div class="command-header-left">
-                    <h1><i class="fas fa-th-large"></i> Dashboard</h1>
+                    <h1><i class="ri-grid-line"></i> Dashboard</h1>
                 </div>
                 <div class="command-header-right">
                     <div class="cmd-search-box">
-                        <i class="fas fa-search"></i>
+                        <i class="ri-search-line"></i>
                         <input type="text" id="globalSearch" placeholder="Search candidates..." autocomplete="off">
                     </div>
                     <button class="cmd-btn cmd-btn-ghost" onclick="refreshDashboard()" title="Refresh Data">
-                        <i class="fas fa-sync-alt" id="refreshIcon"></i> Refresh
+                        <i class="ri-refresh-line" id="refreshIcon"></i> Refresh
                     </button>
                     <button class="cmd-btn cmd-btn-primary" onclick="window.location.href='applications.php'" title="New Application">
-                        <i class="fas fa-plus"></i> New Application
+                        <i class="ri-add-line"></i> New Application
                     </button>
                 </div>
             </div>
@@ -959,7 +959,7 @@ if (isset($_GET['action'])) {
                 <div class="kpi-row">
                     <div class="kpi-card kpi-total">
                         <div class="kpi-card-top">
-                            <div class="kpi-icon-circle"><i class="fas fa-layer-group"></i></div>
+                            <div class="kpi-icon-circle"><i class="ri-stack-line"></i></div>
                             <div class="kpi-info">
                                 <span class="kpi-label">Total Applications</span>
                                 <div class="kpi-value" id="kpiTotalApps">0</div>
@@ -972,7 +972,7 @@ if (isset($_GET['action'])) {
                     </div>
                     <div class="kpi-card kpi-active">
                         <div class="kpi-card-top">
-                            <div class="kpi-icon-circle"><i class="fas fa-user-check"></i></div>
+                            <div class="kpi-icon-circle"><i class="ri-user-follow-line"></i></div>
                             <div class="kpi-info">
                                 <span class="kpi-label">Active Candidates</span>
                                 <div class="kpi-value" id="kpiActive">0</div>
@@ -985,7 +985,7 @@ if (isset($_GET['action'])) {
                     </div>
                     <div class="kpi-card kpi-interview">
                         <div class="kpi-card-top">
-                            <div class="kpi-icon-circle"><i class="fas fa-comments"></i></div>
+                            <div class="kpi-icon-circle"><i class="ri-chat-3-line"></i></div>
                             <div class="kpi-info">
                                 <span class="kpi-label">Interviews</span>
                                 <div class="kpi-value" id="kpiInterview">0</div>
@@ -998,7 +998,7 @@ if (isset($_GET['action'])) {
                     </div>
                     <div class="kpi-card kpi-offer">
                         <div class="kpi-card-top">
-                            <div class="kpi-icon-circle"><i class="fas fa-hand-holding-usd"></i></div>
+                            <div class="kpi-icon-circle"><i class="ri-hand-coin-line"></i></div>
                             <div class="kpi-info">
                                 <span class="kpi-label">Offers Pending</span>
                                 <div class="kpi-value" id="kpiOffer">0</div>
@@ -1011,7 +1011,7 @@ if (isset($_GET['action'])) {
                     </div>
                     <div class="kpi-card kpi-avgdays">
                         <div class="kpi-card-top">
-                            <div class="kpi-icon-circle"><i class="fas fa-hourglass-half"></i></div>
+                            <div class="kpi-icon-circle"><i class="ri-hourglass-line"></i></div>
                             <div class="kpi-info">
                                 <span class="kpi-label">Avg Days to Join</span>
                                 <div class="kpi-value" id="kpiAvgDays">—</div>
@@ -1026,7 +1026,7 @@ if (isset($_GET['action'])) {
 
                 <!-- Filter Bar -->
                 <div class="filter-bar" id="filterBar">
-                    <span class="filter-bar-label"><i class="fas fa-filter"></i> Filter</span>
+                    <span class="filter-bar-label"><i class="ri-filter-line"></i> Filter</span>
                     <select id="filterStage">
                         <option value="">All Stages</option>
                     </select>
@@ -1035,7 +1035,7 @@ if (isset($_GET['action'])) {
                     </select>
                     <span id="filterActiveTags"></span>
                     <button class="filter-bar-clear" id="filterClearBtn" style="display:none;" onclick="clearFilters()">
-                        <i class="fas fa-times-circle"></i> Clear Filters
+                        <i class="ri-close-circle-line"></i> Clear Filters
                     </button>
                 </div>
 
@@ -1043,7 +1043,7 @@ if (isset($_GET['action'])) {
                 <div class="stats-row">
                     <div class="stat-mini">
                         <div class="stat-mini-icon" style="background:linear-gradient(135deg,#10B981,#059669);">
-                            <i class="fas fa-briefcase"></i>
+                            <i class="ri-briefcase-line"></i>
                         </div>
                         <div>
                             <div class="stat-mini-value" id="kpiHired">0</div>
@@ -1052,7 +1052,7 @@ if (isset($_GET['action'])) {
                     </div>
                     <div class="stat-mini" id="statUsersCard">
                         <div class="stat-mini-icon" style="background:linear-gradient(135deg,var(--navy-accent),#005fa3);">
-                            <i class="fas fa-users"></i>
+                            <i class="ri-group-line"></i>
                         </div>
                         <div>
                             <div class="stat-mini-value" id="kpiUsers">0</div>
@@ -1061,7 +1061,7 @@ if (isset($_GET['action'])) {
                     </div>
                     <div class="stat-mini">
                         <div class="stat-mini-icon" style="background:linear-gradient(135deg,#F59E0B,#d48806);">
-                            <i class="fas fa-paperclip"></i>
+                            <i class="ri-attachment-line"></i>
                         </div>
                         <div>
                             <div class="stat-mini-value" id="kpiDocs">0</div>
@@ -1074,7 +1074,7 @@ if (isset($_GET['action'])) {
                 <div class="charts-grid">
                     <div class="chart-card">
                         <div class="chart-card-header">
-                            <span class="chart-card-title"><i class="fas fa-stream"></i> Pipeline Overview</span>
+                            <span class="chart-card-title"><i class="ri-list-unordered"></i> Pipeline Overview</span>
                         </div>
                         <div class="chart-container">
                             <canvas id="pipelineChart"></canvas>
@@ -1082,7 +1082,7 @@ if (isset($_GET['action'])) {
                     </div>
                     <div class="chart-card">
                         <div class="chart-card-header">
-                            <span class="chart-card-title"><i class="fas fa-chart-pie"></i> Status Distribution</span>
+                            <span class="chart-card-title"><i class="ri-pie-chart-line"></i> Status Distribution</span>
                         </div>
                         <div class="chart-container">
                             <canvas id="statusChart"></canvas>
@@ -1094,7 +1094,7 @@ if (isset($_GET['action'])) {
                 <div class="charts-grid charts-grid-even">
                     <div class="chart-card">
                         <div class="chart-card-header">
-                            <span class="chart-card-title"><i class="fas fa-chart-area"></i> Monthly Applications</span>
+                            <span class="chart-card-title"><i class="ri-area-chart-line"></i> Monthly Applications</span>
                         </div>
                         <div class="chart-container">
                             <canvas id="monthlyChart"></canvas>
@@ -1102,7 +1102,7 @@ if (isset($_GET['action'])) {
                     </div>
                     <div class="chart-card">
                         <div class="chart-card-header">
-                            <span class="chart-card-title"><i class="fas fa-building"></i> Top Companies</span>
+                            <span class="chart-card-title"><i class="ri-building-line"></i> Top Companies</span>
                         </div>
                         <div class="chart-container">
                             <canvas id="companyChart"></canvas>
@@ -1114,14 +1114,14 @@ if (isset($_GET['action'])) {
                 <div class="bottom-grid">
                     <div class="info-card">
                         <div class="info-card-header">
-                            <span class="info-card-title"><i class="fas fa-calendar-alt"></i> Upcoming Actions</span>
+                            <span class="info-card-title"><i class="ri-calendar-line"></i> Upcoming Actions</span>
                             <span class="info-card-badge">Next 7 days</span>
                         </div>
                         <ul class="upcoming-list" id="upcomingList"></ul>
                     </div>
                     <div class="info-card">
                         <div class="info-card-header">
-                            <span class="info-card-title"><i class="fas fa-history"></i> Recent Activity</span>
+                            <span class="info-card-title"><i class="ri-history-line"></i> Recent Activity</span>
                             <span class="info-card-badge">Latest</span>
                         </div>
                         <ul class="activity-list" id="activityList"></ul>
@@ -1181,12 +1181,12 @@ if (isset($_GET['action'])) {
         var hasFilter = false;
         if (currentFilters.stage_id) {
             var txt = $('#filterStage option:selected').text();
-            tags += '<span class="filter-active-tag"><i class="fas fa-columns"></i> ' + escapeHtml(txt) + '</span> ';
+            tags += '<span class="filter-active-tag"><i class="ri-layout-column-line"></i> ' + escapeHtml(txt) + '</span> ';
             hasFilter = true;
         }
         if (currentFilters.status_id) {
             var txt = $('#filterStatus option:selected').text();
-            tags += '<span class="filter-active-tag"><i class="fas fa-check-circle"></i> ' + escapeHtml(txt) + '</span> ';
+            tags += '<span class="filter-active-tag"><i class="ri-checkbox-circle-line"></i> ' + escapeHtml(txt) + '</span> ';
             hasFilter = true;
         }
         $('#filterActiveTags').html(tags);
@@ -1267,9 +1267,9 @@ if (isset($_GET['action'])) {
     // ---- Refresh Dashboard ----
     function refreshDashboard() {
         var icon = $('#refreshIcon');
-        icon.addClass('fa-spin');
+        icon.addClass('ri-spin');
         loadDashboard();
-        setTimeout(function() { icon.removeClass('fa-spin'); }, 1000);
+        setTimeout(function() { icon.removeClass('ri-spin'); }, 1000);
     }
 
     // ---- Animated Counter ----
@@ -1305,9 +1305,9 @@ if (isset($_GET['action'])) {
             var prev = trends[key].previous;
             var pct = prev > 0 ? Math.round(((cur - prev) / prev) * 100) : (cur > 0 ? 100 : 0);
             var cls = pct > 0 ? 'trend-up' : (pct < 0 ? 'trend-down' : 'trend-neutral');
-            var icon = pct > 0 ? 'fa-arrow-up' : (pct < 0 ? 'fa-arrow-down' : 'fa-minus');
+            var icon = pct > 0 ? 'ri-arrow-up-line' : (pct < 0 ? 'ri-arrow-down-line' : 'ri-subtract-line');
             var label = pct === 0 ? 'No change' : (Math.abs(pct) + '%');
-            el.innerHTML = '<span class="kpi-trend-badge ' + cls + '"><i class="fas ' + icon + '"></i> ' + label + '</span><span class="kpi-trend-sub">vs last month</span>';
+            el.innerHTML = '<span class="kpi-trend-badge ' + cls + '"><i class="' + icon + '"></i> ' + label + '</span><span class="kpi-trend-sub">vs last month</span>';
         });
     }
 
@@ -1553,7 +1553,7 @@ if (isset($_GET['action'])) {
         list.empty();
 
         if (!actions || actions.length === 0) {
-            list.html('<li class="upcoming-empty"><i class="fas fa-calendar-check"></i>No upcoming actions in the next 7 days</li>');
+            list.html('<li class="upcoming-empty"><i class="ri-calendar-check-line"></i>No upcoming actions in the next 7 days</li>');
             return;
         }
 
@@ -1584,25 +1584,25 @@ if (isset($_GET['action'])) {
         list.empty();
 
         if (!logs || logs.length === 0) {
-            list.html('<li class="activity-empty"><i class="fas fa-history"></i>No recent activity</li>');
+            list.html('<li class="activity-empty"><i class="ri-history-line"></i>No recent activity</li>');
             return;
         }
 
         var actionIcons = {
-            'LOGIN': { icon: 'fa-sign-in-alt', cls: 'act-login' },
-            'LOGOUT': { icon: 'fa-sign-out-alt', cls: 'act-logout' },
-            'CREATE': { icon: 'fa-plus', cls: 'act-create' },
-            'UPDATE': { icon: 'fa-edit', cls: 'act-update' },
-            'DELETE': { icon: 'fa-trash', cls: 'act-delete' }
+            'LOGIN': { icon: 'ri-login-box-line', cls: 'act-login' },
+            'LOGOUT': { icon: 'ri-logout-box-line', cls: 'act-logout' },
+            'CREATE': { icon: 'ri-add-line', cls: 'act-create' },
+            'UPDATE': { icon: 'ri-edit-line', cls: 'act-update' },
+            'DELETE': { icon: 'ri-delete-bin-line', cls: 'act-delete' }
         };
 
         logs.forEach(function(log) {
-            var ai = actionIcons[log.action] || { icon: 'fa-circle', cls: 'act-default' };
+            var ai = actionIcons[log.action] || { icon: 'ri-circle-line', cls: 'act-default' };
             var timeAgo = getTimeAgo(log.created_at);
 
             list.append(
                 '<li class="activity-item">' +
-                    '<div class="activity-icon ' + ai.cls + '"><i class="fas ' + ai.icon + '"></i></div>' +
+                    '<div class="activity-icon ' + ai.cls + '"><i class="' + ai.icon + '"></i></div>' +
                     '<div class="activity-info">' +
                         '<div class="activity-desc"><strong>' + escapeHtml(log.user_name || 'System') + '</strong> — ' + escapeHtml(log.description || log.action) + '</div>' +
                         '<div class="activity-meta">' + escapeHtml(log.module || '') + ' · ' + timeAgo + '</div>' +

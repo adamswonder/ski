@@ -296,11 +296,11 @@ if (isset($_GET['action'])) {
     <title>Job Postings - Dashboard System</title>
 
     <!-- CDN Dependencies -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css">
-    <link rel="stylesheet" href="styles.css?v=5.2">
+    <link rel="stylesheet" href="styles.css?v=5.4">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -316,25 +316,25 @@ if (isset($_GET['action'])) {
 
         <div class="main-content">
             <div class="header">
-                <h1><i class="fas fa-bullhorn"></i> Job Postings</h1>
+                <h1><i class="ri-megaphone-line"></i> Job Postings</h1>
                 <div>Welcome, <?php echo htmlspecialchars($username); ?></div>
             </div>
 
             <div class="data-section">
                 <div class="section-header">
-                    <h2><i class="fas fa-list"></i> Manage Postings</h2>
+                    <h2><i class="ri-list-check"></i> Manage Postings</h2>
                     <div style="display: flex; gap: 10px;">
                         <button class="btn btn-primary" onclick="loadPostings()">
-                            <i class="fas fa-sync"></i> Refresh
+                            <i class="ri-refresh-line"></i> Refresh
                         </button>
                         <button class="btn btn-success" onclick="openAddModal()">
-                            <i class="fas fa-plus"></i> New Posting
+                            <i class="ri-add-line"></i> New Posting
                         </button>
                     </div>
                 </div>
 
                 <div class="table-scroll-hint">
-                    <i class="fas fa-arrows-alt-h"></i> Swipe left/right to see all columns
+                    <i class="ri-arrow-left-right-line"></i> Swipe left/right to see all columns
                 </div>
                 <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
                     <table id="postingsTable" class="display" style="width:100%"></table>
@@ -347,9 +347,9 @@ if (isset($_GET['action'])) {
     <div class="modal-overlay" id="postingModal">
         <div class="modal" onclick="event.stopPropagation()" style="max-width: 800px;">
             <div class="modal-header">
-                <h3 id="modalTitle"><i class="fas fa-plus-circle"></i> New Job Posting</h3>
+                <h3 id="modalTitle"><i class="ri-add-circle-line"></i> New Job Posting</h3>
                 <button class="close-btn" onclick="closeModal()">
-                    <i class="fas fa-times"></i>
+                    <i class="ri-close-line"></i>
                 </button>
             </div>
             <div class="modal-body">
@@ -357,39 +357,39 @@ if (isset($_GET['action'])) {
                     <input type="hidden" id="postingId" name="id">
 
                     <div class="form-group">
-                        <label><i class="fas fa-heading"></i> Title *</label>
+                        <label><i class="ri-heading"></i> Title *</label>
                         <input type="text" id="postingTitle" name="title" required maxlength="150" placeholder="e.g. Senior Backend Developer">
                     </div>
 
                     <div class="form-grid">
                         <div class="form-group">
-                            <label><i class="fas fa-building"></i> Department</label>
+                            <label><i class="ri-building-line"></i> Department</label>
                             <input type="text" id="postingDepartment" name="department" maxlength="100" placeholder="e.g. Engineering">
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-map-marker-alt"></i> Location</label>
+                            <label><i class="ri-map-pin-line"></i> Location</label>
                             <input type="text" id="postingLocation" name="location" maxlength="150" placeholder="e.g. Nairobi / Remote">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label><i class="fas fa-align-left"></i> Description *</label>
+                        <label><i class="ri-align-left"></i> Description *</label>
                         <div id="descriptionEditor" style="background:#fff; min-height: 160px;"></div>
                     </div>
 
                     <div class="form-grid">
                         <div class="form-group">
-                            <label><i class="fas fa-calendar-check"></i> Open Date</label>
+                            <label><i class="ri-calendar-check-line"></i> Open Date</label>
                             <input type="date" id="openDate" name="open_date">
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-calendar-times"></i> Close Date</label>
+                            <label><i class="ri-calendar-close-line"></i> Close Date</label>
                             <input type="date" id="closeDate" name="close_date">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label><i class="fas fa-toggle-on"></i> Status Override</label>
+                        <label><i class="ri-toggle-line"></i> Status Override</label>
                         <select id="statusOverride" name="status_override">
                             <option value="auto">Auto (based on dates above)</option>
                             <option value="force_open">Force Open</option>
@@ -401,9 +401,9 @@ if (isset($_GET['action'])) {
 
                     <div class="form-group">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <label style="margin:0;"><i class="fas fa-list-ol"></i> Application Questions</label>
+                            <label style="margin:0;"><i class="ri-list-ordered"></i> Application Questions</label>
                             <button type="button" class="btn btn-secondary btn-sm" onclick="addQuestionRow()">
-                                <i class="fas fa-plus"></i> Add Question
+                                <i class="ri-add-line"></i> Add Question
                             </button>
                         </div>
                         <div id="questionsList" style="margin-top: 12px; display: flex; flex-direction: column; gap: 10px;"></div>
@@ -411,10 +411,10 @@ if (isset($_GET['action'])) {
 
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Save
+                            <i class="ri-save-line"></i> Save
                         </button>
                         <button type="button" class="btn btn-secondary" onclick="closeModal()">
-                            <i class="fas fa-times"></i> Cancel
+                            <i class="ri-close-line"></i> Cancel
                         </button>
                     </div>
                 </form>
@@ -451,7 +451,7 @@ if (isset($_GET['action'])) {
                     <input type="checkbox" class="q-required"> Required
                 </label>
                 <button type="button" class="action-icon delete-icon" onclick="this.closest('.question-row').remove()" title="Remove">
-                    <i class="fas fa-trash"></i>
+                    <i class="ri-delete-bin-line"></i>
                 </button>
             </div>
         </div>
@@ -516,8 +516,8 @@ if (isset($_GET['action'])) {
                             title: 'Actions',
                             orderable: false,
                             render: function(data, type, row) {
-                                return '<button class="action-icon edit-icon" onclick="editPosting(' + row.id + ')" title="Edit"><i class="fas fa-edit"></i></button>' +
-                                    '<button class="action-icon delete-icon" onclick="deletePosting(' + row.id + ')" title="Delete"><i class="fas fa-trash"></i></button>';
+                                return '<button class="action-icon edit-icon" onclick="editPosting(' + row.id + ')" title="Edit"><i class="ri-edit-line"></i></button>' +
+                                    '<button class="action-icon delete-icon" onclick="deletePosting(' + row.id + ')" title="Delete"><i class="ri-delete-bin-line"></i></button>';
                             }
                         }
                     ],
@@ -574,7 +574,7 @@ if (isset($_GET['action'])) {
 
         function openAddModal() {
             isEditMode = false;
-            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle"></i> New Job Posting';
+            document.getElementById('modalTitle').innerHTML = '<i class="ri-add-circle-line"></i> New Job Posting';
             document.getElementById('postingForm').reset();
             document.getElementById('postingId').value = '';
             document.getElementById('questionsList').innerHTML = '';
@@ -595,7 +595,7 @@ if (isset($_GET['action'])) {
 
                     const posting = response.data;
                     isEditMode = true;
-                    document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> Edit Job Posting';
+                    document.getElementById('modalTitle').innerHTML = '<i class="ri-edit-line"></i> Edit Job Posting';
                     document.getElementById('postingId').value = posting.id;
                     document.getElementById('postingTitle').value = posting.title;
                     document.getElementById('postingDepartment').value = posting.department || '';

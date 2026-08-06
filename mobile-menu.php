@@ -16,27 +16,27 @@ $mobile_role = isset($role) ? $role : 'user';
 <!-- Mobile Bottom Navigation Bar -->
 <nav class="mobile-bottom-nav" id="mobileBottomNav">
     <a href="<?php echo $mobile_role === 'admin' ? 'dashboard.php' : 'applications.php'; ?>" class="mobile-nav-item <?php echo ($mobile_current === 'dashboard' || ($mobile_role !== 'admin' && $mobile_current === 'applications')) ? 'active' : ''; ?>">
-        <i class="fas <?php echo $mobile_role === 'admin' ? 'fa-chart-line' : 'fa-file-alt'; ?>"></i>
+        <i class="<?php echo $mobile_role === 'admin' ? 'ri-line-chart-line' : 'ri-file-text-line'; ?>"></i>
         <span><?php echo $mobile_role === 'admin' ? 'Dashboard' : 'Apps'; ?></span>
     </a>
 
     <a href="pipeline.php" class="mobile-nav-item <?php echo $mobile_current === 'pipeline' ? 'active' : ''; ?>">
-        <i class="fas fa-columns"></i>
+        <i class="ri-layout-column-line"></i>
         <span>Pipeline</span>
     </a>
 
     <a href="calendar.php" class="mobile-nav-item <?php echo $mobile_current === 'calendar' ? 'active' : ''; ?>">
-        <i class="fas fa-calendar-alt"></i>
+        <i class="ri-calendar-line"></i>
         <span>Calendar</span>
     </a>
 
     <a href="account.php" class="mobile-nav-item <?php echo $mobile_current === 'account' ? 'active' : ''; ?>">
-        <i class="fas fa-user"></i>
+        <i class="ri-user-line"></i>
         <span>Profile</span>
     </a>
 
     <button class="mobile-nav-item mobile-nav-more" onclick="toggleMobileMenu()">
-        <i class="fas fa-bars"></i>
+        <i class="ri-menu-line"></i>
         <span>More</span>
     </button>
 </nav>

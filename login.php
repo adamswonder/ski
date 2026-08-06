@@ -119,8 +119,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <title>Login - Skyward Airlines</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.3">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
+    <link rel="stylesheet" href="styles.css?v=5.4">
     <?php echo generateBrandAccentCSS(); ?>
 </head>
 <body>
@@ -130,9 +130,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <h1>Manage recruitment from one dashboard</h1>
                 <p>Sign in to review applications, move candidates through the pipeline, and keep every hiring decision organized.</p>
                 <div class="login-brand-features">
-                    <div><i class="fas fa-stream"></i> Pipeline Tracking</div>
-                    <div><i class="fas fa-users"></i> Team Access</div>
-                    <div><i class="fas fa-shield-alt"></i> Secure Sessions</div>
+                    <div><i class="ri-list-unordered"></i> Pipeline Tracking</div>
+                    <div><i class="ri-group-line"></i> Team Access</div>
+                    <div><i class="ri-shield-check-line"></i> Secure Sessions</div>
                 </div>
             </div>
         </div>
@@ -146,24 +146,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <h2>System Login</h2>
 
             <?php if ($error): ?>
-                <div class="error"><i class="fas fa-exclamation-circle"></i> <?php echo $error; ?></div>
+                <div class="error"><i class="ri-error-warning-line"></i> <?php echo $error; ?></div>
             <?php endif; ?>
 
             <form method="POST" action="">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
 
                 <div class="form-group">
-                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <label><i class="ri-mail-line"></i> Email</label>
                     <input type="email" id="email" name="email" required autofocus autocomplete="email" maxlength="150" value="<?php echo isset($email) ? htmlspecialchars($email) : ''; ?>">
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fas fa-lock"></i> Password</label>
+                    <label><i class="ri-lock-line"></i> Password</label>
                     <input type="password" id="password" name="password" required autocomplete="current-password" minlength="6">
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    <i class="fas fa-sign-in-alt"></i> Login
+                    <i class="ri-login-box-line"></i> Login
                 </button>
             </form>
 
@@ -175,7 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <!-- Theme Toggle Button -->
         <button class="login-theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
-            <i class="fas fa-moon" id="themeIcon"></i>
+            <i class="ri-moon-line" id="themeIcon"></i>
         </button>
     </div>
 
@@ -200,7 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     function updateThemeIcon(isDark) {
         const icon = document.getElementById('themeIcon');
         if (icon) {
-            icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+            icon.className = isDark ? 'ri-sun-line' : 'ri-moon-line';
         }
     }
 

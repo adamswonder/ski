@@ -77,8 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Create Account - Careers</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.3">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
+    <link rel="stylesheet" href="styles.css?v=5.4">
     <?php echo generateBrandAccentCSS(); ?>
 </head>
 <body>
@@ -88,9 +88,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <h1>Join the Skyward Airlines team</h1>
                 <p>Create an account to apply for open positions and keep track of every application from one place.</p>
                 <div class="login-brand-features">
-                    <div><i class="fas fa-route"></i> Track Progress</div>
-                    <div><i class="fas fa-bolt"></i> Fast Applications</div>
-                    <div><i class="fas fa-lock"></i> Secure Account</div>
+                    <div><i class="ri-route-line"></i> Track Progress</div>
+                    <div><i class="ri-flashlight-line"></i> Fast Applications</div>
+                    <div><i class="ri-lock-line"></i> Secure Account</div>
                 </div>
             </div>
         </div>
@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <p style="text-align:center; margin-top:-10px;">Track your job applications in one place</p>
 
             <?php if ($error): ?>
-                <div class="error"><i class="fas fa-exclamation-circle"></i> <?php echo htmlspecialchars($error); ?></div>
+                <div class="error"><i class="ri-error-warning-line"></i> <?php echo htmlspecialchars($error); ?></div>
             <?php endif; ?>
 
             <form method="POST" action="">
@@ -113,32 +113,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="hidden" name="redirect" value="<?php echo htmlspecialchars($redirect); ?>">
 
                 <div class="form-group">
-                    <label><i class="fas fa-user"></i> Full Name</label>
+                    <label><i class="ri-user-line"></i> Full Name</label>
                     <input type="text" name="full_name" required maxlength="100" autofocus value="<?php echo isset($fullName) ? htmlspecialchars($fullName) : ''; ?>">
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <label><i class="ri-mail-line"></i> Email</label>
                     <input type="email" name="email" required maxlength="150" value="<?php echo isset($email) ? htmlspecialchars($email) : ''; ?>">
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fas fa-phone"></i> Phone (optional)</label>
+                    <label><i class="ri-phone-line"></i> Phone (optional)</label>
                     <input type="text" name="phone" maxlength="20" value="<?php echo isset($phone) ? htmlspecialchars($phone) : ''; ?>">
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fas fa-lock"></i> Password</label>
+                    <label><i class="ri-lock-line"></i> Password</label>
                     <input type="password" name="password" required minlength="6" autocomplete="new-password">
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fas fa-lock"></i> Confirm Password</label>
+                    <label><i class="ri-lock-line"></i> Confirm Password</label>
                     <input type="password" name="confirm_password" required minlength="6" autocomplete="new-password">
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    <i class="fas fa-user-plus"></i> Create Account
+                    <i class="ri-user-add-line"></i> Create Account
                 </button>
             </form>
 
@@ -150,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
 
         <button class="login-theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
-            <i class="fas fa-moon" id="themeIcon"></i>
+            <i class="ri-moon-line" id="themeIcon"></i>
         </button>
     </div>
 
@@ -170,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     function updateThemeIcon(isDark) {
         const icon = document.getElementById('themeIcon');
-        if (icon) icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+        if (icon) icon.className = isDark ? 'ri-sun-line' : 'ri-moon-line';
     }
     initTheme();
     </script>

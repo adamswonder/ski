@@ -331,8 +331,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
     <title>My Account - Dashboard System</title>
 
     <!-- CDN Dependencies -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=4.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
+    <link rel="stylesheet" href="styles.css?v=5.4">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -346,14 +346,14 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
         <!-- Main Content -->
         <div class="main-content">
             <div class="header">
-                <h1><i class="fas fa-user-circle"></i> My Account</h1>
+                <h1><i class="ri-account-circle-line"></i> My Account</h1>
                 <div>Welcome, <?php echo htmlspecialchars($username); ?></div>
             </div>
 
             <!-- Profile Image Section -->
             <div class="data-section" style="margin-bottom: 30px;">
                 <div class="section-header">
-                    <h2><i class="fas fa-image"></i> Profile Image</h2>
+                    <h2><i class="ri-image-line"></i> Profile Image</h2>
                 </div>
 
                 <div class="profile-section-grid">
@@ -361,7 +361,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
                     <div class="profile-image-display">
                         <div class="profile-image-container">
                             <img id="currentProfileImage" src="" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; display: none;">
-                            <i id="defaultProfileIcon" class="fas fa-user" style="display: none;"></i>
+                            <i id="defaultProfileIcon" class="ri-user-line" style="display: none;"></i>
                         </div>
                         <div class="profile-image-label">Current Image</div>
                     </div>
@@ -370,25 +370,25 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
                     <div class="profile-upload-form">
                         <form id="profileImageForm" enctype="multipart/form-data">
                             <div class="form-group">
-                                <label><i class="fas fa-upload"></i> Upload New Profile Image</label>
+                                <label><i class="ri-upload-line"></i> Upload New Profile Image</label>
                                 <input type="file" id="profileImageInput" name="profile_image" accept="image/jpeg,image/png,image/gif,image/webp" class="file-input-styled">
                                 <div class="help-text">
-                                    <i class="fas fa-info-circle"></i> Accepted: JPG, PNG, GIF, WEBP (Max 2MB)
+                                    <i class="ri-information-line"></i> Accepted: JPG, PNG, GIF, WEBP (Max 2MB)
                                 </div>
                             </div>
 
                             <div class="form-actions" id="uploadSection" style="display: none;">
                                 <button type="submit" class="btn btn-primary" id="uploadBtn">
-                                    <i class="fas fa-upload"></i> Upload Image
+                                    <i class="ri-upload-line"></i> Upload Image
                                 </button>
                                 <button type="button" class="btn btn-secondary" onclick="cancelUpload()">
-                                    <i class="fas fa-times"></i> Cancel
+                                    <i class="ri-close-line"></i> Cancel
                                 </button>
                             </div>
                         </form>
 
                         <div id="uploadDisabledMessage" class="warning-message" style="display: none;">
-                            <i class="fas fa-exclamation-triangle"></i> Profile image uploads are currently disabled by administrator.
+                            <i class="ri-alert-line"></i> Profile image uploads are currently disabled by administrator.
                         </div>
                     </div>
                 </div>
@@ -396,21 +396,21 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
 
             <!-- Account Information Card -->
             <div class="account-info-card">
-                <h3><i class="fas fa-info-circle"></i> Account Information</h3>
+                <h3><i class="ri-information-line"></i> Account Information</h3>
                 <div class="info-row">
-                    <div class="info-label"><i class="fas fa-user"></i> Full Name:</div>
+                    <div class="info-label"><i class="ri-user-line"></i> Full Name:</div>
                     <div class="info-value" id="display-fullname">Loading...</div>
                 </div>
                 <div class="info-row">
-                    <div class="info-label"><i class="fas fa-envelope"></i> Email:</div>
+                    <div class="info-label"><i class="ri-mail-line"></i> Email:</div>
                     <div class="info-value" id="display-email">Loading...</div>
                 </div>
                 <div class="info-row">
-                    <div class="info-label"><i class="fas fa-user-tag"></i> Role:</div>
+                    <div class="info-label"><i class="ri-user-settings-line"></i> Role:</div>
                     <div class="info-value" id="display-role">Loading...</div>
                 </div>
                 <div class="info-row">
-                    <div class="info-label"><i class="fas fa-calendar-alt"></i> Member Since:</div>
+                    <div class="info-label"><i class="ri-calendar-line"></i> Member Since:</div>
                     <div class="info-value" id="display-created">Loading...</div>
                 </div>
             </div>
@@ -418,23 +418,23 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
             <!-- Update Profile Section -->
             <div class="data-section" style="margin-bottom: 30px;">
                 <div class="section-header">
-                    <h2><i class="fas fa-edit"></i> Update Profile</h2>
+                    <h2><i class="ri-edit-line"></i> Update Profile</h2>
                 </div>
 
                 <form id="profileForm">
                     <div class="form-grid">
                         <div class="form-group">
-                            <label><i class="fas fa-user"></i> Full Name *</label>
+                            <label><i class="ri-user-line"></i> Full Name *</label>
                             <input type="text" id="full_name" name="full_name" required minlength="2" maxlength="100">
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-envelope"></i> Email *</label>
+                            <label><i class="ri-mail-line"></i> Email *</label>
                             <input type="email" id="email" name="email" required>
                         </div>
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Save Changes
+                            <i class="ri-save-line"></i> Save Changes
                         </button>
                     </div>
                 </form>
@@ -443,27 +443,27 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
             <!-- Change Password Section -->
             <div class="data-section" style="margin-bottom: 30px;">
                 <div class="section-header">
-                    <h2><i class="fas fa-lock"></i> Change Password</h2>
+                    <h2><i class="ri-lock-line"></i> Change Password</h2>
                 </div>
 
                 <form id="passwordForm">
                     <div class="form-grid">
                         <div class="form-group">
-                            <label><i class="fas fa-lock"></i> Current Password *</label>
+                            <label><i class="ri-lock-line"></i> Current Password *</label>
                             <input type="password" id="current_password" name="current_password" required>
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-key"></i> New Password *</label>
+                            <label><i class="ri-key-2-line"></i> New Password *</label>
                             <input type="password" id="new_password" name="new_password" required minlength="6">
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-key"></i> Confirm New Password *</label>
+                            <label><i class="ri-key-2-line"></i> Confirm New Password *</label>
                             <input type="password" id="confirm_password" name="confirm_password" required minlength="6">
                         </div>
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-key"></i> Change Password
+                            <i class="ri-key-2-line"></i> Change Password
                         </button>
                     </div>
                 </form>
@@ -472,25 +472,25 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
             <!-- UI Customization Section -->
             <div class="data-section">
                 <div class="section-header">
-                    <h2><i class="fas fa-palette"></i> UI Customization</h2>
+                    <h2><i class="ri-palette-line"></i> UI Customization</h2>
                     <button class="btn btn-secondary" onclick="resetTheme()">
-                        <i class="fas fa-undo"></i> Reset to Default
+                        <i class="ri-arrow-go-back-line"></i> Reset to Default
                     </button>
                 </div>
 
                 <p class="help-text" style="margin-bottom: 20px; color: var(--text-muted);">
-                    <i class="fas fa-info-circle"></i> Customize your dashboard colors. Changes are saved per user and will apply across all pages.
+                    <i class="ri-information-line"></i> Customize your dashboard colors. Changes are saved per user and will apply across all pages.
                 </p>
 
                 <!-- Color Preview -->
                 <div class="theme-preview" id="themePreview" style="margin-bottom: 25px; padding: 20px; border-radius: 8px; border: 2px solid var(--border-color);">
-                    <h4 style="margin-bottom: 15px; color: var(--text-primary);"><i class="fas fa-eye"></i> Live Preview</h4>
+                    <h4 style="margin-bottom: 15px; color: var(--text-primary);"><i class="ri-eye-line"></i> Live Preview</h4>
                     <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
                         <div id="previewPrimary" style="width: 80px; height: 50px; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 600;">Primary</div>
                         <div id="previewSecondary" style="width: 80px; height: 50px; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 600;">Secondary</div>
                         <div id="previewAccent" style="width: 80px; height: 50px; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 600;">Accent</div>
                         <button class="btn" id="previewButton" style="margin-left: 20px;">
-                            <i class="fas fa-check"></i> Sample Button
+                            <i class="ri-check-line"></i> Sample Button
                         </button>
                     </div>
                 </div>
@@ -498,7 +498,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
                 <form id="themeForm">
                     <div class="form-grid" style="grid-template-columns: repeat(3, 1fr);">
                         <div class="form-group">
-                            <label><i class="fas fa-square" id="primaryColorIcon"></i> Primary Color</label>
+                            <label><i class="ri-square-line" id="primaryColorIcon"></i> Primary Color</label>
                             <div style="display: flex; gap: 10px; align-items: center;">
                                 <input type="color" id="theme_primary" name="theme_primary" value="#001f3f" style="width: 60px; height: 45px; padding: 2px; cursor: pointer; border: 2px solid var(--border-color); border-radius: 4px;">
                                 <input type="text" id="theme_primary_hex" value="#001f3f" maxlength="7" style="flex: 1; text-transform: uppercase;">
@@ -506,7 +506,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
                             <small class="help-text" style="color: var(--text-muted); margin-top: 5px; display: block;">Sidebar & headers</small>
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-square" id="secondaryColorIcon"></i> Secondary Color</label>
+                            <label><i class="ri-square-line" id="secondaryColorIcon"></i> Secondary Color</label>
                             <div style="display: flex; gap: 10px; align-items: center;">
                                 <input type="color" id="theme_secondary" name="theme_secondary" value="#003366" style="width: 60px; height: 45px; padding: 2px; cursor: pointer; border: 2px solid var(--border-color); border-radius: 4px;">
                                 <input type="text" id="theme_secondary_hex" value="#003366" maxlength="7" style="flex: 1; text-transform: uppercase;">
@@ -514,27 +514,27 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
                             <small class="help-text" style="color: var(--text-muted); margin-top: 5px; display: block;">Hover states & gradients</small>
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-square" id="accentColorIcon"></i> Accent Color</label>
+                            <label><i class="ri-square-line" id="accentColorIcon"></i> Accent Color</label>
                             <div style="display: flex; gap: 10px; align-items: center;">
                                 <input type="color" id="theme_accent" name="theme_accent" value="<?php echo htmlspecialchars(getBrandAccentColor()); ?>" disabled style="width: 60px; height: 45px; padding: 2px; cursor: not-allowed; border: 2px solid var(--border-color); border-radius: 4px; opacity: 0.7;">
                                 <input type="text" id="theme_accent_hex" value="<?php echo htmlspecialchars(getBrandAccentColor()); ?>" maxlength="7" disabled style="flex: 1; text-transform: uppercase; cursor: not-allowed; opacity: 0.7;">
                             </div>
-                            <small class="help-text" style="color: var(--text-muted); margin-top: 5px; display: block;"><i class="fas fa-lock"></i> Set by your administrator in System Settings</small>
+                            <small class="help-text" style="color: var(--text-muted); margin-top: 5px; display: block;"><i class="ri-lock-line"></i> Set by your administrator in System Settings</small>
                         </div>
                     </div>
 
                     <!-- Theme Mode -->
                     <div class="form-group" style="margin-top: 20px;">
-                        <label><i class="fas fa-adjust"></i> Default Theme Mode</label>
+                        <label><i class="ri-contrast-2-line"></i> Default Theme Mode</label>
                         <div style="display: flex; gap: 20px; margin-top: 10px;">
                             <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 12px 20px; border: 2px solid var(--border-color); border-radius: 4px; transition: all 0.3s;" class="theme-mode-option" id="lightModeOption">
                                 <input type="radio" name="theme_mode" value="light" id="theme_mode_light" checked style="width: 18px; height: 18px;">
-                                <i class="fas fa-sun" style="color: #fbbc04;"></i>
+                                <i class="ri-sun-line" style="color: #fbbc04;"></i>
                                 <span>Light Mode</span>
                             </label>
                             <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 12px 20px; border: 2px solid var(--border-color); border-radius: 4px; transition: all 0.3s;" class="theme-mode-option" id="darkModeOption">
                                 <input type="radio" name="theme_mode" value="dark" id="theme_mode_dark" style="width: 18px; height: 18px;">
-                                <i class="fas fa-moon" style="color: #5dade2;"></i>
+                                <i class="ri-moon-line" style="color: #5dade2;"></i>
                                 <span>Dark Mode</span>
                             </label>
                         </div>
@@ -542,7 +542,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
 
                     <!-- Preset Colors -->
                     <div class="form-group" style="margin-top: 25px;">
-                        <label><i class="fas fa-swatchbook"></i> Quick Presets</label>
+                        <label><i class="ri-contrast-2-line"></i> Quick Presets</label>
                         <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
                             <button type="button" class="preset-btn" onclick="applyPreset('#001f3f', '#003366', '#0074D9')" style="background: linear-gradient(135deg, #001f3f 50%, #0074D9 50%); width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--border-color); cursor: pointer;" title="Navy Blue (Default)"></button>
                             <button type="button" class="preset-btn" onclick="applyPreset('#1a1a2e', '#16213e', '#e94560')" style="background: linear-gradient(135deg, #1a1a2e 50%, #e94560 50%); width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--border-color); cursor: pointer;" title="Dark Rose"></button>
@@ -557,10 +557,10 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
 
                     <div class="form-actions" style="margin-top: 30px;">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Save Theme Settings
+                            <i class="ri-save-line"></i> Save Theme Settings
                         </button>
                         <button type="button" class="btn btn-success" onclick="applyThemePreview()">
-                            <i class="fas fa-eye"></i> Preview Changes
+                            <i class="ri-eye-line"></i> Preview Changes
                         </button>
                     </div>
                 </form>

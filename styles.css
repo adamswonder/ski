@@ -1957,6 +1957,21 @@ body.dark-mode .modal-header {
     animation: none;
 }
 
+/* Remix Icon has no bundled spin animation utility (unlike Font Awesome's fa-spin);
+   this replicates it for use alongside icons such as ri-loader-4-line / ri-refresh-line. */
+.ri-spin {
+    animation: ri-spin 1s linear infinite;
+}
+
+@keyframes ri-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 @keyframes pulse {
     0%, 100% {
         box-shadow: 0 0 0 3px rgba(52, 168, 83, 0.2);

@@ -35,11 +35,11 @@ echo generateUserThemeCSS($user_id);
 <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <div class="sidebar-title">
-            <i class="fas fa-tachometer-alt"></i>
-            <span class="sidebar-title-text">Dashboard</span>
+            <!-- <i class="ri-dashboard-line"></i> -->
+            <span class="sidebar-title-text">Skyward Airlines</span>
         </div>
         <button class="sidebar-toggle-btn" onclick="toggleSidebar()" title="Toggle Sidebar">
-            <i class="fas fa-chevron-left" id="sidebarToggleIcon"></i>
+            <i class="ri-arrow-left-s-line" id="sidebarToggleIcon"></i>
         </button>
     </div>
     <div class="sidebar-logo-section">
@@ -51,7 +51,7 @@ echo generateUserThemeCSS($user_id);
             <!-- Dashboard -->
             <li data-tooltip="Dashboard">
                 <a href="dashboard.php" class="<?php echo $current_page === 'dashboard' ? 'active' : ''; ?>">
-                    <i class="fas fa-chart-line"></i>
+                    <i class="ri-line-chart-line"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
@@ -59,7 +59,7 @@ echo generateUserThemeCSS($user_id);
             <!-- Applications (All users) -->
             <li data-tooltip="Applications">
                 <a href="applications.php" class="<?php echo $current_page === 'applications' ? 'active' : ''; ?>">
-                    <i class="fas fa-file-alt"></i>
+                    <i class="ri-file-text-line"></i>
                     <span>Applications</span>
                 </a>
             </li>
@@ -67,7 +67,7 @@ echo generateUserThemeCSS($user_id);
             <!-- Pipeline / Kanban (All users) -->
             <li data-tooltip="Pipeline">
                 <a href="pipeline.php" class="<?php echo $current_page === 'pipeline' ? 'active' : ''; ?>">
-                    <i class="fas fa-columns"></i>
+                    <i class="ri-layout-column-line"></i>
                     <span>Pipeline</span>
                 </a>
             </li>
@@ -75,7 +75,7 @@ echo generateUserThemeCSS($user_id);
             <!-- Calendar (All users) -->
             <li data-tooltip="Calendar">
                 <a href="calendar.php" class="<?php echo $current_page === 'calendar' ? 'active' : ''; ?>">
-                    <i class="fas fa-calendar-alt"></i>
+                    <i class="ri-calendar-line"></i>
                     <span>Calendar</span>
                 </a>
             </li>
@@ -84,7 +84,7 @@ echo generateUserThemeCSS($user_id);
             <!-- Job Postings -->
             <li data-tooltip="Job Postings">
                 <a href="job-postings.php" class="<?php echo $current_page === 'job-postings' ? 'active' : ''; ?>">
-                    <i class="fas fa-bullhorn"></i>
+                    <i class="ri-megaphone-line"></i>
                     <span>Job Postings</span>
                 </a>
             </li>
@@ -94,7 +94,7 @@ echo generateUserThemeCSS($user_id);
             <!-- Stages -->
             <li data-tooltip="Stages">
                 <a href="stages.php" class="<?php echo $current_page === 'stages' ? 'active' : ''; ?>">
-                    <i class="fas fa-stream"></i>
+                    <i class="ri-list-unordered"></i>
                     <span>Stages</span>
                 </a>
             </li>
@@ -102,7 +102,7 @@ echo generateUserThemeCSS($user_id);
             <!-- Users -->
             <li data-tooltip="Users">
                 <a href="users.php" class="<?php echo $current_page === 'users' ? 'active' : ''; ?>">
-                    <i class="fas fa-users"></i>
+                    <i class="ri-group-line"></i>
                     <span>Users</span>
                 </a>
             </li>
@@ -111,28 +111,28 @@ echo generateUserThemeCSS($user_id);
             <!-- My Account (Parent with Submenu) -->
             <li class="has-submenu" data-tooltip="My Account">
                 <a href="#" class="submenu-toggle <?php echo $account_submenu_active ? 'active' : ''; ?>" data-submenu="account-submenu">
-                    <i class="fas fa-user-circle"></i>
+                    <i class="ri-account-circle-line"></i>
                     <span>My Account</span>
-                    <i class="fas fa-chevron-down submenu-arrow"></i>
+                    <i class="ri-arrow-down-s-line submenu-arrow"></i>
                 </a>
 
                 <!-- Submenu -->
                 <ul class="sidebar-submenu" id="account-submenu">
                     <li data-tooltip="My Profile">
                         <a href="account.php" class="<?php echo $current_page === 'account' ? 'active' : ''; ?>">
-                            <i class="fas fa-user"></i>
+                            <i class="ri-user-line"></i>
                             <span>My Profile</span>
                         </a>
                     </li>
                     <li data-tooltip="Settings">
                         <a href="settings.php" class="<?php echo $current_page === 'settings' ? 'active' : ''; ?>">
-                            <i class="fas fa-cog"></i>
+                            <i class="ri-settings-3-line"></i>
                             <span>Settings</span>
                         </a>
                     </li>
                     <li data-tooltip="Activity Logs">
                         <a href="logs.php" class="<?php echo $current_page === 'logs' ? 'active' : ''; ?>">
-                            <i class="fas fa-history"></i>
+                            <i class="ri-history-line"></i>
                             <span>Activity Logs</span>
                         </a>
                     </li>
@@ -142,13 +142,13 @@ echo generateUserThemeCSS($user_id);
     </div>
     <div class="sidebar-theme">
         <button onclick="toggleTheme()">
-            <i class="fas fa-moon" id="themeIcon"></i>
+            <i class="ri-moon-line" id="themeIcon"></i>
             <span id="themeText">Dark Mode</span>
         </button>
     </div>
     <div class="sidebar-logout">
         <button onclick="window.location.href='logout.php'">
-            <i class="fas fa-sign-out-alt"></i>
+            <i class="ri-logout-box-line"></i>
             <span>Logout</span>
         </button>
     </div>
@@ -199,10 +199,10 @@ function updateThemeButton(isDark) {
 
     if (icon && text) {
         if (isDark) {
-            icon.className = 'fas fa-sun';
+            icon.className = 'ri-sun-line';
             text.textContent = 'Light Mode';
         } else {
-            icon.className = 'fas fa-moon';
+            icon.className = 'ri-moon-line';
             text.textContent = 'Dark Mode';
         }
     }
@@ -233,7 +233,7 @@ function toggleSidebar() {
 function updateSidebarIcon(isCollapsed) {
     const icon = document.getElementById('sidebarToggleIcon');
     if (icon) {
-        icon.className = isCollapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-left';
+        icon.className = isCollapsed ? 'ri-arrow-right-s-line' : 'ri-arrow-left-s-line';
     }
 }
 

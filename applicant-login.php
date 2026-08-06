@@ -83,8 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Applicant Login - Careers</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.3">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
+    <link rel="stylesheet" href="styles.css?v=5.4">
     <?php echo generateBrandAccentCSS(); ?>
 </head>
 <body>
@@ -94,9 +94,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <h1>Track your career journey with Skyward Airlines</h1>
                 <p>Sign in to check your application status, pick up where you left off, and apply to new openings without re-entering your details.</p>
                 <div class="login-brand-features">
-                    <div><i class="fas fa-route"></i> Track Progress</div>
-                    <div><i class="fas fa-bolt"></i> Fast Applications</div>
-                    <div><i class="fas fa-lock"></i> Secure Account</div>
+                    <div><i class="ri-route-line"></i> Track Progress</div>
+                    <div><i class="ri-flashlight-line"></i> Fast Applications</div>
+                    <div><i class="ri-lock-line"></i> Secure Account</div>
                 </div>
             </div>
         </div>
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <h2>Applicant Login</h2>
 
             <?php if ($error): ?>
-                <div class="error"><i class="fas fa-exclamation-circle"></i> <?php echo htmlspecialchars($error); ?></div>
+                <div class="error"><i class="ri-error-warning-line"></i> <?php echo htmlspecialchars($error); ?></div>
             <?php endif; ?>
 
             <form method="POST" action="">
@@ -118,17 +118,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="hidden" name="redirect" value="<?php echo htmlspecialchars($redirect); ?>">
 
                 <div class="form-group">
-                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <label><i class="ri-mail-line"></i> Email</label>
                     <input type="email" name="email" required autofocus maxlength="150" value="<?php echo isset($email) ? htmlspecialchars($email) : ''; ?>">
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fas fa-lock"></i> Password</label>
+                    <label><i class="ri-lock-line"></i> Password</label>
                     <input type="password" name="password" required autocomplete="current-password" minlength="6">
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    <i class="fas fa-sign-in-alt"></i> Login
+                    <i class="ri-login-box-line"></i> Login
                 </button>
             </form>
 
@@ -140,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
 
         <button class="login-theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
-            <i class="fas fa-moon" id="themeIcon"></i>
+            <i class="ri-moon-line" id="themeIcon"></i>
         </button>
     </div>
 
@@ -160,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     function updateThemeIcon(isDark) {
         const icon = document.getElementById('themeIcon');
-        if (icon) icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+        if (icon) icon.className = isDark ? 'ri-sun-line' : 'ri-moon-line';
     }
     initTheme();
     </script>

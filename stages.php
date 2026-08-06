@@ -327,11 +327,11 @@ if (isset($_GET['action'])) {
     <title>Stages & Statuses - Dashboard System</title>
 
     <!-- CDN Dependencies -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.0">
+    <link rel="stylesheet" href="styles.css?v=5.4">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -353,7 +353,7 @@ if (isset($_GET['action'])) {
         <!-- Main Content -->
         <div class="main-content">
             <div class="header">
-                <h1><i class="fas fa-stream"></i> Stages & Statuses</h1>
+                <h1><i class="ri-list-unordered"></i> Stages & Statuses</h1>
                 <div>Welcome, <?php echo htmlspecialchars($username); ?></div>
             </div>
 
@@ -362,13 +362,13 @@ if (isset($_GET['action'])) {
 
             <div class="data-section">
                 <div class="section-header">
-                    <h2><i class="fas fa-layer-group"></i> Manage Stages</h2>
+                    <h2><i class="ri-stack-line"></i> Manage Stages</h2>
                     <div style="display: flex; gap: 10px;">
                         <button class="btn btn-primary" onclick="loadStages()">
-                            <i class="fas fa-sync"></i> Refresh
+                            <i class="ri-refresh-line"></i> Refresh
                         </button>
                         <button class="btn btn-success" onclick="openAddModal()">
-                            <i class="fas fa-plus"></i> Add Stage
+                            <i class="ri-add-line"></i> Add Stage
                         </button>
                     </div>
                 </div>
@@ -376,15 +376,15 @@ if (isset($_GET['action'])) {
                 <!-- Tabs -->
                 <div class="tab-buttons">
                     <button class="tab-btn active" data-tab="all" onclick="switchTab('all', this)">
-                        <i class="fas fa-list"></i> All
+                        <i class="ri-list-check"></i> All
                         <span class="count-badge" id="countAll">0</span>
                     </button>
                     <button class="tab-btn" data-tab="pipeline" onclick="switchTab('pipeline', this)">
-                        <i class="fas fa-stream"></i> Pipeline
+                        <i class="ri-list-unordered"></i> Pipeline
                         <span class="count-badge" id="countPipeline">0</span>
                     </button>
                     <button class="tab-btn" data-tab="status" onclick="switchTab('status', this)">
-                        <i class="fas fa-tags"></i> Statuses
+                        <i class="ri-price-tag-3-line"></i> Statuses
                         <span class="count-badge" id="countStatus">0</span>
                     </button>
                 </div>
@@ -392,14 +392,14 @@ if (isset($_GET['action'])) {
                 <!-- Filters Section -->
                 <div class="filters-section" id="filtersSection" style="display: none;">
                     <div class="filters-header">
-                        <h3><i class="fas fa-filter"></i> Filters</h3>
+                        <h3><i class="ri-filter-line"></i> Filters</h3>
                         <button class="btn btn-secondary btn-sm" onclick="clearFilters()">
-                            <i class="fas fa-times-circle"></i> Clear All
+                            <i class="ri-close-circle-line"></i> Clear All
                         </button>
                     </div>
                     <div class="filters-grid">
                         <div class="filter-group">
-                            <label><i class="fas fa-toggle-on"></i> Status</label>
+                            <label><i class="ri-toggle-line"></i> Status</label>
                             <select id="filterActive" class="filter-input">
                                 <option value="">All</option>
                                 <option value="Active">Active</option>
@@ -410,7 +410,7 @@ if (isset($_GET['action'])) {
                 </div>
 
                 <div class="table-scroll-hint">
-                    <i class="fas fa-arrows-alt-h"></i> Swipe left/right to see all columns
+                    <i class="ri-arrow-left-right-line"></i> Swipe left/right to see all columns
                 </div>
                 <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
                     <table id="stagesTable" class="display" style="width:100%"></table>
@@ -423,9 +423,9 @@ if (isset($_GET['action'])) {
     <div class="modal-overlay" id="stageModal">
         <div class="modal" onclick="event.stopPropagation()" style="max-width: 600px;">
             <div class="modal-header">
-                <h3 id="modalTitle"><i class="fas fa-plus-circle"></i> Add Stage</h3>
+                <h3 id="modalTitle"><i class="ri-add-circle-line"></i> Add Stage</h3>
                 <button class="close-btn" onclick="closeModal()">
-                    <i class="fas fa-times"></i>
+                    <i class="ri-close-line"></i>
                 </button>
             </div>
             <div class="modal-body">
@@ -433,13 +433,13 @@ if (isset($_GET['action'])) {
                     <input type="hidden" id="stageId" name="id">
 
                     <div class="form-group">
-                        <label><i class="fas fa-tag"></i> Name *</label>
+                        <label><i class="ri-price-tag-line"></i> Name *</label>
                         <input type="text" id="stageName" name="name" required maxlength="100" placeholder="e.g. Interview, On Hold">
                     </div>
 
                     <div class="form-grid">
                         <div class="form-group">
-                            <label><i class="fas fa-layer-group"></i> Type *</label>
+                            <label><i class="ri-stack-line"></i> Type *</label>
                             <select id="stageType" name="stage_type" required>
                                 <option value="pipeline">Pipeline Stage</option>
                                 <option value="status">Status</option>
@@ -447,13 +447,13 @@ if (isset($_GET['action'])) {
                         </div>
 
                         <div class="form-group">
-                            <label><i class="fas fa-sort-numeric-up"></i> Display Order</label>
+                            <label><i class="ri-sort-number-asc"></i> Display Order</label>
                             <input type="number" id="displayOrder" name="display_order" min="0" value="0" placeholder="Auto if 0">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label><i class="fas fa-palette"></i> Color</label>
+                        <label><i class="ri-palette-line"></i> Color</label>
                         <div class="color-input-wrapper">
                             <input type="color" id="colorPicker" value="#6B7280" onchange="document.getElementById('stageColor').value = this.value">
                             <input type="text" id="stageColor" name="color" value="#6B7280" maxlength="7" pattern="^#[0-9A-Fa-f]{6}$" placeholder="#6B7280" onchange="document.getElementById('colorPicker').value = this.value">
@@ -461,15 +461,15 @@ if (isset($_GET['action'])) {
                     </div>
 
                     <div class="form-group">
-                        <label><i class="fas fa-icons"></i> Icon (Font Awesome class)</label>
-                        <input type="text" id="stageIcon" name="icon" maxlength="50" placeholder="e.g. fa-paper-plane, fa-check-circle">
+                        <label><i class="ri-shapes-line"></i> Icon (Remix Icon class)</label>
+                        <input type="text" id="stageIcon" name="icon" maxlength="50" placeholder="e.g. ri-send-plane-line, ri-checkbox-circle-line">
                         <div id="iconPreviewBox" style="margin-top: 8px; display: none;">
                             Preview: <span id="iconLivePreview"></span>
                         </div>
                     </div>
 
                     <div class="form-group" id="activeGroup" style="display: none;">
-                        <label><i class="fas fa-toggle-on"></i> Active</label>
+                        <label><i class="ri-toggle-line"></i> Active</label>
                         <select id="stageActive" name="is_active">
                             <option value="1">Active</option>
                             <option value="0">Inactive</option>
@@ -478,10 +478,10 @@ if (isset($_GET['action'])) {
 
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Save
+                            <i class="ri-save-line"></i> Save
                         </button>
                         <button type="button" class="btn btn-secondary" onclick="closeModal()">
-                            <i class="fas fa-times"></i> Cancel
+                            <i class="ri-close-line"></i> Cancel
                         </button>
                     </div>
                 </form>
@@ -505,7 +505,7 @@ if (isset($_GET['action'])) {
             const previewBox = document.getElementById('iconPreviewBox');
             const preview = document.getElementById('iconLivePreview');
             if (val) {
-                preview.innerHTML = '<i class="fas ' + val + '" style="font-size: 20px; margin-left: 8px;"></i>';
+                preview.innerHTML = '<i class="' + val + '" style="font-size: 20px; margin-left: 8px;"></i>';
                 previewBox.style.display = 'block';
             } else {
                 previewBox.style.display = 'none';
@@ -551,13 +551,13 @@ if (isset($_GET['action'])) {
                 return;
             }
 
-            let html = '<strong style="margin-right: 10px;"><i class="fas fa-stream"></i> Pipeline Flow:</strong>';
+            let html = '<strong style="margin-right: 10px;"><i class="ri-list-unordered"></i> Pipeline Flow:</strong>';
             pipeline.forEach((stage, idx) => {
                 html += '<span class="stage-badge" style="background:' + stage.color + '">';
-                if (stage.icon) html += '<i class="fas ' + stage.icon + '"></i> ';
+                if (stage.icon) html += '<i class="' + stage.icon + '"></i> ';
                 html += stage.name + '</span>';
                 if (idx < pipeline.length - 1) {
-                    html += '<span class="arrow"><i class="fas fa-arrow-right"></i></span>';
+                    html += '<span class="arrow"><i class="ri-arrow-right-line"></i></span>';
                 }
             });
 
@@ -598,7 +598,7 @@ if (isset($_GET['action'])) {
                             data: null,
                             title: 'Stage',
                             render: function(data, type, row) {
-                                let icon = row.icon ? '<i class="fas ' + row.icon + '"></i> ' : '';
+                                let icon = row.icon ? '<i class="' + row.icon + '"></i> ' : '';
                                 return '<span class="stage-badge" style="background:' + row.color + '">' + icon + row.name + '</span>';
                             }
                         },
@@ -636,12 +636,12 @@ if (isset($_GET['action'])) {
                             orderable: false,
                             render: function(data, type, row) {
                                 const toggleIcon = row.is_active
-                                    ? '<button class="action-icon delete-icon" onclick="toggleActive(' + row.id + ', 0)" title="Deactivate"><i class="fas fa-ban"></i></button>'
-                                    : '<button class="action-icon edit-icon" onclick="toggleActive(' + row.id + ', 1)" title="Activate"><i class="fas fa-check-circle"></i></button>';
+                                    ? '<button class="action-icon delete-icon" onclick="toggleActive(' + row.id + ', 0)" title="Deactivate"><i class="ri-forbid-line"></i></button>'
+                                    : '<button class="action-icon edit-icon" onclick="toggleActive(' + row.id + ', 1)" title="Activate"><i class="ri-checkbox-circle-line"></i></button>';
 
-                                return '<button class="action-icon edit-icon" onclick=\'editStage(' + JSON.stringify(row).replace(/'/g, "\\'") + ')\' title="Edit"><i class="fas fa-edit"></i></button>' +
+                                return '<button class="action-icon edit-icon" onclick=\'editStage(' + JSON.stringify(row).replace(/'/g, "\\'") + ')\' title="Edit"><i class="ri-edit-line"></i></button>' +
                                     toggleIcon +
-                                    '<button class="action-icon delete-icon" onclick="deleteStage(' + row.id + ')" title="Delete"><i class="fas fa-trash"></i></button>';
+                                    '<button class="action-icon delete-icon" onclick="deleteStage(' + row.id + ')" title="Delete"><i class="ri-delete-bin-line"></i></button>';
                             }
                         }
                     ],
@@ -650,9 +650,9 @@ if (isset($_GET['action'])) {
                     responsive: true,
                     dom: 'Blfrtip',
                     buttons: [
-                        { extend: 'csv', text: '<i class="fas fa-file-csv"></i> CSV', exportOptions: { columns: ':not(:last-child)' } },
-                        { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF', exportOptions: { columns: ':not(:last-child)' } },
-                        { extend: 'print', text: '<i class="fas fa-print"></i> Print', exportOptions: { columns: ':not(:last-child)' } }
+                        { extend: 'csv', text: '<i class="ri-file-excel-2-line"></i> CSV', exportOptions: { columns: ':not(:last-child)' } },
+                        { extend: 'pdf', text: '<i class="ri-file-pdf-line"></i> PDF', exportOptions: { columns: ':not(:last-child)' } },
+                        { extend: 'print', text: '<i class="ri-printer-line"></i> Print', exportOptions: { columns: ':not(:last-child)' } }
                     ],
                     order: [[0, 'asc']]
                 });
@@ -683,7 +683,7 @@ if (isset($_GET['action'])) {
 
         function openAddModal() {
             isEditMode = false;
-            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle"></i> Add Stage';
+            document.getElementById('modalTitle').innerHTML = '<i class="ri-add-circle-line"></i> Add Stage';
             document.getElementById('stageForm').reset();
             document.getElementById('stageId').value = '';
             document.getElementById('colorPicker').value = '#6B7280';
@@ -695,7 +695,7 @@ if (isset($_GET['action'])) {
 
         function editStage(stage) {
             isEditMode = true;
-            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> Edit Stage';
+            document.getElementById('modalTitle').innerHTML = '<i class="ri-edit-line"></i> Edit Stage';
             document.getElementById('stageId').value = stage.id;
             document.getElementById('stageName').value = stage.name;
             document.getElementById('stageType').value = stage.stage_type;

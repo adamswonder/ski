@@ -87,11 +87,11 @@ if (isset($_GET['action']) && $_GET['action'] === 'getLogs') {
     <title>Activity Logs - Dashboard System</title>
 
     <!-- CDN Dependencies -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.0">
+    <link rel="stylesheet" href="styles.css?v=5.4">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -204,37 +204,37 @@ if (isset($_GET['action']) && $_GET['action'] === 'getLogs') {
         <!-- Main Content -->
         <div class="main-content">
             <div class="header">
-                <h1><i class="fas fa-history"></i> Activity Logs</h1>
+                <h1><i class="ri-history-line"></i> Activity Logs</h1>
                 <div>Welcome, <?php echo htmlspecialchars($username); ?></div>
             </div>
 
             <div class="data-section">
                 <div class="section-header">
-                    <h2><i class="fas fa-table"></i> Activity History</h2>
+                    <h2><i class="ri-table-line"></i> Activity History</h2>
                     <button class="btn btn-primary" onclick="loadLogs()">
-                        <i class="fas fa-sync"></i> Refresh
+                        <i class="ri-refresh-line"></i> Refresh
                     </button>
                 </div>
 
                 <!-- Filters Section -->
                 <div class="filters-section" id="filtersSection" style="display: none;">
                     <div class="filters-header">
-                        <h3><i class="fas fa-filter"></i> Filters</h3>
+                        <h3><i class="ri-filter-line"></i> Filters</h3>
                         <button class="btn btn-secondary btn-sm" onclick="clearFilters()">
-                            <i class="fas fa-times-circle"></i> Clear All
+                            <i class="ri-close-circle-line"></i> Clear All
                         </button>
                     </div>
                     <div class="filters-grid">
                         <div class="filter-group">
-                            <label><i class="fas fa-calendar-alt"></i> Date From</label>
+                            <label><i class="ri-calendar-line"></i> Date From</label>
                             <input type="date" id="filterDateFrom" class="filter-input">
                         </div>
                         <div class="filter-group">
-                            <label><i class="fas fa-calendar-alt"></i> Date To</label>
+                            <label><i class="ri-calendar-line"></i> Date To</label>
                             <input type="date" id="filterDateTo" class="filter-input">
                         </div>
                         <div class="filter-group">
-                            <label><i class="fas fa-bolt"></i> Action</label>
+                            <label><i class="ri-flashlight-line"></i> Action</label>
                             <select id="filterAction" class="filter-input">
                                 <option value="">All Actions</option>
                                 <option value="LOGIN">LOGIN</option>
@@ -248,14 +248,14 @@ if (isset($_GET['action']) && $_GET['action'] === 'getLogs') {
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label><i class="fas fa-cube"></i> Module</label>
+                            <label><i class="ri-box-3-line"></i> Module</label>
                             <select id="filterModule" class="filter-input">
                                 <option value="">All Modules</option>
                             </select>
                         </div>
                         <?php if ($role === 'admin'): ?>
                         <div class="filter-group">
-                            <label><i class="fas fa-user"></i> User</label>
+                            <label><i class="ri-user-line"></i> User</label>
                             <select id="filterUser" class="filter-input">
                                 <option value="">All Users</option>
                             </select>
@@ -293,7 +293,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getLogs') {
                 <!-- DataTable -->
                 <div id="tableContainer" style="display: none;">
                     <div class="table-scroll-hint">
-                        <i class="fas fa-arrows-alt-h"></i> Swipe left/right to see all columns
+                        <i class="ri-arrow-left-right-line"></i> Swipe left/right to see all columns
                     </div>
                     <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
                         <table id="logsTable" class="display" style="width:100%"></table>
@@ -307,9 +307,9 @@ if (isset($_GET['action']) && $_GET['action'] === 'getLogs') {
     <div class="modal-overlay" id="logDetailModal">
         <div class="modal" onclick="event.stopPropagation()" style="max-width: 700px;">
             <div class="modal-header">
-                <h3><i class="fas fa-info-circle"></i> Log Entry Details</h3>
+                <h3><i class="ri-information-line"></i> Log Entry Details</h3>
                 <button class="close-btn" onclick="closeLogDetail()">
-                    <i class="fas fa-times"></i>
+                    <i class="ri-close-line"></i>
                 </button>
             </div>
             <div class="modal-body" id="logDetailBody">
@@ -450,7 +450,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getLogs') {
                             width: '40px',
                             className: 'text-center',
                             render: function(data, type, row, meta) {
-                                return '<button class="action-icon" data-idx="' + meta.row + '" title="View Details" style="color: var(--navy-accent);"><i class="fas fa-eye"></i></button>';
+                                return '<button class="action-icon" data-idx="' + meta.row + '" title="View Details" style="color: var(--navy-accent);"><i class="ri-eye-line"></i></button>';
                             }
                         }
                     ],
@@ -459,9 +459,9 @@ if (isset($_GET['action']) && $_GET['action'] === 'getLogs') {
                     responsive: true,
                     dom: 'Blfrtip',
                     buttons: [
-                        { extend: 'csv', text: '<i class="fas fa-file-csv"></i> CSV', exportOptions: { columns: [0,1,2,3,4,5,6] } },
-                        { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF', exportOptions: { columns: [0,1,2,3,4,5,6] } },
-                        { extend: 'print', text: '<i class="fas fa-print"></i> Print', exportOptions: { columns: [0,1,2,3,4,5,6] } }
+                        { extend: 'csv', text: '<i class="ri-file-excel-2-line"></i> CSV', exportOptions: { columns: [0,1,2,3,4,5,6] } },
+                        { extend: 'pdf', text: '<i class="ri-file-pdf-line"></i> PDF', exportOptions: { columns: [0,1,2,3,4,5,6] } },
+                        { extend: 'print', text: '<i class="ri-printer-line"></i> Print', exportOptions: { columns: [0,1,2,3,4,5,6] } }
                     ],
                     order: [[0, 'desc']]
                 });
@@ -514,10 +514,10 @@ if (isset($_GET['action']) && $_GET['action'] === 'getLogs') {
             if (log.old_values || log.new_values) {
                 html += '<div class="log-detail-grid">';
                 if (log.old_values) {
-                    html += '<div class="log-detail-section"><label><i class="fas fa-arrow-left"></i> Old Values</label><div class="json-display">' + formatJSON(log.old_values) + '</div></div>';
+                    html += '<div class="log-detail-section"><label><i class="ri-arrow-left-line"></i> Old Values</label><div class="json-display">' + formatJSON(log.old_values) + '</div></div>';
                 }
                 if (log.new_values) {
-                    html += '<div class="log-detail-section"><label><i class="fas fa-arrow-right"></i> New Values</label><div class="json-display">' + formatJSON(log.new_values) + '</div></div>';
+                    html += '<div class="log-detail-section"><label><i class="ri-arrow-right-line"></i> New Values</label><div class="json-display">' + formatJSON(log.new_values) + '</div></div>';
                 }
                 html += '</div>';
             }
@@ -529,7 +529,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getLogs') {
             html += '</div>';
 
             if (log.user_agent) {
-                html += '<div class="log-detail-section"><label><i class="fas fa-desktop"></i> User Agent</label><div class="detail-value" style="font-size:12px; word-break:break-all;">' + log.user_agent + '</div></div>';
+                html += '<div class="log-detail-section"><label><i class="ri-computer-line"></i> User Agent</label><div class="detail-value" style="font-size:12px; word-break:break-all;">' + log.user_agent + '</div></div>';
             }
 
             document.getElementById('logDetailBody').innerHTML = html;

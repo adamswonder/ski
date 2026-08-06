@@ -106,8 +106,8 @@ if (isset($_GET['action'])) {
     <meta name="mobile-web-app-capable" content="yes">
     <title>Calendar - Job Application Tracker</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
+    <link rel="stylesheet" href="styles.css?v=5.4">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -568,19 +568,19 @@ if (isset($_GET['action'])) {
 
         <div class="main-content">
             <div class="header">
-                <h1><i class="fas fa-calendar-alt"></i> Calendar</h1>
+                <h1><i class="ri-calendar-line"></i> Calendar</h1>
                 <div>Welcome, <?php echo htmlspecialchars($username); ?></div>
             </div>
 
             <div class="data-section">
                 <div class="calendar-controls">
                     <div class="calendar-nav">
-                        <button onclick="changeMonth(-1)" title="Previous Month"><i class="fas fa-chevron-left"></i></button>
+                        <button onclick="changeMonth(-1)" title="Previous Month"><i class="ri-arrow-left-s-line"></i></button>
                         <div class="calendar-month-title" id="calendarTitle"></div>
-                        <button onclick="changeMonth(1)" title="Next Month"><i class="fas fa-chevron-right"></i></button>
+                        <button onclick="changeMonth(1)" title="Next Month"><i class="ri-arrow-right-s-line"></i></button>
                     </div>
                     <button class="btn btn-primary calendar-today-btn" onclick="goToToday()">
-                        <i class="fas fa-calendar-day"></i> Today
+                        <i class="ri-calendar-todo-line"></i> Today
                     </button>
                 </div>
 
@@ -589,9 +589,9 @@ if (isset($_GET['action'])) {
                         <div class="calendar-grid" id="calendarGrid"></div>
                     </div>
                     <div class="upcoming-panel" id="upcomingPanel">
-                        <h3><i class="fas fa-clock"></i> This Month's Actions</h3>
+                        <h3><i class="ri-time-line"></i> This Month's Actions</h3>
                         <div id="upcomingEvents">
-                            <p style="color: var(--text-muted); text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Loading...</p>
+                            <p style="color: var(--text-muted); text-align: center; padding: 20px;"><i class="ri-loader-4-line ri-spin"></i> Loading...</p>
                         </div>
                     </div>
                 </div>
@@ -718,7 +718,7 @@ if (isset($_GET['action'])) {
             var container = document.getElementById('upcomingEvents');
 
             if (events.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 20px;"><i class="fas fa-calendar-check" style="font-size:24px;display:block;margin-bottom:8px;"></i>No scheduled actions this month</p>';
+                container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 20px;"><i class="ri-calendar-check-line" style="font-size:24px;display:block;margin-bottom:8px;"></i>No scheduled actions this month</p>';
                 return;
             }
 
@@ -728,9 +728,9 @@ if (isset($_GET['action'])) {
                 var dateStr = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
                 html += '<div class="upcoming-event-item" onclick=\'showEventPopup(' + JSON.stringify(ev).replace(/'/g, "\\'") + ')\' style="cursor:pointer;">';
-                html += '<div class="upcoming-event-date"><i class="fas fa-calendar-day"></i> ' + dateStr + '</div>';
+                html += '<div class="upcoming-event-date"><i class="ri-calendar-todo-line"></i> ' + dateStr + '</div>';
                 html += '<div class="upcoming-event-name">' + escapeHtml(ev.candidate_name) + '</div>';
-                html += '<div class="upcoming-event-action"><i class="fas fa-tasks"></i> ' + escapeHtml(ev.next_action || 'No action specified') + '</div>';
+                html += '<div class="upcoming-event-action"><i class="ri-checkbox-multiple-line"></i> ' + escapeHtml(ev.next_action || 'No action specified') + '</div>';
                 html += '</div>';
             });
             container.innerHTML = html;
@@ -747,11 +747,11 @@ if (isset($_GET['action'])) {
             // Header
             html += '<div class="ep-header">';
             html += '<div class="ep-header-top">';
-            html += '<div class="ep-ref"><i class="fas fa-hashtag"></i> APP-' + String(event.id || 0).padStart(4, '0') + '</div>';
-            html += '<button class="ep-close" onclick="closeEventPopup()"><i class="fas fa-times"></i></button>';
+            html += '<div class="ep-ref"><i class="ri-hashtag"></i> APP-' + String(event.id || 0).padStart(4, '0') + '</div>';
+            html += '<button class="ep-close" onclick="closeEventPopup()"><i class="ri-close-line"></i></button>';
             html += '</div>';
-            html += '<div class="ep-candidate-name"><i class="fas fa-user-circle"></i> ' + escapeHtml(event.candidate_name) + '</div>';
-            html += '<div class="ep-position"><i class="fas fa-briefcase"></i> ' + escapeHtml(event.position) + (event.company ? ' &mdash; ' + escapeHtml(event.company) : '') + '</div>';
+            html += '<div class="ep-candidate-name"><i class="ri-account-circle-line"></i> ' + escapeHtml(event.candidate_name) + '</div>';
+            html += '<div class="ep-position"><i class="ri-briefcase-line"></i> ' + escapeHtml(event.position) + (event.company ? ' &mdash; ' + escapeHtml(event.company) : '') + '</div>';
             html += '</div>';
 
             // Body
@@ -759,27 +759,27 @@ if (isset($_GET['action'])) {
 
             // Action highlight card
             html += '<div class="ep-action-card">';
-            html += '<div class="ep-action-label"><i class="fas fa-bolt"></i> Scheduled Action</div>';
+            html += '<div class="ep-action-label"><i class="ri-flashlight-line"></i> Scheduled Action</div>';
             html += '<div class="ep-action-text">' + escapeHtml(event.next_action || 'No action specified') + '</div>';
-            html += '<div class="ep-action-date"><i class="fas fa-calendar-alt"></i> ' + dateDisplay + '</div>';
+            html += '<div class="ep-action-date"><i class="ri-calendar-line"></i> ' + dateDisplay + '</div>';
             html += '</div>';
 
             // Details grid
             html += '<div class="ep-details-grid">';
 
             html += '<div class="ep-detail-item">';
-            html += '<div class="ep-detail-label"><i class="fas fa-stream"></i> Stage</div>';
+            html += '<div class="ep-detail-label"><i class="ri-list-unordered"></i> Stage</div>';
             html += '<div class="ep-detail-value">' + stageHtml + '</div>';
             html += '</div>';
 
             html += '<div class="ep-detail-item">';
-            html += '<div class="ep-detail-label"><i class="fas fa-tags"></i> Status</div>';
+            html += '<div class="ep-detail-label"><i class="ri-price-tag-3-line"></i> Status</div>';
             html += '<div class="ep-detail-value">' + statusHtml + '</div>';
             html += '</div>';
 
             if (event.company) {
                 html += '<div class="ep-detail-item full-width">';
-                html += '<div class="ep-detail-label"><i class="fas fa-building"></i> Company</div>';
+                html += '<div class="ep-detail-label"><i class="ri-building-line"></i> Company</div>';
                 html += '<div class="ep-detail-value">' + escapeHtml(event.company) + '</div>';
                 html += '</div>';
             }
@@ -789,8 +789,8 @@ if (isset($_GET['action'])) {
 
             // Footer actions
             html += '<div class="ep-footer">';
-            html += '<a href="applications.php" class="btn btn-primary" style="text-decoration:none;"><i class="fas fa-file-alt"></i> View Applications</a>';
-            html += '<button class="btn btn-secondary" onclick="closeEventPopup()"><i class="fas fa-times"></i> Close</button>';
+            html += '<a href="applications.php" class="btn btn-primary" style="text-decoration:none;"><i class="ri-file-text-line"></i> View Applications</a>';
+            html += '<button class="btn btn-secondary" onclick="closeEventPopup()"><i class="ri-close-line"></i> Close</button>';
             html += '</div>';
 
             html += '</div>'; // event-popup
@@ -816,13 +816,13 @@ if (isset($_GET['action'])) {
             var date = new Date(dateStr);
             var dateDisplay = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
-            var html = '<div class="day-events-title"><i class="fas fa-calendar-day"></i> ' + dateDisplay + '</div>';
+            var html = '<div class="day-events-title"><i class="ri-calendar-todo-line"></i> ' + dateDisplay + '</div>';
             dayEvents.forEach(function(ev) {
                 var evJson = JSON.stringify(ev).replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 html += '<div class="day-event-card" style="border-left-color:' + (ev.stage_color || '#6B7280') + ';" onclick="Swal.close();setTimeout(function(){showEventPopup(' + evJson + ')},200);">';
-                html += '<div class="day-event-name"><i class="fas fa-user" style="color:' + (ev.stage_color || '#6B7280') + ';font-size:12px;margin-right:4px;"></i> ' + escapeHtml(ev.candidate_name) + '</div>';
-                html += '<div class="day-event-pos"><i class="fas fa-briefcase" style="font-size:10px;margin-right:3px;"></i> ' + escapeHtml(ev.position) + (ev.company ? ' &mdash; ' + escapeHtml(ev.company) : '') + '</div>';
-                html += '<div class="day-event-action"><i class="fas fa-tasks"></i> ' + escapeHtml(ev.next_action || 'No action specified') + '</div>';
+                html += '<div class="day-event-name"><i class="ri-user-line" style="color:' + (ev.stage_color || '#6B7280') + ';font-size:12px;margin-right:4px;"></i> ' + escapeHtml(ev.candidate_name) + '</div>';
+                html += '<div class="day-event-pos"><i class="ri-briefcase-line" style="font-size:10px;margin-right:3px;"></i> ' + escapeHtml(ev.position) + (ev.company ? ' &mdash; ' + escapeHtml(ev.company) : '') + '</div>';
+                html += '<div class="day-event-action"><i class="ri-checkbox-multiple-line"></i> ' + escapeHtml(ev.next_action || 'No action specified') + '</div>';
                 html += '</div>';
             });
             html += '<div style="text-align:center;margin-top:12px;font-size:11px;color:var(--text-muted);">Click an event to see full details</div>';

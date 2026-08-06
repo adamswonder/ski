@@ -11,13 +11,13 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <title>Database Setup</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=4.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
+    <link rel="stylesheet" href="styles.css?v=5.4">
 </head>
 <body>
     <div class="setup-wrapper">
     <div class="setup-container">
-        <h2><i class="fas fa-database"></i> Database Setup</h2>
+        <h2><i class="ri-database-2-line"></i> Database Setup</h2>
         <p class="subtitle">Setting up your dashboard database tables...</p>
         <hr>
 
@@ -27,14 +27,14 @@
         // create db if missing
         $tmp = new mysqli(DB_HOST, DB_USER, DB_PASS);
         if ($tmp->connect_error) {
-            echo '<div class="log-item log-error"><i class="fas fa-times-circle"></i> MySQL connection failed: ' . $tmp->connect_error . '</div>';
+            echo '<div class="log-item log-error"><i class="ri-close-circle-line"></i> MySQL connection failed: ' . $tmp->connect_error . '</div>';
             die();
         }
         $db_escaped = str_replace('`', '``', DB_NAME);
         if ($tmp->query("CREATE DATABASE IF NOT EXISTS `$db_escaped` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")) {
-            echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Database "' . DB_NAME . '" ready</div>';
+            echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Database "' . DB_NAME . '" ready</div>';
         } else {
-            echo '<div class="log-item log-error"><i class="fas fa-times-circle"></i> Failed to create DB: ' . $tmp->error . '</div>';
+            echo '<div class="log-item log-error"><i class="ri-close-circle-line"></i> Failed to create DB: ' . $tmp->error . '</div>';
             die();
         }
         $tmp->close();
@@ -42,30 +42,30 @@
         $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
         if ($conn->connect_error) {
-            echo '<div class="log-item log-error"><i class="fas fa-times-circle"></i> Connection failed: ' . $conn->connect_error . '</div>';
+            echo '<div class="log-item log-error"><i class="ri-close-circle-line"></i> Connection failed: ' . $conn->connect_error . '</div>';
             die();
         }
 
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Database connection successful</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Database connection successful</div>';
 
         // ====== DROP ALL TABLES (clean slate) ======
-        echo '<br><div class="log-item log-info"><i class="fas fa-trash-alt"></i> <strong>Dropping existing tables...</strong></div>';
+        echo '<br><div class="log-item log-info"><i class="ri-delete-bin-line"></i> <strong>Dropping existing tables...</strong></div>';
 
         $conn->query("SET FOREIGN_KEY_CHECKS = 0");
 
         $tables_to_drop = ['application_answers', 'application_documents', 'activity_logs', 'applications', 'job_posting_questions', 'job_postings', 'applicants', 'user_permissions', 'permissions', 'login_attempts', 'system_settings', 'stages', 'users'];
         foreach ($tables_to_drop as $table) {
             if ($conn->query("DROP TABLE IF EXISTS `$table`")) {
-                echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Dropped table: ' . $table . '</div>';
+                echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Dropped table: ' . $table . '</div>';
             } else {
-                echo '<div class="log-item log-error"><i class="fas fa-times-circle"></i> Error dropping ' . $table . ': ' . $conn->error . '</div>';
+                echo '<div class="log-item log-error"><i class="ri-close-circle-line"></i> Error dropping ' . $table . ': ' . $conn->error . '</div>';
             }
         }
 
         $conn->query("SET FOREIGN_KEY_CHECKS = 1");
 
         // ====== CREATE TABLES ======
-        echo '<br><div class="log-item log-info"><i class="fas fa-plus-circle"></i> <strong>Creating tables...</strong></div>';
+        echo '<br><div class="log-item log-info"><i class="ri-add-circle-line"></i> <strong>Creating tables...</strong></div>';
 
         // 1. users (no FK dependencies)
         $conn->query("CREATE TABLE users (
@@ -89,7 +89,7 @@
             INDEX idx_role (role),
             INDEX idx_is_active (is_active)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "users" created</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Table "users" created</div>';
 
         // 2. permissions (no FK dependencies)
         $conn->query("CREATE TABLE permissions (
@@ -98,7 +98,7 @@
             label VARCHAR(100) NOT NULL,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "permissions" created</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Table "permissions" created</div>';
 
         // 3. user_permissions (FK → users, permissions, both CASCADE)
         $conn->query("CREATE TABLE user_permissions (
@@ -109,7 +109,7 @@
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
             FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "user_permissions" created</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Table "user_permissions" created</div>';
 
         // 4. stages (no FK dependencies)
         $conn->query("CREATE TABLE stages (
@@ -125,7 +125,7 @@
             INDEX idx_display_order (display_order),
             INDEX idx_is_active (is_active)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "stages" created</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Table "stages" created</div>';
 
         // 3. system_settings (no FK dependencies)
         $conn->query("CREATE TABLE system_settings (
@@ -135,7 +135,7 @@
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             INDEX idx_setting_key (setting_key)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "system_settings" created</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Table "system_settings" created</div>';
 
         // 4. login_attempts (no FK dependencies)
         $conn->query("CREATE TABLE login_attempts (
@@ -146,7 +146,7 @@
             INDEX idx_username (username),
             INDEX idx_attempt_time (attempt_time)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "login_attempts" created</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Table "login_attempts" created</div>';
 
         // 5. applicants (no FK dependencies) - separate auth table for candidates
         $conn->query("CREATE TABLE applicants (
@@ -164,7 +164,7 @@
             INDEX idx_email (email),
             INDEX idx_is_active (is_active)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "applicants" created</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Table "applicants" created</div>';
 
         // 6. job_postings (FK → users)
         $conn->query("CREATE TABLE job_postings (
@@ -184,7 +184,7 @@
             INDEX idx_close_date (close_date),
             FOREIGN KEY (created_by) REFERENCES users(id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "job_postings" created</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Table "job_postings" created</div>';
 
         // 7. job_posting_questions (FK → job_postings CASCADE) - dynamic apply-form builder
         $conn->query("CREATE TABLE job_posting_questions (
@@ -198,7 +198,7 @@
             INDEX idx_job_posting_id (job_posting_id),
             FOREIGN KEY (job_posting_id) REFERENCES job_postings(id) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "job_posting_questions" created</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Table "job_posting_questions" created</div>';
 
         // 8. applications (FK → users, stages, job_postings, applicants)
         $conn->query("CREATE TABLE applications (
@@ -244,7 +244,7 @@
             FOREIGN KEY (job_posting_id) REFERENCES job_postings(id),
             FOREIGN KEY (applicant_id) REFERENCES applicants(id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "applications" created</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Table "applications" created</div>';
 
         // 9. application_answers (FK → applications CASCADE, job_posting_questions RESTRICT) - candidate's submitted form answers
         $conn->query("CREATE TABLE application_answers (
@@ -257,7 +257,7 @@
             FOREIGN KEY (application_id) REFERENCES applications(id) ON DELETE CASCADE,
             FOREIGN KEY (question_id) REFERENCES job_posting_questions(id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "application_answers" created</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Table "application_answers" created</div>';
 
         // 10. application_documents (FK → applications CASCADE, users RESTRICT)
         $conn->query("CREATE TABLE application_documents (
@@ -275,7 +275,7 @@
             FOREIGN KEY (application_id) REFERENCES applications(id) ON DELETE CASCADE,
             FOREIGN KEY (uploaded_by) REFERENCES users(id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "application_documents" created</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Table "application_documents" created</div>';
 
         // 11. activity_logs (FK → users RESTRICT, applications SET NULL)
         $conn->query("CREATE TABLE activity_logs (
@@ -298,11 +298,11 @@
             FOREIGN KEY (user_id) REFERENCES users(id),
             FOREIGN KEY (application_id) REFERENCES applications(id) ON DELETE SET NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Table "activity_logs" created</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Table "activity_logs" created</div>';
 
         // ====== FK RELATIONSHIP SUMMARY ======
         echo '<br><div class="credentials-box">';
-        echo '<strong><i class="fas fa-link"></i> Foreign Key Relationships:</strong><br><br>';
+        echo '<strong><i class="ri-link"></i> Foreign Key Relationships:</strong><br><br>';
         echo '<table style="width:100%; border-collapse:collapse; font-size:13px;">';
         echo '<tr style="background:var(--navy-primary); color:white;">';
         echo '<th style="padding:8px; text-align:left;">Child Table → Column</th>';
@@ -340,7 +340,7 @@
         echo '</div>';
 
         // ====== INSERT DEFAULT DATA ======
-        echo '<br><div class="log-item log-info"><i class="fas fa-user-shield"></i> <strong>Creating default admin user...</strong></div>';
+        echo '<br><div class="log-item log-info"><i class="ri-shield-user-line"></i> <strong>Creating default admin user...</strong></div>';
 
         $default_name = 'Admin User';
         $default_email = 'admin@demo.com';
@@ -352,9 +352,9 @@
 
         if ($insert_stmt->execute()) {
             $admin_id = $conn->insert_id;
-            echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Default admin user created</div>';
+            echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Default admin user created</div>';
         } else {
-            echo '<div class="log-item log-error"><i class="fas fa-times-circle"></i> Error creating admin user: ' . $insert_stmt->error . '</div>';
+            echo '<div class="log-item log-error"><i class="ri-close-circle-line"></i> Error creating admin user: ' . $insert_stmt->error . '</div>';
             $admin_id = 1;
         }
         $insert_stmt->close();
@@ -373,21 +373,21 @@
             }
         }
         $insert_user->close();
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Seeded ' . count($user_ids) . ' users (1 admin + 39 users)</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Seeded ' . count($user_ids) . ' users (1 admin + 39 users)</div>';
 
         echo '<div class="credentials-box">';
-        echo '<strong><i class="fas fa-key"></i> Login Credentials:</strong><br><br>';
+        echo '<strong><i class="ri-key-2-line"></i> Login Credentials:</strong><br><br>';
         echo '<strong>Admin:</strong> admin@demo.com / admin123<br>';
         echo '<strong>Users:</strong> user1@demo.com → user39@demo.com / user123<br><br>';
-        echo '<em style="color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> Please change the admin password after first login!</em>';
+        echo '<em style="color: var(--warning);"><i class="ri-alert-line"></i> Please change the admin password after first login!</em>';
         echo '</div>';
 
         // Insert default system setting
         $conn->query("INSERT INTO system_settings (setting_key, setting_value) VALUES ('allow_user_profile_uploads', '1')");
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Default settings created</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Default settings created</div>';
 
         // ====== INSERT DEFAULT PERMISSIONS ======
-        echo '<br><div class="log-item log-info"><i class="fas fa-user-lock"></i> <strong>Creating default permissions...</strong></div>';
+        echo '<br><div class="log-item log-info"><i class="ri-lock-2-line"></i> <strong>Creating default permissions...</strong></div>';
 
         $default_permissions = [
             ['manage_postings', 'Manage Job Postings'],
@@ -401,28 +401,28 @@
             }
         }
         $insert_permission->close();
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Inserted ' . $permissions_inserted . ' default permissions</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Inserted ' . $permissions_inserted . ' default permissions</div>';
 
         // ====== INSERT DEFAULT STAGES & STATUSES ======
-        echo '<br><div class="log-item log-info"><i class="fas fa-stream"></i> <strong>Creating default stages & statuses...</strong></div>';
+        echo '<br><div class="log-item log-info"><i class="ri-list-unordered"></i> <strong>Creating default stages & statuses...</strong></div>';
 
         $pipeline_stages = [
-            ['Applied',     'pipeline', '#3B82F6', 'fa-paper-plane',    1],
-            ['Screening',   'pipeline', '#8B5CF6', 'fa-search',         2],
-            ['Shortlisted', 'pipeline', '#F59E0B', 'fa-star',           3],
-            ['Interview',   'pipeline', '#0074D9', 'fa-comments',       4],
-            ['Offer',       'pipeline', '#10B981', 'fa-handshake',      5],
-            ['Joined',      'pipeline', '#34A853', 'fa-user-check',     6],
-            ['Rejected',    'pipeline', '#EF4444', 'fa-times-circle',   7]
+            ['Applied',     'pipeline', '#3B82F6', 'ri-send-plane-line',    1],
+            ['Screening',   'pipeline', '#8B5CF6', 'ri-search-line',         2],
+            ['Shortlisted', 'pipeline', '#F59E0B', 'ri-star-line',           3],
+            ['Interview',   'pipeline', '#0074D9', 'ri-chat-3-line',       4],
+            ['Offer',       'pipeline', '#10B981', 'ri-shake-hands-line',      5],
+            ['Joined',      'pipeline', '#34A853', 'ri-user-follow-line',     6],
+            ['Rejected',    'pipeline', '#EF4444', 'ri-close-circle-line',   7]
         ];
 
         $statuses = [
-            ['Active',        'status', '#34A853', 'fa-check-circle',    1],
-            ['On Hold',       'status', '#F59E0B', 'fa-pause-circle',    2],
-            ['Withdrawn',     'status', '#6B7280', 'fa-arrow-left',      3],
-            ['Hired',         'status', '#10B981', 'fa-briefcase',       4],
-            ['Not Suitable',  'status', '#EF4444', 'fa-user-times',      5],
-            ['Blacklisted',   'status', '#1F2937', 'fa-ban',             6]
+            ['Active',        'status', '#34A853', 'ri-checkbox-circle-line',    1],
+            ['On Hold',       'status', '#F59E0B', 'ri-pause-circle-line',    2],
+            ['Withdrawn',     'status', '#6B7280', 'ri-arrow-left-line',      3],
+            ['Hired',         'status', '#10B981', 'ri-briefcase-line',       4],
+            ['Not Suitable',  'status', '#EF4444', 'ri-user-unfollow-line',      5],
+            ['Blacklisted',   'status', '#1F2937', 'ri-forbid-line',             6]
         ];
 
         $insert_stage = $conn->prepare("INSERT INTO stages (name, stage_type, color, icon, display_order) VALUES (?, ?, ?, ?, ?)");
@@ -437,16 +437,16 @@
         }
         $insert_stage->close();
 
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Inserted ' . $inserted . ' default stages & statuses</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Inserted ' . $inserted . ' default stages & statuses</div>';
         echo '<div class="credentials-box">';
-        echo '<strong><i class="fas fa-stream"></i> Pipeline Stages:</strong><br>';
+        echo '<strong><i class="ri-list-unordered"></i> Pipeline Stages:</strong><br>';
         echo 'Applied → Screening → Shortlisted → Interview → Offer → Joined → Rejected<br><br>';
-        echo '<strong><i class="fas fa-tags"></i> Statuses:</strong><br>';
+        echo '<strong><i class="ri-price-tag-3-line"></i> Statuses:</strong><br>';
         echo 'Active, On Hold, Withdrawn, Hired, Not Suitable, Blacklisted';
         echo '</div>';
 
         // ====== INSERT DEMO APPLICATIONS ======
-        echo '<br><div class="log-item log-info"><i class="fas fa-clipboard-list"></i> <strong>Inserting demo applications...</strong></div>';
+        echo '<br><div class="log-item log-info"><i class="ri-clipboard-line"></i> <strong>Inserting demo applications...</strong></div>';
 
         // Get stage & status IDs dynamically
         $stage_ids = [];
@@ -516,10 +516,10 @@
         }
         $insert_app->close();
 
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Inserted ' . count($app_ids) . ' demo applications</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Inserted ' . count($app_ids) . ' demo applications</div>';
 
         // ====== INSERT DEMO DOCUMENTS ======
-        echo '<br><div class="log-item log-info"><i class="fas fa-file-upload"></i> <strong>Inserting demo documents...</strong></div>';
+        echo '<br><div class="log-item log-info"><i class="ri-file-upload-line"></i> <strong>Inserting demo documents...</strong></div>';
 
         $doc_labels = ['CV', 'Cover Letter', 'Certificate', 'Portfolio', 'ID Proof'];
         $doc_meta = [
@@ -547,10 +547,10 @@
             }
         }
         $insert_doc->close();
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Inserted ' . $docs_inserted . ' demo documents</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Inserted ' . $docs_inserted . ' demo documents</div>';
 
         // ====== INSERT DEMO ACTIVITY LOGS ======
-        echo '<br><div class="log-item log-info"><i class="fas fa-history"></i> <strong>Inserting demo activity logs...</strong></div>';
+        echo '<br><div class="log-item log-info"><i class="ri-history-line"></i> <strong>Inserting demo activity logs...</strong></div>';
 
         $log_actions = ['CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'LOGOUT', 'VIEW'];
         $log_modules = ['applications', 'users', 'stages', 'settings', 'auth', 'documents'];
@@ -572,10 +572,10 @@
             }
         }
         $insert_log->close();
-        echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Inserted ' . $logs_inserted . ' demo activity logs</div>';
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Inserted ' . $logs_inserted . ' demo activity logs</div>';
 
         echo '<div class="credentials-box">';
-        echo '<strong><i class="fas fa-database"></i> Seed Summary:</strong><br><br>';
+        echo '<strong><i class="ri-database-2-line"></i> Seed Summary:</strong><br><br>';
         echo '<table style="width:100%; border-collapse:collapse; font-size:13px;">';
         echo '<tr style="background:var(--navy-primary); color:white;"><th style="padding:8px; text-align:left;">Table</th><th style="padding:8px; text-align:left;">Records</th></tr>';
         $summary = [
@@ -600,7 +600,7 @@
         echo '</div>';
 
         // ====== UPLOAD DIRECTORIES ======
-        echo '<br><div class="log-item log-info"><i class="fas fa-folder"></i> <strong>Creating upload directories...</strong></div>';
+        echo '<br><div class="log-item log-info"><i class="ri-folder-line"></i> <strong>Creating upload directories...</strong></div>';
 
         $upload_base = __DIR__ . '/uploads';
         $upload_profiles = __DIR__ . '/uploads/profiles';
@@ -610,12 +610,12 @@
             $dir_name = str_replace(__DIR__ . '/', '', $dir);
             if (!file_exists($dir)) {
                 if (mkdir($dir, 0755, true)) {
-                    echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Directory "' . $dir_name . '/" created</div>';
+                    echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Directory "' . $dir_name . '/" created</div>';
                 } else {
-                    echo '<div class="log-item log-error"><i class="fas fa-times-circle"></i> Failed to create "' . $dir_name . '/"</div>';
+                    echo '<div class="log-item log-error"><i class="ri-close-circle-line"></i> Failed to create "' . $dir_name . '/"</div>';
                 }
             } else {
-                echo '<div class="log-item log-info"><i class="fas fa-info-circle"></i> Directory "' . $dir_name . '/" already exists</div>';
+                echo '<div class="log-item log-info"><i class="ri-information-line"></i> Directory "' . $dir_name . '/" already exists</div>';
             }
         }
 
@@ -623,9 +623,9 @@
         $test_file = $upload_profiles . '/test.txt';
         if (file_put_contents($test_file, 'test') !== false) {
             unlink($test_file);
-            echo '<div class="log-item log-success"><i class="fas fa-check-circle"></i> Upload directory is writable</div>';
+            echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Upload directory is writable</div>';
         } else {
-            echo '<div class="log-item log-error"><i class="fas fa-exclamation-triangle"></i> Warning: Upload directory may not be writable</div>';
+            echo '<div class="log-item log-error"><i class="ri-alert-line"></i> Warning: Upload directory may not be writable</div>';
         }
 
         // Create .htaccess for security
@@ -640,26 +640,26 @@
 
         $htaccess_file = $upload_base . '/.htaccess';
         if (file_put_contents($htaccess_file, $htaccess_content) !== false) {
-            echo '<div class="log-item log-success"><i class="fas fa-shield-alt"></i> Security .htaccess created</div>';
+            echo '<div class="log-item log-success"><i class="ri-shield-check-line"></i> Security .htaccess created</div>';
         } else {
-            echo '<div class="log-item log-error"><i class="fas fa-exclamation-triangle"></i> Warning: Could not create .htaccess</div>';
+            echo '<div class="log-item log-error"><i class="ri-alert-line"></i> Warning: Could not create .htaccess</div>';
         }
 
         $conn->close();
 
         echo '<br><div class="log-item log-success">';
-        echo '<i class="fas fa-check-circle"></i> <strong>Setup completed successfully!</strong>';
+        echo '<i class="ri-checkbox-circle-line"></i> <strong>Setup completed successfully!</strong>';
         echo '</div>';
         ?>
 
         <a href="login.php" class="btn">
-            <i class="fas fa-sign-in-alt"></i> Go to Login Page
+            <i class="ri-login-box-line"></i> Go to Login Page
         </a>
     </div>
 
     <!-- Theme Toggle Button -->
     <button class="login-theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
-        <i class="fas fa-moon" id="themeIcon"></i>
+        <i class="ri-moon-line" id="themeIcon"></i>
     </button>
     </div>
 
@@ -683,7 +683,7 @@
     function updateThemeIcon(isDark) {
         const icon = document.getElementById('themeIcon');
         if (icon) {
-            icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+            icon.className = isDark ? 'ri-sun-line' : 'ri-moon-line';
         }
     }
 
