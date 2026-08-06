@@ -145,7 +145,7 @@ if (isset($_GET['action'])) {
     <title>Pipeline - Job Application Tracker</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles.css?v=5.4">
+    <link rel="stylesheet" href="styles.css?v=5.5">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -12,7 +12,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <title>Database Setup</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles.css?v=5.4">
+    <link rel="stylesheet" href="styles.css?v=5.5">
 </head>
 <body>
     <div class="setup-wrapper">
