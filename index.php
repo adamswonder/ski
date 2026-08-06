@@ -54,7 +54,7 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles.css?v=5.5">
+    <link rel="stylesheet" href="styles.css?v=5.7">
     <?php echo generateBrandAccentCSS(); ?>
     <style>
         html, body.landing {
