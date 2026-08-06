@@ -173,6 +173,8 @@
             description TEXT NOT NULL,
             department VARCHAR(100) DEFAULT NULL,
             location VARCHAR(150) DEFAULT NULL,
+            employment_type VARCHAR(50) DEFAULT NULL,
+            salary_range VARCHAR(100) DEFAULT NULL,
             open_date DATE DEFAULT NULL,
             close_date DATE DEFAULT NULL,
             status_override ENUM('auto', 'force_open', 'force_closed') NOT NULL DEFAULT 'auto',

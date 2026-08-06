@@ -63,7 +63,7 @@ if (isset($_GET['action'])) {
         switch ($_GET['action']) {
             case 'getPostings':
                 $conn = getDBConnection();
-                $result = $conn->query("SELECT jp.id, jp.title, jp.department, jp.location, jp.open_date, jp.close_date,
+                $result = $conn->query("SELECT jp.id, jp.title, jp.department, jp.location, jp.employment_type, jp.salary_range, jp.open_date, jp.close_date,
                                                 jp.status_override, jp.created_at, u.full_name AS created_by_name,
                                                 (SELECT COUNT(*) FROM job_posting_questions q WHERE q.job_posting_id = jp.id) AS question_count
                                          FROM job_postings jp
@@ -77,6 +77,8 @@ if (isset($_GET['action'])) {
                         'title' => $row['title'],
                         'department' => $row['department'],
                         'location' => $row['location'],
+                        'employment_type' => $row['employment_type'],
+                        'salary_range' => $row['salary_range'],
                         'open_date' => $row['open_date'],
                         'close_date' => $row['close_date'],
                         'status_override' => $row['status_override'],
@@ -99,7 +101,7 @@ if (isset($_GET['action'])) {
                 }
 
                 $conn = getDBConnection();
-                $stmt = $conn->prepare("SELECT id, title, description, department, location, open_date, close_date, status_override FROM job_postings WHERE id = ?");
+                $stmt = $conn->prepare("SELECT id, title, description, department, location, employment_type, salary_range, open_date, close_date, status_override FROM job_postings WHERE id = ?");
                 $stmt->bind_param("i", $id);
                 $stmt->execute();
                 $result = $stmt->get_result();
@@ -150,6 +152,8 @@ if (isset($_GET['action'])) {
                 $description = trim($_POST['description'] ?? '');
                 $department = trim($_POST['department'] ?? '') ?: null;
                 $location = trim($_POST['location'] ?? '') ?: null;
+                $employmentType = trim($_POST['employment_type'] ?? '') ?: null;
+                $salaryRange = trim($_POST['salary_range'] ?? '') ?: null;
                 $openDate = trim($_POST['open_date'] ?? '') ?: null;
                 $closeDate = trim($_POST['close_date'] ?? '') ?: null;
                 $statusOverride = $_POST['status_override'] ?? 'auto';
@@ -183,8 +187,8 @@ if (isset($_GET['action'])) {
 
                 try {
                     if ($isUpdate) {
-                        $stmt = $conn->prepare("UPDATE job_postings SET title = ?, description = ?, department = ?, location = ?, open_date = ?, close_date = ?, status_override = ? WHERE id = ?");
-                        $stmt->bind_param("sssssssi", $title, $description, $department, $location, $openDate, $closeDate, $statusOverride, $postingId);
+                        $stmt = $conn->prepare("UPDATE job_postings SET title = ?, description = ?, department = ?, location = ?, employment_type = ?, salary_range = ?, open_date = ?, close_date = ?, status_override = ? WHERE id = ?");
+                        $stmt->bind_param("sssssssssi", $title, $description, $department, $location, $employmentType, $salaryRange, $openDate, $closeDate, $statusOverride, $postingId);
                         $stmt->execute();
                         $stmt->close();
 
@@ -193,8 +197,8 @@ if (isset($_GET['action'])) {
                         $del->execute();
                         $del->close();
                     } else {
-                        $stmt = $conn->prepare("INSERT INTO job_postings (title, description, department, location, open_date, close_date, status_override, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-                        $stmt->bind_param("sssssssi", $title, $description, $department, $location, $openDate, $closeDate, $statusOverride, $user_id);
+                        $stmt = $conn->prepare("INSERT INTO job_postings (title, description, department, location, employment_type, salary_range, open_date, close_date, status_override, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        $stmt->bind_param("sssssssssi", $title, $description, $department, $location, $employmentType, $salaryRange, $openDate, $closeDate, $statusOverride, $user_id);
                         $stmt->execute();
                         $postingId = $conn->insert_id;
                         $stmt->close();
@@ -370,6 +374,22 @@ if (isset($_GET['action'])) {
                             <label><i class="ri-map-pin-line"></i> Location</label>
                             <input type="text" id="postingLocation" name="location" maxlength="150" placeholder="e.g. Nairobi / Remote">
                         </div>
+                        <div class="form-group">
+                            <label><i class="ri-time-line"></i> Employment Type</label>
+                            <select id="postingEmploymentType" name="employment_type">
+                                <option value="">Not specified</option>
+                                <option value="Full Time">Full Time</option>
+                                <option value="Part Time">Part Time</option>
+                                <option value="Contract">Contract</option>
+                                <option value="Internship">Internship</option>
+                                <option value="Temporary">Temporary</option>
+                                <option value="Remote">Remote</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-money-dollar-circle-line"></i> Salary Range</label>
+                            <input type="text" id="postingSalaryRange" name="salary_range" maxlength="100" placeholder="e.g. $100 - $500K">
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -500,6 +520,8 @@ if (isset($_GET['action'])) {
                         { data: 'title', title: 'Title' },
                         { data: 'department', title: 'Department', defaultContent: '—' },
                         { data: 'location', title: 'Location', defaultContent: '—' },
+                        { data: 'employment_type', title: 'Type', defaultContent: '—' },
+                        { data: 'salary_range', title: 'Salary', defaultContent: '—' },
                         {
                             data: 'effective_status',
                             title: 'Status',
@@ -524,7 +546,7 @@ if (isset($_GET['action'])) {
                     pageLength: 10,
                     lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
                     responsive: true,
-                    order: [[5, 'desc']]
+                    order: [[7, 'desc']]
                 });
             }, 100);
         }
@@ -600,6 +622,8 @@ if (isset($_GET['action'])) {
                     document.getElementById('postingTitle').value = posting.title;
                     document.getElementById('postingDepartment').value = posting.department || '';
                     document.getElementById('postingLocation').value = posting.location || '';
+                    document.getElementById('postingEmploymentType').value = posting.employment_type || '';
+                    document.getElementById('postingSalaryRange').value = posting.salary_range || '';
                     document.getElementById('openDate').value = posting.open_date || '';
                     document.getElementById('closeDate').value = posting.close_date || '';
                     document.getElementById('statusOverride').value = posting.status_override;

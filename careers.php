@@ -2,7 +2,7 @@
 require_once 'applicant_config.php';
 
 $conn = getDBConnection();
-$result = $conn->query("SELECT id, title, description, department, location, open_date, close_date, status_override, created_at FROM job_postings ORDER BY created_at DESC");
+$result = $conn->query("SELECT id, title, description, department, location, employment_type, salary_range, open_date, close_date, status_override, created_at FROM job_postings ORDER BY created_at DESC");
 
 $postings = [];
 while ($row = $result->fetch_assoc()) {
@@ -19,6 +19,8 @@ while ($row = $result->fetch_assoc()) {
         'title' => $row['title'],
         'department' => $row['department'],
         'location' => $row['location'],
+        'employment_type' => $row['employment_type'],
+        'salary_range' => $row['salary_range'],
         'excerpt' => $excerpt
     ];
 }
@@ -33,17 +35,93 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Careers - Job Openings</title>
+    <title>Careers - Skyward Airlines</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
     <link rel="stylesheet" href="styles.css?v=5.8">
     <?php echo generateBrandAccentCSS(); ?>
+    <style>
+        .careers-page { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .careers-page h1, .careers-page h2 { font-family: 'Playfair Display', Georgia, serif; }
+
+        .careers-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 12px; }
+        .careers-nav-brand { display: flex; align-items: center; gap: 12px; }
+        .careers-nav-brand img { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; }
+        .careers-nav-brand h1 { margin: 0; font-size: 24px; }
+
+        .careers-list { border-top: 1px solid var(--border-color); }
+        .careers-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 28px 0;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+        .careers-row-main { flex: 1; min-width: 240px; }
+        .careers-eyebrow {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--navy-accent);
+            margin-bottom: 8px;
+        }
+        .careers-row-main h2 { font-size: 26px; margin-bottom: 10px; line-height: 1.25; }
+        .careers-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--text-secondary); font-size: 14px; }
+        .careers-meta .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted); flex-shrink: 0; }
+
+        .careers-row-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+        .careers-view-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        .careers-view-btn:hover { border-color: var(--navy-accent); color: var(--navy-accent); }
+        .careers-apply-btn {
+            background: var(--navy-accent);
+            color: #fff;
+            padding: 12px 22px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            transition: filter 0.2s, transform 0.2s;
+        }
+        .careers-apply-btn:hover { filter: brightness(0.9); transform: translateY(-1px); }
+
+        .careers-footer-info { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 50px; }
+        .careers-footer-info-item .careers-eyebrow { background: var(--bg-secondary); border: 1px solid var(--border-color); display: inline-block; padding: 4px 12px; border-radius: 999px; margin-bottom: 14px; }
+        .careers-footer-info-item p { color: var(--text-secondary); font-size: 15px; line-height: 1.6; }
+
+        @media (max-width: 640px) {
+            .careers-row { flex-direction: column; align-items: flex-start; }
+            .careers-row-actions { width: 100%; }
+            .careers-apply-btn { flex: 1; justify-content: center; }
+            .careers-footer-info { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
-<body>
-    <div style="max-width: 1000px; margin: 0 auto; padding: 30px 20px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 30px; flex-wrap: wrap; gap: 12px;">
-            <div style="display:flex; align-items:center; gap:12px;">
-                <img src="<?php echo $logoUrl; ?>" alt="Logo" style="width:48px; height:48px; border-radius:8px; object-fit:cover;">
-                <h1 style="margin:0;"><i class="ri-briefcase-line"></i> Careers</h1>
+<body class="careers-page">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 30px 20px 60px;">
+        <div class="careers-nav">
+            <div class="careers-nav-brand">
+                <img src="<?php echo $logoUrl; ?>" alt="Logo">
+                <h1>Careers</h1>
             </div>
             <div>
                 <?php if ($isLoggedIn): ?>
@@ -63,26 +141,49 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
                 <p style="margin-top: 16px;">No open positions right now. Check back soon.</p>
             </div>
         <?php else: ?>
-            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+            <div class="careers-list">
                 <?php foreach ($postings as $posting): ?>
-                    <div class="data-section" style="padding: 20px;">
-                        <h3 style="margin-top:0;"><?php echo htmlspecialchars($posting['title']); ?></h3>
-                        <div style="margin-bottom: 10px; color: var(--text-secondary, #666); font-size: 14px;">
-                            <?php if ($posting['department']): ?>
-                                <span><i class="ri-building-line"></i> <?php echo htmlspecialchars($posting['department']); ?></span>
-                            <?php endif; ?>
-                            <?php if ($posting['location']): ?>
-                                <span style="margin-left: 10px;"><i class="ri-map-pin-line"></i> <?php echo htmlspecialchars($posting['location']); ?></span>
-                            <?php endif; ?>
+                    <div class="careers-row">
+                        <div class="careers-row-main">
+                            <div class="careers-eyebrow"><?php echo htmlspecialchars($posting['department'] ?: 'Open Roles'); ?></div>
+                            <h2><?php echo htmlspecialchars($posting['title']); ?></h2>
+                            <div class="careers-meta">
+                                <?php
+                                    $metaParts = array_filter([
+                                        $posting['employment_type'],
+                                        $posting['salary_range'],
+                                        $posting['location']
+                                    ]);
+                                ?>
+                                <?php foreach ($metaParts as $i => $part): ?>
+                                    <?php if ($i > 0): ?><span class="dot"></span><?php endif; ?>
+                                    <span><?php echo htmlspecialchars($part); ?></span>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
-                        <p><?php echo htmlspecialchars($posting['excerpt']); ?></p>
-                        <a href="careers-job.php?id=<?php echo $posting['id']; ?>" class="btn btn-primary btn-sm">
-                            <i class="ri-arrow-right-line"></i> View & Apply
-                        </a>
+                        <div class="careers-row-actions">
+                            <a href="careers-job.php?id=<?php echo $posting['id']; ?>" class="careers-view-btn" title="View Details">
+                                <i class="ri-arrow-down-s-line"></i>
+                            </a>
+                            <a href="careers-job.php?id=<?php echo $posting['id']; ?>" class="careers-apply-btn">
+                                Submit Application <i class="ri-arrow-right-up-line"></i>
+                            </a>
+                        </div>
                     </div>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
+
+        <div class="careers-footer-info">
+            <div class="careers-footer-info-item">
+                <div class="careers-eyebrow">How It Works</div>
+                <p>Create an account, browse open roles, and apply in minutes. Track every application's progress from your personal dashboard.</p>
+            </div>
+            <div class="careers-footer-info-item">
+                <div class="careers-eyebrow">Contact Us</div>
+                <p>Have a question about a role or your application? Reach out to our recruitment team and we'll get back to you shortly.</p>
+            </div>
+        </div>
     </div>
 </body>
 </html>
