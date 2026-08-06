@@ -25,7 +25,8 @@ $applyHref = $isLoggedIn ? $applyUrl : 'applicant-login.php?redirect=' . urlenco
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title><?php echo $posting ? htmlspecialchars($posting['title']) . ' - Careers' : 'Position Not Found - Careers'; ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.2">
+    <link rel="stylesheet" href="styles.css?v=5.3">
+    <?php echo generateBrandAccentCSS(); ?>
 </head>
 <body>
     <div style="max-width: 800px; margin: 0 auto; padding: 30px 20px;">

@@ -35,7 +35,8 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Careers - Job Openings</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.2">
+    <link rel="stylesheet" href="styles.css?v=5.3">
+    <?php echo generateBrandAccentCSS(); ?>
 </head>
 <body>
     <div style="max-width: 1000px; margin: 0 auto; padding: 30px 20px;">
