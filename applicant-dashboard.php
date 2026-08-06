@@ -41,7 +41,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>My Applications - Careers</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles.css?v=5.7">
+    <link rel="stylesheet" href="styles.css?v=5.8">
     <?php echo generateBrandAccentCSS(); ?>
 </head>
 <body>

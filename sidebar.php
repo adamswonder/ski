@@ -141,10 +141,17 @@ echo generateUserThemeCSS($user_id);
         </ul>
     </div>
     <div class="sidebar-theme">
-        <button onclick="toggleTheme()">
-            <i class="ri-moon-line" id="themeIcon"></i>
-            <span id="themeText">Dark Mode</span>
-        </button>
+        <div class="mode-toggle-group" role="group" aria-label="Theme mode">
+            <button type="button" class="mode-toggle-btn" data-mode="system" title="System" onclick="setThemeMode('system')">
+                <i class="ri-computer-line"></i>
+            </button>
+            <button type="button" class="mode-toggle-btn" data-mode="light" title="Light" onclick="setThemeMode('light')">
+                <i class="ri-sun-line"></i>
+            </button>
+            <button type="button" class="mode-toggle-btn" data-mode="dark" title="Dark" onclick="setThemeMode('dark')">
+                <i class="ri-moon-line"></i>
+            </button>
+        </div>
     </div>
     <div class="sidebar-logout">
         <button onclick="window.location.href='logout.php'">
@@ -161,51 +168,43 @@ echo generateUserThemeCSS($user_id);
  * Handles light/dark mode switching with localStorage persistence
  * Also respects user's saved theme preference from database
  */
-function initTheme() {
-    const savedTheme = localStorage.getItem('theme');
-    const userThemeMode = '<?php echo $user_theme['theme_mode']; ?>';
+function getActiveMode() {
+    return localStorage.getItem('themeMode') || null;
+}
+
+function applyMode(mode) {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = mode === 'dark' || (mode === 'system' && prefersDark);
 
-    // Priority: localStorage > database setting > system preference
-    let isDark = false;
-    if (savedTheme) {
-        isDark = savedTheme === 'dark';
-    } else if (userThemeMode) {
-        isDark = userThemeMode === 'dark';
-        // Save to localStorage so it persists
-        localStorage.setItem('theme', userThemeMode);
-    } else {
-        isDark = prefersDark;
-    }
+    document.body.classList.toggle('dark-mode', isDark);
 
-    if (isDark) {
-        document.body.classList.add('dark-mode');
-        updateThemeButton(true);
-    } else {
-        document.body.classList.remove('dark-mode');
-        updateThemeButton(false);
-    }
-}
+    document.querySelectorAll('.mode-toggle-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-mode') === mode);
+    });
 
-function toggleTheme() {
-    const isDark = document.body.classList.toggle('dark-mode');
+    // Keep the old 'theme' key in sync for any legacy reads elsewhere
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    updateThemeButton(isDark);
 }
 
-function updateThemeButton(isDark) {
-    const icon = document.getElementById('themeIcon');
-    const text = document.getElementById('themeText');
+function setThemeMode(mode) {
+    localStorage.setItem('themeMode', mode);
+    applyMode(mode);
+}
 
-    if (icon && text) {
-        if (isDark) {
-            icon.className = 'ri-sun-line';
-            text.textContent = 'Light Mode';
-        } else {
-            icon.className = 'ri-moon-line';
-            text.textContent = 'Dark Mode';
-        }
+function initTheme() {
+    // 'system'/'light'/'dark' are all explicit, sticky choices once saved
+    const savedMode = localStorage.getItem('themeMode');
+
+    if (savedMode) {
+        applyMode(savedMode);
+        return;
     }
+
+    // True first visit - fall back to the saved database preference once, then remember it
+    const userThemeMode = '<?php echo $user_theme['theme_mode']; ?>';
+    const initialMode = (userThemeMode === 'dark' || userThemeMode === 'light') ? userThemeMode : 'system';
+    localStorage.setItem('themeMode', initialMode);
+    applyMode(initialMode);
 }
 
 // Initialize theme on page load
@@ -242,14 +241,8 @@ initSidebar();
 
 // Listen for system theme changes
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
-    if (!localStorage.getItem('theme')) {
-        if (e.matches) {
-            document.body.classList.add('dark-mode');
-            updateThemeButton(true);
-        } else {
-            document.body.classList.remove('dark-mode');
-            updateThemeButton(false);
-        }
+    if (getActiveMode() === 'system') {
+        applyMode('system');
     }
 });
 </script>

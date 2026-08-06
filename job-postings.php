@@ -300,7 +300,7 @@ if (isset($_GET['action'])) {
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css">
-    <link rel="stylesheet" href="styles.css?v=5.7">
+    <link rel="stylesheet" href="styles.css?v=5.8">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -316,7 +316,7 @@ if (isset($_GET['action'])) {
 
         <div class="main-content">
             <div class="header">
-                <h1><i class="ri-megaphone-line"></i> Job Postings</h1>
+                <h1>Job Postings</h1>
                 <div>Welcome, <?php echo htmlspecialchars($username); ?></div>
             </div>
 

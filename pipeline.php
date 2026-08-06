@@ -142,10 +142,10 @@ if (isset($_GET['action'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Pipeline - Job Application Tracker</title>
+    <title>Pipeline - Skyward Airlines</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles.css?v=5.7">
+    <link rel="stylesheet" href="styles.css?v=5.8">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -363,7 +363,7 @@ if (isset($_GET['action'])) {
 
         <div class="main-content">
             <div class="header">
-                <h1><i class="ri-layout-column-line"></i> Pipeline</h1>
+                <h1>Pipeline</h1>
                 <div>Welcome, <?php echo htmlspecialchars($username); ?></div>
             </div>
 
