@@ -47,7 +47,7 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
         .careers-page h1, .careers-page h2 { font-family: 'Playfair Display', Georgia, serif; }
 
         .careers-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 12px; }
-        .careers-nav-brand { display: flex; align-items: center; gap: 12px; }
+        .careers-nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
         .careers-nav-brand img { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; }
         .careers-nav-brand h1 { margin: 0; font-size: 24px; }
 
@@ -119,10 +119,10 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
 <body class="careers-page">
     <div style="max-width: 1000px; margin: 0 auto; padding: 30px 20px 60px;">
         <div class="careers-nav">
-            <div class="careers-nav-brand">
+            <a href="index.php" class="careers-nav-brand">
                 <img src="<?php echo $logoUrl; ?>" alt="Logo">
                 <h1>Careers</h1>
-            </div>
+            </a>
             <div>
                 <?php if ($isLoggedIn): ?>
                     <span style="margin-right:12px;">Hi, <?php echo htmlspecialchars($_SESSION['applicant_name']); ?></span>
