@@ -548,6 +548,21 @@ function setUserTheme($user_id, $theme_primary, $theme_secondary, $theme_accent,
     }
 }
 
+// Brand accent color: a single admin-set value (not a per-user preference) used for
+// --navy-accent everywhere, so an org-wide brand color can't be diluted by personal themes.
+function getBrandAccentColor() {
+    $accent = getSetting('brand_accent_color', '#0074D9');
+    if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $accent)) {
+        $accent = '#0074D9';
+    }
+    return $accent;
+}
+
+// For pages without a logged-in user context (login, careers, apply) that still want the brand accent
+function generateBrandAccentCSS() {
+    return "<style id='brand-accent-css'>:root { --navy-accent: " . getBrandAccentColor() . "; }</style>\n";
+}
+
 // Generate CSS variables for user theme
 function generateUserThemeCSS($user_id) {
     $theme = getUserTheme($user_id);
@@ -559,7 +574,7 @@ function generateUserThemeCSS($user_id) {
     $css .= ":root {\n";
     $css .= "    --navy-primary: {$theme['theme_primary']};\n";
     $css .= "    --navy-light: {$theme['theme_secondary']};\n";
-    $css .= "    --navy-accent: {$theme['theme_accent']};\n";
+    $css .= "    --navy-accent: " . getBrandAccentColor() . ";\n";
     $css .= "    --navy-dark: {$theme['theme_primary']};\n";
     $css .= "    --navy-hover: {$theme['theme_secondary']};\n";
     $css .= "}\n";
