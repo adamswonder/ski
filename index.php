@@ -50,11 +50,8 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Skyward Airlines Careers</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles.css?v=5.8">
+    <link rel="stylesheet" href="styles.css?v=5.10">
     <?php echo generateBrandAccentCSS(); ?>
     <style>
         html, body.landing {
@@ -65,13 +62,11 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
             display: none;
         }
 
-        .landing { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-primary); color: var(--text-primary); }
-        .landing h1, .landing h2, .landing h3 { font-family: 'Playfair Display', Georgia, serif; }
+        .landing { background: var(--bg-primary); color: var(--text-primary); }
         .landing a { text-decoration: none; }
 
         .landing .btn { border-radius: 999px; }
-        .landing .btn-primary { background: var(--navy-accent); color: #fff; }
-        .landing .btn-primary:hover { background: var(--navy-accent); filter: brightness(0.88); transform: translateY(-2px); }
+        .landing .btn-primary:hover { filter: brightness(0.88); transform: translateY(-2px); }
         .landing .btn-outline-accent { background: transparent; color: var(--navy-accent); border: 2px solid var(--navy-accent); }
         .landing .btn-outline-accent:hover { background: var(--navy-accent); color: #fff; transform: translateY(-2px); }
 
@@ -107,7 +102,7 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
 
         .landing-stats { max-width: 1180px; margin: 0 auto 80px; padding: 0 24px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
         .landing-stat { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px 16px; text-align: center; }
-        .landing-stat-value { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 700; color: var(--navy-accent); }
+        .landing-stat-value { font-size: 30px; font-weight: 700; color: var(--navy-accent); }
         .landing-stat-label { font-size: 12px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-muted); margin-top: 6px; }
 
         .landing-section { max-width: 1180px; margin: 0 auto; padding: 60px 24px; }
@@ -117,17 +112,17 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
 
         .landing-features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .landing-feature { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 26px; }
-        .landing-feature-icon { width: 44px; height: 44px; border-radius: 10px; background: rgba(0, 116, 217, 0.12); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; font-size: 20px; color: var(--navy-accent); }
+        .landing-feature-icon { width: 44px; height: 44px; border-radius: 10px; background: rgba(2, 63, 87, 0.12); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; font-size: 20px; color: var(--navy-accent); }
         .landing-feature h3 { font-size: 18px; margin-bottom: 8px; }
         .landing-feature p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
 
         .landing-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
         .landing-step { text-align: center; padding: 0 12px; }
-        .landing-step-number { width: 40px; height: 40px; border-radius: 50%; background: var(--navy-accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; margin: 0 auto 16px; font-family: 'Playfair Display', serif; }
+        .landing-step-number { width: 40px; height: 40px; border-radius: 50%; background: var(--navy-accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; margin: 0 auto 16px; }
         .landing-step h3 { font-size: 17px; margin-bottom: 8px; }
         .landing-step p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
 
-        .landing-cta { background: linear-gradient(135deg, var(--navy-accent) 0%, #6e0a17 100%); border-radius: 20px; padding: 56px 32px; text-align: center; margin: 0 24px 80px; max-width: 1132px; margin-left: auto; margin-right: auto; }
+        .landing-cta { background: linear-gradient(135deg, var(--navy-primary) 0%, var(--navy-dark) 100%); border-radius: 20px; padding: 56px 32px; text-align: center; margin: 0 24px 80px; max-width: 1132px; margin-left: auto; margin-right: auto; }
         .landing-cta h2 { color: #fff; font-size: 30px; margin-bottom: 12px; }
         .landing-cta p { color: rgba(255,255,255,0.75); margin-bottom: 26px; }
         .landing-cta .btn-primary { background: #fff; color: var(--navy-accent); }
@@ -151,8 +146,8 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
     <nav class="landing-nav">
         <div class="landing-nav-inner">
             <a href="index.php" class="landing-brand">
-                <img src="<?php echo $logoUrl; ?>" alt="Skyward Airlines">
-                <span>Skyward Airlines</span>
+                <img src="<?php echo $logoUrl; ?>" alt="Skyward Airlines" style="width: 100px">
+                <!-- <span>Skyward Airlines</span> -->
             </a>
             <div class="landing-nav-links">
                 <a href="#features">Features</a>
@@ -265,7 +260,7 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
     </div>
 
     <footer class="landing-footer">
-        &copy; 2026 Skyward Airlines. All rights reserved.
+        &copy; <?php echo date('Y'); ?> Skyward Airlines. All rights reserved.
     </footer>
 </body>
 </html>

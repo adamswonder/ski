@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="mobile-web-app-capable" content="yes">
     <title>Login - Skyward Airlines</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles.css?v=5.8">
+    <link rel="stylesheet" href="styles.css?v=5.10">
     <?php echo generateBrandAccentCSS(); ?>
 </head>
 <body>
@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $loginLogo = getSetting('login_logo', '');
             $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiGXxCe0WNNedmFqSWeF761f7Kshhc-NP5ChRQKz9fr97cO8VaarvD0KlCwqHojJVBWv-RAxfOqMI5rD4H78KnARyOc6QgwL1nRRFWf5xNQ1d9F9HfAoLPPGlTyP0GwNl4n-INMEsWLQ4Y7zJtz5bOdAnc2ePH9-uCRgshlo6BsS6gJEz6fhrxL-5U5O3sX/s160/channels4_profile.jpg';
             ?>
-            <img src="<?php echo $logoUrl; ?>" alt="Logo" class="login-logo">
+            <a href="index.php"><img src="<?php echo $logoUrl; ?>" alt="Logo" class="login-logo"></a>
             <h2>System Login</h2>
 
             <?php if ($error): ?>
@@ -168,7 +168,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </form>
 
             <div class="login-footer">
-                <p>&copy; 2026 Skyward Airlines. All rights reserved.</p>
+                <p><a href="index.php"><i class="ri-arrow-left-line"></i> Back to Home</a></p>
+                <p>&copy; <?php echo date('Y'); ?> Skyward Airlines. All rights reserved.</p>
             </div>
         </div>
         </div>

@@ -250,7 +250,7 @@ if (isset($_GET['action'])) {
     <title>Dashboard - Skyward Airlines</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles.css?v=5.8">
+    <link rel="stylesheet" href="styles.css?v=5.10">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -312,7 +312,7 @@ if (isset($_GET['action'])) {
         .cmd-search-box input:focus {
             outline: none;
             border-color: var(--navy-accent);
-            box-shadow: 0 0 0 3px rgba(0,116,217,0.12);
+            box-shadow: 0 0 0 3px rgba(2,63,87,0.12);
             width: 260px;
         }
         .cmd-search-box i {
@@ -353,7 +353,7 @@ if (isset($_GET['action'])) {
         .cmd-btn-primary:hover {
             background: #005fa3;
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0,116,217,0.25);
+            box-shadow: 0 4px 12px rgba(2,63,87,0.25);
         }
 
         /* ===== 5-Card KPI Row (Modern Redesign) ===== */
@@ -465,14 +465,14 @@ if (isset($_GET['action'])) {
         }
 
         /* KPI Color Variants */
-        .kpi-total .kpi-icon-circle { background: linear-gradient(135deg, #0074D9, #005fa3); }
+        .kpi-total .kpi-icon-circle { background: linear-gradient(135deg, #023f57, #005fa3); }
         .kpi-active .kpi-icon-circle { background: linear-gradient(135deg, #34a853, #2d8f47); }
         .kpi-interview .kpi-icon-circle { background: linear-gradient(135deg, #F59E0B, #d48806); }
         .kpi-offer .kpi-icon-circle { background: linear-gradient(135deg, #8B5CF6, #6D28D9); }
         .kpi-avgdays .kpi-icon-circle { background: linear-gradient(135deg, #10B981, #059669); }
 
         /* Subtle background tint per card */
-        .kpi-total { background: linear-gradient(135deg, var(--bg-card) 60%, rgba(0,116,217,0.04) 100%); }
+        .kpi-total { background: linear-gradient(135deg, var(--bg-card) 60%, rgba(2,63,87,0.04) 100%); }
         .kpi-active { background: linear-gradient(135deg, var(--bg-card) 60%, rgba(52,168,83,0.04) 100%); }
         .kpi-interview { background: linear-gradient(135deg, var(--bg-card) 60%, rgba(245,158,11,0.04) 100%); }
         .kpi-offer { background: linear-gradient(135deg, var(--bg-card) 60%, rgba(139,92,246,0.04) 100%); }
@@ -520,7 +520,7 @@ if (isset($_GET['action'])) {
         .filter-bar select:focus {
             outline: none;
             border-color: var(--navy-accent);
-            box-shadow: 0 0 0 3px rgba(0,116,217,0.12);
+            box-shadow: 0 0 0 3px rgba(2,63,87,0.12);
         }
         .filter-bar-clear {
             padding: 8px 14px;
@@ -548,7 +548,7 @@ if (isset($_GET['action'])) {
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
-            background: rgba(0,116,217,0.1);
+            background: rgba(2,63,87,0.1);
             color: var(--navy-accent);
         }
 
@@ -673,7 +673,7 @@ if (isset($_GET['action'])) {
             font-weight: 600;
             padding: 4px 12px;
             border-radius: 20px;
-            background: rgba(0,116,217,0.1);
+            background: rgba(2,63,87,0.1);
             color: var(--navy-accent);
         }
 
@@ -694,7 +694,7 @@ if (isset($_GET['action'])) {
             border-radius: 8px;
             transition: background 0.2s;
         }
-        .upcoming-item:hover { background: rgba(0,116,217,0.03); }
+        .upcoming-item:hover { background: rgba(2,63,87,0.03); }
         .upcoming-item:last-child { border-bottom: none; }
         .upcoming-date {
             flex-shrink: 0;
@@ -776,7 +776,7 @@ if (isset($_GET['action'])) {
             border-radius: 8px;
             transition: background 0.2s;
         }
-        .activity-item:hover { background: rgba(0,116,217,0.03); }
+        .activity-item:hover { background: rgba(2,63,87,0.03); }
         .activity-item:last-child { border-bottom: none; }
         .activity-icon {
             width: 36px;
@@ -791,7 +791,7 @@ if (isset($_GET['action'])) {
         }
         .activity-icon.act-login { background: linear-gradient(135deg, #34a853, #2d8f47); }
         .activity-icon.act-logout { background: linear-gradient(135deg, #6B7280, #4B5563); }
-        .activity-icon.act-create { background: linear-gradient(135deg, #0074D9, #005fa3); }
+        .activity-icon.act-create { background: linear-gradient(135deg, #023f57, #005fa3); }
         .activity-icon.act-update { background: linear-gradient(135deg, #F59E0B, #d48806); }
         .activity-icon.act-delete { background: linear-gradient(135deg, #ea4335, #c5221f); }
         .activity-icon.act-default { background: linear-gradient(135deg, #8B5CF6, #6D28D9); }
@@ -1316,7 +1316,7 @@ if (isset($_GET['action'])) {
     function initKpiSparklines(monthlyData) {
         var counts = monthlyData.map(function(d) { return d.cnt; });
         var sparkConfigs = [
-            { id: 'sparkTotal', color: '#0074D9' },
+            { id: 'sparkTotal', color: '#023f57' },
             { id: 'sparkActive', color: '#34a853' },
             { id: 'sparkInterview', color: '#F59E0B' },
             { id: 'sparkOffer', color: '#8B5CF6' },
@@ -1473,8 +1473,8 @@ if (isset($_GET['action'])) {
 
         var isDark = document.body.classList.contains('dark-mode');
         var grad = ctx.getContext('2d').createLinearGradient(0, 0, 0, 280);
-        grad.addColorStop(0, 'rgba(0, 116, 217, 0.45)');
-        grad.addColorStop(1, 'rgba(0, 116, 217, 0.02)');
+        grad.addColorStop(0, 'rgba(2, 63, 87, 0.45)');
+        grad.addColorStop(1, 'rgba(2, 63, 87, 0.02)');
 
         var labels = data.map(function(d) {
             var p = d.month.split('-');
@@ -1488,12 +1488,12 @@ if (isset($_GET['action'])) {
                 datasets: [{
                     label: 'Applications',
                     data: data.map(function(d) { return d.cnt; }),
-                    borderColor: '#0074D9',
+                    borderColor: '#023f57',
                     backgroundColor: grad,
                     fill: true,
                     tension: 0.4,
                     pointBackgroundColor: '#fff',
-                    pointBorderColor: '#0074D9',
+                    pointBorderColor: '#023f57',
                     pointBorderWidth: 2,
                     pointRadius: 5,
                     pointHoverRadius: 7
@@ -1519,7 +1519,7 @@ if (isset($_GET['action'])) {
         if (!ctx) return;
 
         var isDark = document.body.classList.contains('dark-mode');
-        var colors = ['#001f3f', '#0074D9', '#34a853', '#F59E0B', '#8B5CF6', '#ea4335'];
+        var colors = ['#e8262c', '#023f57', '#34a853', '#F59E0B', '#8B5CF6', '#ea4335'];
 
         chartInstances.company = new Chart(ctx, {
             type: 'bar',

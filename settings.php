@@ -52,7 +52,7 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] === 'saveSettings') {
         try {
             $allowUserUploads = isset($_POST['allow_user_profile_uploads']) ? $_POST['allow_user_profile_uploads'] : '0';
-            $brandAccentColor = isset($_POST['brand_accent_color']) ? trim($_POST['brand_accent_color']) : '#0074D9';
+            $brandAccentColor = isset($_POST['brand_accent_color']) ? trim($_POST['brand_accent_color']) : '#023f57';
 
             if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $brandAccentColor)) {
                 echo json_encode(['success' => false, 'message' => 'Invalid accent color format. Use a hex color like #E31E24']);
@@ -189,7 +189,7 @@ if (isset($_POST['action'])) {
 
     <!-- CDN Dependencies -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles.css?v=5.8">
+    <link rel="stylesheet" href="styles.css?v=5.10">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -271,7 +271,7 @@ if (isset($_POST['action'])) {
                                 </div>
                             </div>
                             <div class="stat-item-inline">
-                                <div class="stat-item-icon" style="background: rgba(0, 116, 217, 0.1); color: var(--navy-accent);">
+                                <div class="stat-item-icon" style="background: rgba(2, 63, 87, 0.1); color: var(--navy-accent);">
                                     <i class="ri-time-line"></i>
                                 </div>
                                 <div class="stat-item-content">
@@ -345,7 +345,7 @@ if (isset($_POST['action'])) {
                     <!-- Card 3: Security Status -->
                     <div class="settings-mega-card">
                         <div class="settings-card-header">
-                            <div class="settings-card-icon" style="background: linear-gradient(135deg, #0074D9 0%, #0056a8 100%);">
+                            <div class="settings-card-icon" style="background: linear-gradient(135deg, #023f57 0%, #0056a8 100%);">
                                 <i class="ri-shield-check-line"></i>
                             </div>
                             <div>
@@ -548,8 +548,8 @@ if (isset($_POST['action'])) {
                             <div class="form-group">
                                 <label><i class="ri-square-line" id="brandAccentIcon"></i> Accent Color</label>
                                 <div style="display: flex; gap: 10px; align-items: center;">
-                                    <input type="color" id="brand_accent_color" value="#0074D9" style="width: 60px; height: 45px; padding: 2px; cursor: pointer; border: 2px solid var(--border-color); border-radius: 4px;">
-                                    <input type="text" id="brand_accent_color_hex" value="#0074D9" maxlength="7" style="flex: 1; text-transform: uppercase;">
+                                    <input type="color" id="brand_accent_color" value="#023f57" style="width: 60px; height: 45px; padding: 2px; cursor: pointer; border: 2px solid var(--border-color); border-radius: 4px;">
+                                    <input type="text" id="brand_accent_color_hex" value="#023f57" maxlength="7" style="flex: 1; text-transform: uppercase;">
                                 </div>
                             </div>
                             <div style="display: flex; gap: 10px; margin-top: 15px;">
@@ -645,7 +645,7 @@ if (isset($_POST['action'])) {
                         document.getElementById('logoPreview').src = data.login_logo || defaultLogo;
 
                         // Set brand accent color
-                        const brandAccent = data.brand_accent_color || '#0074D9';
+                        const brandAccent = data.brand_accent_color || '#023f57';
                         document.getElementById('brand_accent_color').value = brandAccent;
                         document.getElementById('brand_accent_color_hex').value = brandAccent.toUpperCase();
                         document.getElementById('brandAccentIcon').style.color = brandAccent;
@@ -911,7 +911,7 @@ if (isset($_POST['action'])) {
                 title: 'Reset Logo?',
                 text: 'This will restore the default logo on the login page.',
                 showCancelButton: true,
-                confirmButtonColor: '#001f3f',
+                confirmButtonColor: '#e8262c',
                 confirmButtonText: 'Reset'
             }).then(function(result) {
                 if (result.isConfirmed) {

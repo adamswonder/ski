@@ -12,7 +12,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <title>Database Setup</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles.css?v=5.8">
+    <link rel="stylesheet" href="styles.css?v=5.10">
 </head>
 <body>
     <div class="setup-wrapper">
@@ -79,9 +79,9 @@
             password_reset_token VARCHAR(255) DEFAULT NULL,
             password_reset_expires DATETIME DEFAULT NULL,
             last_login_at DATETIME DEFAULT NULL,
-            theme_primary VARCHAR(7) DEFAULT '#001f3f',
-            theme_secondary VARCHAR(7) DEFAULT '#003366',
-            theme_accent VARCHAR(7) DEFAULT '#0074D9',
+            theme_primary VARCHAR(7) DEFAULT '#e8262c',
+            theme_secondary VARCHAR(7) DEFAULT '#023f57',
+            theme_accent VARCHAR(7) DEFAULT '#023f57',
             theme_mode ENUM('light', 'dark') DEFAULT 'light',
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -412,7 +412,7 @@
             ['Applied',     'pipeline', '#3B82F6', 'ri-send-plane-line',    1],
             ['Screening',   'pipeline', '#8B5CF6', 'ri-search-line',         2],
             ['Shortlisted', 'pipeline', '#F59E0B', 'ri-star-line',           3],
-            ['Interview',   'pipeline', '#0074D9', 'ri-chat-3-line',       4],
+            ['Interview',   'pipeline', '#023f57', 'ri-chat-3-line',       4],
             ['Offer',       'pipeline', '#10B981', 'ri-shake-hands-line',      5],
             ['Joined',      'pipeline', '#34A853', 'ri-user-follow-line',     6],
             ['Rejected',    'pipeline', '#EF4444', 'ri-close-circle-line',   7]

@@ -91,7 +91,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getLogs') {
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.8">
+    <link rel="stylesheet" href="styles.css?v=5.10">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -117,12 +117,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'getLogs') {
         }
         .action-LOGIN { background: #34a853; }
         .action-LOGOUT { background: #6c757d; }
-        .action-CREATE { background: #0074D9; }
+        .action-CREATE { background: #023f57; }
         .action-UPDATE { background: #F59E0B; color: #333; }
         .action-DELETE { background: #ea4335; }
         .action-EXPORT { background: #6f42c1; }
         .action-PRINT { background: #20c997; }
-        .action-VIEW_CV { background: #001f3f; }
+        .action-VIEW_CV { background: #e8262c; }
 
         .module-badge {
             padding: 3px 8px;

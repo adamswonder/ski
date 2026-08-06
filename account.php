@@ -69,8 +69,8 @@ if (isset($_GET['action'])) {
                     exit();
                 }
 
-                $theme_primary = isset($_POST['theme_primary']) ? trim($_POST['theme_primary']) : '#001f3f';
-                $theme_secondary = isset($_POST['theme_secondary']) ? trim($_POST['theme_secondary']) : '#003366';
+                $theme_primary = isset($_POST['theme_primary']) ? trim($_POST['theme_primary']) : '#e8262c';
+                $theme_secondary = isset($_POST['theme_secondary']) ? trim($_POST['theme_secondary']) : '#023f57';
                 // Accent is a fixed, admin-set brand color - never accepted from the per-user form
                 $theme_accent = getBrandAccentColor();
                 $theme_mode = isset($_POST['theme_mode']) ? trim($_POST['theme_mode']) : 'light';
@@ -79,7 +79,7 @@ if (isset($_GET['action'])) {
                 $color_pattern = '/^#[0-9A-Fa-f]{6}$/';
                 if (!preg_match($color_pattern, $theme_primary) ||
                     !preg_match($color_pattern, $theme_secondary)) {
-                    echo json_encode(['success' => false, 'message' => 'Invalid color format. Use hex colors like #001f3f']);
+                    echo json_encode(['success' => false, 'message' => 'Invalid color format. Use hex colors like #e8262c']);
                     exit();
                 }
 
@@ -99,7 +99,7 @@ if (isset($_GET['action'])) {
                 exit();
 
             case 'resetTheme':
-                $result = setUserTheme($user_id, '#001f3f', '#003366', getBrandAccentColor(), 'light');
+                $result = setUserTheme($user_id, '#e8262c', '#023f57', getBrandAccentColor(), 'light');
 
                 if ($result) {
                     logActivity($user_id, 'UPDATE', 'Reset UI colors to default', ['module' => 'settings']);
@@ -332,7 +332,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
 
     <!-- CDN Dependencies -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles.css?v=5.8">
+    <link rel="stylesheet" href="styles.css?v=5.10">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -500,16 +500,16 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
                         <div class="form-group">
                             <label><i class="ri-square-line" id="primaryColorIcon"></i> Primary Color</label>
                             <div style="display: flex; gap: 10px; align-items: center;">
-                                <input type="color" id="theme_primary" name="theme_primary" value="#001f3f" style="width: 60px; height: 45px; padding: 2px; cursor: pointer; border: 2px solid var(--border-color); border-radius: 4px;">
-                                <input type="text" id="theme_primary_hex" value="#001f3f" maxlength="7" style="flex: 1; text-transform: uppercase;">
+                                <input type="color" id="theme_primary" name="theme_primary" value="#e8262c" style="width: 60px; height: 45px; padding: 2px; cursor: pointer; border: 2px solid var(--border-color); border-radius: 4px;">
+                                <input type="text" id="theme_primary_hex" value="#e8262c" maxlength="7" style="flex: 1; text-transform: uppercase;">
                             </div>
                             <small class="help-text" style="color: var(--text-muted); margin-top: 5px; display: block;">Sidebar & headers</small>
                         </div>
                         <div class="form-group">
                             <label><i class="ri-square-line" id="secondaryColorIcon"></i> Secondary Color</label>
                             <div style="display: flex; gap: 10px; align-items: center;">
-                                <input type="color" id="theme_secondary" name="theme_secondary" value="#003366" style="width: 60px; height: 45px; padding: 2px; cursor: pointer; border: 2px solid var(--border-color); border-radius: 4px;">
-                                <input type="text" id="theme_secondary_hex" value="#003366" maxlength="7" style="flex: 1; text-transform: uppercase;">
+                                <input type="color" id="theme_secondary" name="theme_secondary" value="#023f57" style="width: 60px; height: 45px; padding: 2px; cursor: pointer; border: 2px solid var(--border-color); border-radius: 4px;">
+                                <input type="text" id="theme_secondary_hex" value="#023f57" maxlength="7" style="flex: 1; text-transform: uppercase;">
                             </div>
                             <small class="help-text" style="color: var(--text-muted); margin-top: 5px; display: block;">Hover states & gradients</small>
                         </div>
@@ -544,7 +544,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
                     <div class="form-group" style="margin-top: 25px;">
                         <label><i class="ri-contrast-2-line"></i> Quick Presets</label>
                         <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
-                            <button type="button" class="preset-btn" onclick="applyPreset('#001f3f', '#003366', '#0074D9')" style="background: linear-gradient(135deg, #001f3f 50%, #0074D9 50%); width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--border-color); cursor: pointer;" title="Navy Blue (Default)"></button>
+                            <button type="button" class="preset-btn" onclick="applyPreset('#e8262c', '#023f57')" style="background: linear-gradient(135deg, #e8262c 50%, #023f57 50%); width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--border-color); cursor: pointer;" title="Skyward Red (Default)"></button>
                             <button type="button" class="preset-btn" onclick="applyPreset('#1a1a2e', '#16213e', '#e94560')" style="background: linear-gradient(135deg, #1a1a2e 50%, #e94560 50%); width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--border-color); cursor: pointer;" title="Dark Rose"></button>
                             <button type="button" class="preset-btn" onclick="applyPreset('#2d3436', '#636e72', '#00b894')" style="background: linear-gradient(135deg, #2d3436 50%, #00b894 50%); width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--border-color); cursor: pointer;" title="Emerald Dark"></button>
                             <button type="button" class="preset-btn" onclick="applyPreset('#4a0e4e', '#810e7a', '#c92bc8')" style="background: linear-gradient(135deg, #4a0e4e 50%, #c92bc8 50%); width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--border-color); cursor: pointer;" title="Purple Magic"></button>
@@ -1036,9 +1036,9 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
             Swal.fire({
                 icon: 'warning',
                 title: 'Reset Theme?',
-                text: 'This will reset your colors to the default Navy Blue theme.',
+                text: 'This will reset your colors to the default Skyward Red theme.',
                 showCancelButton: true,
-                confirmButtonColor: '#001f3f',
+                confirmButtonColor: '#e8262c',
                 confirmButtonText: 'Yes, Reset',
                 cancelButtonText: 'Cancel'
             }).then((result) => {
@@ -1050,20 +1050,21 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
                         success: function(response) {
                             if (response.success) {
                                 // Reset form values
-                                document.getElementById('theme_primary').value = '#001f3f';
-                                document.getElementById('theme_primary_hex').value = '#001F3F';
-                                document.getElementById('theme_secondary').value = '#003366';
-                                document.getElementById('theme_secondary_hex').value = '#003366';
-                                document.getElementById('theme_accent').value = '#0074D9';
-                                document.getElementById('theme_accent_hex').value = '#0074D9';
+                                var brandAccent = '<?php echo htmlspecialchars(getBrandAccentColor()); ?>';
+                                document.getElementById('theme_primary').value = '#e8262c';
+                                document.getElementById('theme_primary_hex').value = '#E8262C';
+                                document.getElementById('theme_secondary').value = '#023f57';
+                                document.getElementById('theme_secondary_hex').value = '#023F57';
+                                document.getElementById('theme_accent').value = brandAccent;
+                                document.getElementById('theme_accent_hex').value = brandAccent;
                                 document.getElementById('theme_mode_light').checked = true;
 
                                 // Apply default theme
-                                document.documentElement.style.setProperty('--navy-primary', '#001f3f');
-                                document.documentElement.style.setProperty('--navy-light', '#003366');
-                                document.documentElement.style.setProperty('--navy-dark', '#001f3f');
-                                document.documentElement.style.setProperty('--navy-hover', '#003366');
-                                document.documentElement.style.setProperty('--navy-accent', '#0074D9');
+                                document.documentElement.style.setProperty('--navy-primary', '#e8262c');
+                                document.documentElement.style.setProperty('--navy-light', '#023f57');
+                                document.documentElement.style.setProperty('--navy-dark', '#e8262c');
+                                document.documentElement.style.setProperty('--navy-hover', '#023f57');
+                                document.documentElement.style.setProperty('--navy-accent', brandAccent);
 
                                 // Set light mode
                                 localStorage.setItem('theme', 'light');

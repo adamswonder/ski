@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Philosopher:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
 /*
   Developed by Rameez Scripts
   WhatsApp: https://wa.me/923224083545 (For Custom Projects)
@@ -6,11 +8,11 @@
 
 /* ===== Color Scheme - Light Theme (Default) ===== */
 :root {
-    --navy-primary: #001f3f;
-    --navy-dark: #001529;
-    --navy-light: #003366;
-    --navy-accent: #0074D9;
-    --navy-hover: #002a52;
+    --navy-primary: #e8262c;
+    --navy-dark: #b81f24;
+    --navy-light: #f0454a;
+    --navy-accent: #023f57;
+    --navy-hover: #c41f24;
     --success: #34a853;
     --warning: #fbbc04;
     --danger: #ea4335;
@@ -51,9 +53,9 @@ body.dark-mode {
     --skeleton-base: #252550;
     --skeleton-shine: #2d2d5a;
 
-    --navy-primary: #0a1628;
-    --navy-dark: #060d16;
-    --navy-light: #1a3a5c;
+    --navy-primary: #7a1216;
+    --navy-dark: #4d0c0e;
+    --navy-light: #a81b20;
 }
 
 /* ===== Global Styles ===== */
@@ -71,7 +73,7 @@ html {
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Philosopher', Georgia, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: var(--bg-primary);
     color: var(--text-primary);
     -webkit-tap-highlight-color: transparent;
@@ -185,7 +187,7 @@ input, select, textarea {
 .sidebar-logo:hover {
     transform: scale(1.1);
     border-color: var(--navy-accent);
-    box-shadow: 0 5px 15px rgba(0,116,217,0.6);
+    box-shadow: 0 5px 15px rgba(2,63,87,0.6);
 }
 
 .sidebar-menu-section {
@@ -241,7 +243,7 @@ input, select, textarea {
 .sidebar-menu button.active {
     background: var(--navy-accent);
     color: white;
-    box-shadow: 0 4px 12px rgba(0,116,217,0.3);
+    box-shadow: 0 4px 12px rgba(2,63,87,0.3);
 }
 
 .sidebar-menu i {
@@ -298,7 +300,7 @@ input, select, textarea {
 .sidebar-user-role {
     font-size: 12px;
     color: rgba(255,255,255,0.7);
-    background: rgba(0,116,217,0.3);
+    background: rgba(2,63,87,0.3);
     padding: 4px 12px;
     border-radius: 12px;
     text-transform: capitalize;
@@ -557,7 +559,7 @@ input, select, textarea {
 .mobile-nav-item.active {
     color: white;
     background: var(--navy-accent);
-    box-shadow: 0 2px 8px rgba(0,116,217,0.4);
+    box-shadow: 0 2px 8px rgba(2,63,87,0.4);
 }
 
 .mobile-nav-item.active i {
@@ -1144,7 +1146,7 @@ body.dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
 .dataTables_wrapper .dataTables_length select:focus {
     outline: none;
     border-color: var(--navy-accent);
-    box-shadow: 0 0 0 3px rgba(0,116,217,0.12);
+    box-shadow: 0 0 0 3px rgba(2,63,87,0.12);
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button {
@@ -1187,7 +1189,7 @@ body.dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
     display: none;
     text-align: center;
     padding: 10px;
-    background: rgba(0, 116, 217, 0.1);
+    background: rgba(2, 63, 87, 0.1);
     border-radius: 4px;
     margin-bottom: 10px;
     font-size: 13px;
@@ -1252,7 +1254,7 @@ body.dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
 }
 
 .action-icon.view-icon:hover {
-    background: rgba(0,116,217,0.12);
+    background: rgba(2,63,87,0.12);
     border-color: var(--navy-accent);
 }
 
@@ -1333,7 +1335,7 @@ body.dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
 .form-group textarea:focus {
     outline: none;
     border-color: var(--navy-accent);
-    box-shadow: 0 0 0 2px rgba(0,116,217,0.2);
+    box-shadow: 0 0 0 2px rgba(2,63,87,0.2);
 }
 
 .form-group input::placeholder,
@@ -1518,7 +1520,7 @@ body.dark-mode .modal-header {
 .filter-input:focus {
     outline: none;
     border-color: var(--navy-accent);
-    box-shadow: 0 0 0 3px rgba(0,116,217,0.15);
+    box-shadow: 0 0 0 3px rgba(2,63,87,0.15);
 }
 
 /* ===== Account Info Card ===== */
@@ -1747,6 +1749,16 @@ body.dark-mode .modal-header {
     color: var(--text-muted);
 }
 
+.login-footer a {
+    color: var(--navy-accent);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
+}
+
 @media (max-width: 900px) {
     .login-brand-panel {
         display: none;
@@ -1851,7 +1863,7 @@ body.dark-mode .modal-header {
 .stat-item-inline:hover {
     background: #fff;
     border-color: var(--navy-accent);
-    box-shadow: 0 2px 8px rgba(0, 116, 217, 0.1);
+    box-shadow: 0 2px 8px rgba(2, 63, 87, 0.1);
 }
 
 .stat-item-icon {
@@ -1911,7 +1923,7 @@ body.dark-mode .modal-header {
     justify-content: center;
     font-size: 24px;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(0, 31, 63, 0.2);
+    box-shadow: 0 4px 12px rgba(232, 38, 44, 0.2);
 }
 
 .control-info {
@@ -2047,8 +2059,8 @@ body.dark-mode .modal-header {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(0, 116, 217, 0.05);
-    border: 1px solid rgba(0, 116, 217, 0.2);
+    background: rgba(2, 63, 87, 0.05);
+    border: 1px solid rgba(2, 63, 87, 0.2);
     border-left: 4px solid var(--navy-accent);
     padding: 14px 16px;
     border-radius: 6px;
@@ -2181,7 +2193,7 @@ body.dark-mode .modal-header {
     border-radius: 6px;
     font-size: 13px;
     font-weight: 700;
-    box-shadow: 0 2px 6px rgba(0, 31, 63, 0.2);
+    box-shadow: 0 2px 6px rgba(232, 38, 44, 0.2);
 }
 
 .upload-badge {
@@ -2190,7 +2202,7 @@ body.dark-mode .modal-header {
 
 .time-value {
     font-family: 'Courier New', monospace;
-    background: rgba(0, 116, 217, 0.05);
+    background: rgba(2, 63, 87, 0.05);
     padding: 6px 12px;
     border-radius: 6px;
     color: var(--navy-accent);
@@ -2399,7 +2411,7 @@ body.dark-mode .modal-header {
     color: var(--navy-primary);
     font-weight: 600;
     font-family: 'Courier New', monospace;
-    background: rgba(0, 31, 63, 0.05);
+    background: rgba(232, 38, 44, 0.05);
     padding: 6px 12px;
     border-radius: 4px;
 }
@@ -2562,7 +2574,7 @@ body.dark-mode .modal-header {
 }
 
 .sidebar-submenu a.active {
-    background: rgba(0, 116, 217, 0.25);
+    background: rgba(2, 63, 87, 0.25);
     color: white;
     border-left-color: var(--navy-accent);
     font-weight: 500;
@@ -2789,7 +2801,7 @@ body.dark-mode .log-error {
 }
 
 body.dark-mode .log-info {
-    background: rgba(0, 116, 217, 0.15);
+    background: rgba(2, 63, 87, 0.15);
     color: #5dade2;
 }
 
@@ -2854,8 +2866,8 @@ body.dark-mode .control-toggle-wrapper {
 }
 
 body.dark-mode .info-banner {
-    background: rgba(0, 116, 217, 0.1);
-    border-color: rgba(0, 116, 217, 0.3);
+    background: rgba(2, 63, 87, 0.1);
+    border-color: rgba(2, 63, 87, 0.3);
     color: var(--text-secondary);
 }
 
@@ -2885,7 +2897,7 @@ body.dark-mode .server-info-value {
 }
 
 body.dark-mode .time-value {
-    background: rgba(0, 116, 217, 0.1);
+    background: rgba(2, 63, 87, 0.1);
     color: var(--navy-accent);
 }
 
@@ -2999,7 +3011,7 @@ input[type="color"]::-webkit-color-swatch {
 
 .theme-mode-option:has(input:checked) {
     border-color: var(--navy-accent) !important;
-    background: rgba(0, 116, 217, 0.1);
+    background: rgba(2, 63, 87, 0.1);
 }
 
 body.dark-mode .theme-mode-option {
@@ -3013,7 +3025,7 @@ body.dark-mode .theme-mode-option:hover {
 
 body.dark-mode .theme-mode-option:has(input:checked) {
     border-color: var(--navy-accent) !important;
-    background: rgba(0, 116, 217, 0.2);
+    background: rgba(2, 63, 87, 0.2);
 }
 
 /* Responsive theme form */
@@ -4115,7 +4127,7 @@ body.dark-mode .header div {
 
 .type-pipeline {
     background: #EBF5FF;
-    color: #0074D9;
+    color: #023f57;
 }
 
 .type-status {
@@ -4191,7 +4203,7 @@ body.dark-mode .header div {
 
 .tab-btn:hover {
     color: var(--navy-primary);
-    background: rgba(0,31,63,0.05);
+    background: rgba(232,38,44,0.05);
 }
 
 .tab-btn.active {
@@ -4251,7 +4263,7 @@ body.dark-mode .tab-buttons {
 }
 
 body.dark-mode .type-pipeline {
-    background: rgba(0, 116, 217, 0.15);
+    background: rgba(2, 63, 87, 0.15);
 }
 
 body.dark-mode .type-status {
@@ -4312,7 +4324,7 @@ body.dark-mode .form-section-title {
 
 .checkbox-item:hover {
     border-color: var(--navy-accent);
-    background: rgba(0, 116, 217, 0.05);
+    background: rgba(2, 63, 87, 0.05);
 }
 
 .checkbox-item input[type="checkbox"] {
@@ -4341,7 +4353,7 @@ body.dark-mode .checkbox-item {
 
 body.dark-mode .checkbox-item:hover {
     border-color: var(--navy-accent);
-    background: rgba(0, 116, 217, 0.1);
+    background: rgba(2, 63, 87, 0.1);
 }
 
 /* Qualification Badges (View Modal) */
@@ -4352,12 +4364,12 @@ body.dark-mode .checkbox-item:hover {
     font-size: 12px;
     font-weight: 600;
     background: #EBF5FF;
-    color: #0074D9;
+    color: #023f57;
     margin: 2px 4px 2px 0;
 }
 
 body.dark-mode .qual-badge {
-    background: rgba(0, 116, 217, 0.15);
+    background: rgba(2, 63, 87, 0.15);
     color: #5dabf5;
 }
 
@@ -4515,7 +4527,7 @@ body.dark-mode .view-item {
     font-size: 11px;
     font-weight: 600;
     background: #EBF5FF;
-    color: #0074D9;
+    color: #023f57;
 }
 
 .doc-item-actions {
@@ -4562,7 +4574,7 @@ body.dark-mode .doc-item-meta {
 }
 
 body.dark-mode .doc-label-badge {
-    background: rgba(0, 116, 217, 0.15);
+    background: rgba(2, 63, 87, 0.15);
     color: #5dabf5;
 }
 
@@ -4696,14 +4708,14 @@ body.dark-mode .skill-name {
     justify-content: space-between;
     align-items: flex-start;
     padding-bottom: 18px;
-    border-bottom: 3px solid #001f3f;
+    border-bottom: 3px solid #e8262c;
     margin-bottom: 22px;
 }
 
 .po-header-left h1 {
     font-size: 22px;
     font-weight: 800;
-    color: #001f3f;
+    color: #e8262c;
     letter-spacing: -0.5px;
     margin-bottom: 3px;
 }
@@ -4725,11 +4737,11 @@ body.dark-mode .skill-name {
 }
 
 .po-ref strong {
-    color: #001f3f;
+    color: #e8262c;
 }
 
 .po-title-bar {
-    background: #001f3f;
+    background: #e8262c;
     color: #fff;
     padding: 10px 18px;
     margin-bottom: 20px;
@@ -4757,11 +4769,11 @@ body.dark-mode .skill-name {
 .po-section-title {
     font-size: 12px;
     font-weight: 700;
-    color: #001f3f;
+    color: #e8262c;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     padding: 6px 0;
-    border-bottom: 1.5px solid #0074D9;
+    border-bottom: 1.5px solid #023f57;
     margin-bottom: 10px;
     display: flex;
     align-items: center;
@@ -4770,7 +4782,7 @@ body.dark-mode .skill-name {
 
 .po-section-title i {
     font-size: 11px;
-    color: #0074D9;
+    color: #023f57;
 }
 
 .po-fields {
@@ -4804,7 +4816,7 @@ body.dark-mode .skill-name {
 .po-notes {
     background: #f9fafb;
     border: 1px solid #e5e5e5;
-    border-left: 3px solid #0074D9;
+    border-left: 3px solid #023f57;
     padding: 12px 15px;
     font-size: 12px;
     color: #333;
@@ -4846,7 +4858,7 @@ body.dark-mode .skill-name {
     font-size: 10px;
     font-weight: 600;
     background: #EBF5FF;
-    color: #0074D9;
+    color: #023f57;
     border: 1px solid #d0e5ff;
 }
 

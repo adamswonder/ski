@@ -626,7 +626,7 @@ if (isset($_GET['action'])) {
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.8">
+    <link rel="stylesheet" href="styles.css?v=5.10">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -1458,22 +1458,22 @@ if (isset($_GET['action'])) {
             html += '.doc-page { width: 210mm; min-height: 297mm; margin: 20px auto; background: #fff; padding: 25mm 22mm 20mm; box-shadow: 0 4px 20px rgba(0,0,0,0.15); position: relative; }';
 
             // Header / Letterhead
-            html += '.doc-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 18px; border-bottom: 3px solid #001f3f; margin-bottom: 22px; }';
-            html += '.doc-header-left h1 { font-size: 22px; font-weight: 800; color: #001f3f; letter-spacing: -0.5px; margin-bottom: 3px; }';
+            html += '.doc-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 18px; border-bottom: 3px solid #e8262c; margin-bottom: 22px; }';
+            html += '.doc-header-left h1 { font-size: 22px; font-weight: 800; color: #e8262c; letter-spacing: -0.5px; margin-bottom: 3px; }';
             html += '.doc-header-left p { font-size: 11px; color: #666; letter-spacing: 0.5px; }';
             html += '.doc-header-right { text-align: right; }';
             html += '.doc-ref { font-size: 11px; color: #555; margin-bottom: 3px; }';
-            html += '.doc-ref strong { color: #001f3f; }';
+            html += '.doc-ref strong { color: #e8262c; }';
 
             // Title Bar
-            html += '.doc-title-bar { background: #001f3f; color: #fff; padding: 10px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }';
+            html += '.doc-title-bar { background: #e8262c; color: #fff; padding: 10px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }';
             html += '.doc-title-bar h2 { font-size: 15px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }';
             html += '.doc-title-bar .doc-id { font-size: 12px; opacity: 0.8; }';
 
             // Section
             html += '.doc-section { margin-bottom: 18px; }';
-            html += '.doc-section-title { font-size: 12px; font-weight: 700; color: #001f3f; text-transform: uppercase; letter-spacing: 1.5px; padding: 6px 0; border-bottom: 1.5px solid #0074D9; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }';
-            html += '.doc-section-title i { font-size: 11px; color: #0074D9; }';
+            html += '.doc-section-title { font-size: 12px; font-weight: 700; color: #e8262c; text-transform: uppercase; letter-spacing: 1.5px; padding: 6px 0; border-bottom: 1.5px solid #023f57; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }';
+            html += '.doc-section-title i { font-size: 11px; color: #023f57; }';
 
             // Table layout for fields
             html += '.doc-fields { width: 100%; border-collapse: collapse; }';
@@ -1484,10 +1484,10 @@ if (isset($_GET['action'])) {
 
             // Status tags
             html += '.doc-status-tag { display: inline-block; padding: 3px 10px; border-radius: 3px; font-size: 11px; font-weight: 700; color: #fff; }';
-            html += '.doc-qual-tag { display: inline-block; padding: 2px 8px; margin: 1px 3px 1px 0; border-radius: 2px; font-size: 10px; font-weight: 600; background: #EBF5FF; color: #0074D9; border: 1px solid #d0e5ff; }';
+            html += '.doc-qual-tag { display: inline-block; padding: 2px 8px; margin: 1px 3px 1px 0; border-radius: 2px; font-size: 10px; font-weight: 600; background: #EBF5FF; color: #023f57; border: 1px solid #d0e5ff; }';
 
             // Notes
-            html += '.doc-notes { background: #f9fafb; border: 1px solid #e5e5e5; border-left: 3px solid #0074D9; padding: 12px 15px; font-size: 12px; color: #333; white-space: pre-wrap; line-height: 1.6; min-height: 40px; }';
+            html += '.doc-notes { background: #f9fafb; border: 1px solid #e5e5e5; border-left: 3px solid #023f57; padding: 12px 15px; font-size: 12px; color: #333; white-space: pre-wrap; line-height: 1.6; min-height: 40px; }';
 
             // Footer
             html += '.doc-footer { position: absolute; bottom: 15mm; left: 22mm; right: 22mm; border-top: 1px solid #ddd; padding-top: 10px; display: flex; justify-content: space-between; font-size: 9px; color: #999; }';
@@ -1495,8 +1495,8 @@ if (isset($_GET['action'])) {
             // Action Bar (no-print)
             html += '.doc-action-bar { width: 210mm; margin: 0 auto 20px; display: flex; gap: 10px; justify-content: center; }';
             html += '.doc-action-btn { padding: 10px 28px; border: none; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; }';
-            html += '.doc-action-btn-print { background: #001f3f; color: #fff; }';
-            html += '.doc-action-btn-print:hover { background: #003366; }';
+            html += '.doc-action-btn-print { background: #e8262c; color: #fff; }';
+            html += '.doc-action-btn-print:hover { background: #023f57; }';
             html += '.doc-action-btn-close { background: #6c757d; color: #fff; }';
             html += '.doc-action-btn-close:hover { background: #555; }';
 
@@ -1532,7 +1532,7 @@ if (isset($_GET['action'])) {
             // Header / Letterhead
             html += '<div class="doc-header">';
             html += '<div class="doc-header-left">';
-            html += '<h1><i class="ri-briefcase-line" style="color:#0074D9;font-size:20px;"></i> Job Application Form</h1>';
+            html += '<h1><i class="ri-briefcase-line" style="color:#023f57;font-size:20px;"></i> Job Application Form</h1>';
             html += '<p>Recruitment Management System</p>';
             html += '</div>';
             html += '<div class="doc-header-right">';
@@ -1639,7 +1639,7 @@ if (isset($_GET['action'])) {
             // Header
             html += '<div class="po-header">';
             html += '<div class="po-header-left">';
-            html += '<h1><i class="ri-briefcase-line" style="color:#0074D9;font-size:20px;"></i> Job Application Form</h1>';
+            html += '<h1><i class="ri-briefcase-line" style="color:#023f57;font-size:20px;"></i> Job Application Form</h1>';
             html += '<p>Recruitment Management System</p>';
             html += '</div>';
             html += '<div class="po-header-right">';

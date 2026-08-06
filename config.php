@@ -483,9 +483,9 @@ function getProfileImage($user_id) {
 // User Theme Preferences Functions
 function getUserTheme($user_id) {
     $defaults = [
-        'theme_primary' => '#001f3f',
-        'theme_secondary' => '#003366',
-        'theme_accent' => '#0074D9',
+        'theme_primary' => '#e8262c',
+        'theme_secondary' => '#023f57',
+        'theme_accent' => '#023f57',
         'theme_mode' => 'light'
     ];
 
@@ -551,9 +551,9 @@ function setUserTheme($user_id, $theme_primary, $theme_secondary, $theme_accent,
 // Brand accent color: a single admin-set value (not a per-user preference) used for
 // --navy-accent everywhere, so an org-wide brand color can't be diluted by personal themes.
 function getBrandAccentColor() {
-    $accent = getSetting('brand_accent_color', '#0074D9');
+    $accent = getSetting('brand_accent_color', '#023f57');
     if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $accent)) {
-        $accent = '#0074D9';
+        $accent = '#023f57';
     }
     return $accent;
 }

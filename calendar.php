@@ -107,7 +107,7 @@ if (isset($_GET['action'])) {
     <title>Calendar - Skyward Airlines</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles.css?v=5.8">
+    <link rel="stylesheet" href="styles.css?v=5.10">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -185,7 +185,7 @@ if (isset($_GET['action'])) {
             opacity: 0.5;
         }
         .calendar-day.today {
-            background: rgba(0, 116, 217, 0.06);
+            background: rgba(2, 63, 87, 0.06);
             border-color: var(--navy-accent);
         }
         .calendar-day-number {
@@ -334,8 +334,8 @@ if (isset($_GET['action'])) {
 
         /* Action Highlight Card */
         .ep-action-card {
-            background: linear-gradient(135deg, rgba(0,116,217,0.08) 0%, rgba(0,116,217,0.03) 100%);
-            border: 1px solid rgba(0,116,217,0.15);
+            background: linear-gradient(135deg, rgba(2,63,87,0.08) 0%, rgba(2,63,87,0.03) 100%);
+            border: 1px solid rgba(2,63,87,0.15);
             border-left: 4px solid var(--navy-accent);
             border-radius: 6px;
             padding: 14px 16px;

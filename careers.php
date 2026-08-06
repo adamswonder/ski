@@ -36,15 +36,10 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Careers - Skyward Airlines</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles.css?v=5.8">
+    <link rel="stylesheet" href="styles.css?v=5.10">
     <?php echo generateBrandAccentCSS(); ?>
     <style>
-        .careers-page { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        .careers-page h1, .careers-page h2 { font-family: 'Playfair Display', Georgia, serif; }
 
         .careers-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 12px; }
         .careers-nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
@@ -88,9 +83,9 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
             font-size: 16px;
             transition: all 0.2s;
         }
-        .careers-view-btn:hover { border-color: var(--navy-accent); color: var(--navy-accent); }
+        .careers-view-btn:hover { border-color: var(--navy-primary); color: var(--navy-primary); }
         .careers-apply-btn {
-            background: var(--navy-accent);
+            background: var(--navy-primary);
             color: #fff;
             padding: 12px 22px;
             border-radius: 999px;
@@ -182,6 +177,7 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
             <div class="careers-footer-info-item">
                 <div class="careers-eyebrow">Contact Us</div>
                 <p>Have a question about a role or your application? Reach out to our recruitment team and we'll get back to you shortly.</p>
+                <p><a href="mailto:careers@skywardairlines.co.ke" style="color: var(--navy-accent); font-weight: 600;">careers@skywardairlines.co.ke</a></p>
             </div>
         </div>
     </div>
