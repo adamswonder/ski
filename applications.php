@@ -619,14 +619,14 @@ if (isset($_GET['action'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Applications - Dashboard System</title>
+    <title>Applications Skyward Airlines</title>
 
     <!-- CDN Dependencies -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.5">
+    <link rel="stylesheet" href="styles.css?v=5.7">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -654,7 +654,7 @@ if (isset($_GET['action'])) {
 
             <div class="data-section">
                 <div class="section-header">
-                    <h2><i class="ri-briefcase-line"></i> Job Applications</h2>
+                    <h2>Job Applications</h2>
                     <div style="display: flex; gap: 10px;">
                         <button class="btn btn-primary" onclick="loadApplications()">
                             <i class="ri-refresh-line"></i> Refresh
@@ -1096,7 +1096,7 @@ if (isset($_GET['action'])) {
                             render: function(data, type, row) {
                                 if (!row.stage_name) return '-';
                                 var icon = row.stage_icon ? '<i class="' + row.stage_icon + '"></i> ' : '';
-                                return '<span class="stage-badge" style="background:' + (row.stage_color || '#6B7280') + '">' + icon + row.stage_name + '</span>';
+                                return '<span class="stage-badge" style="color:' + (row.stage_color || '#6B7280') + '">' + icon + row.stage_name + '</span>';
                             }
                         },
                         {
@@ -1105,7 +1105,7 @@ if (isset($_GET['action'])) {
                             render: function(data, type, row) {
                                 if (!row.status_name) return '-';
                                 var icon = row.status_icon ? '<i class="' + row.status_icon + '"></i> ' : '';
-                                return '<span class="stage-badge" style="background:' + (row.status_color || '#6B7280') + '">' + icon + row.status_name + '</span>';
+                                return '<span class="stage-badge" style="color:' + (row.status_color || '#6B7280') + '">' + icon + row.status_name + '</span>';
                             }
                         },
                         { data: 'applied_date_display', title: 'Applied Date' },
@@ -1121,7 +1121,7 @@ if (isset($_GET['action'])) {
                                 if (data > 60) { color = '#ea4335'; icon = 'ri-error-warning-line'; }
                                 else if (data > 30) { color = '#fbbc04'; icon = 'ri-hourglass-line'; }
                                 var isJoined = row.joined_date ? ' title="Applied to Joined"' : ' title="Days in pipeline"';
-                                return '<span class="days-badge" style="background:' + color + ';"' + isJoined + '><i class="' + icon + '"></i> ' + data + '</span>';
+                                return '<span class="days-badge" style="color:' + color + ';"' + isJoined + '><i class="' + icon + '"></i> ' + data + '</span>';
                             }
                         },
                         { data: 'assigned_to_name', title: 'Assigned To', defaultContent: '<span style="color:#999">Unassigned</span>' },

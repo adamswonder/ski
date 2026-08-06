@@ -795,8 +795,9 @@ body.dark-mode .mobile-nav-item.active {
 .data-section {
     background: var(--bg-card);
     padding: 20px;
-    border-radius: 3px;
-    box-shadow: 0 2px 4px var(--shadow-color);
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 10px var(--shadow-color);
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -969,7 +970,7 @@ body.dark-mode .stat-card-value {
 .btn {
     padding: 10px 20px;
     border: none;
-    border-radius: 2px;
+    border-radius: 10px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
@@ -1052,12 +1053,13 @@ table.dataTable {
 }
 
 table.dataTable thead th {
-    background: var(--navy-primary) !important;
-    color: white !important;
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
     padding: 14px !important;
     text-align: left;
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: 700;
+    font-size: 13px;
+    border-bottom: 2px solid var(--border-color) !important;
 }
 
 table.dataTable tbody td {
@@ -1072,7 +1074,9 @@ table.dataTable tbody tr:hover {
 }
 
 body.dark-mode table.dataTable thead th {
-    background: var(--navy-light) !important;
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+    border-bottom: 2px solid var(--border-color) !important;
 }
 
 body.dark-mode .dataTables_wrapper .dataTables_length,
@@ -1106,6 +1110,7 @@ body.dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
 
 .dt-buttons {
     margin-bottom: 15px;
+    margin-right: 20px;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -1116,7 +1121,7 @@ body.dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
     color: white !important;
     border: none !important;
     padding: 10px 16px !important;
-    border-radius: 4px !important;
+    border-radius: 10px !important;
     font-size: 14px !important;
     margin-right: 0 !important;
     cursor: pointer !important;
@@ -1129,6 +1134,47 @@ body.dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
 
 .dt-button:hover {
     background: var(--navy-hover) !important;
+}
+
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus,
+.dataTables_wrapper .dataTables_length select:focus {
+    outline: none;
+    border-color: var(--navy-accent);
+    box-shadow: 0 0 0 3px rgba(0,116,217,0.12);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    border-radius: 8px !important;
+    border: 1px solid transparent !important;
+    padding: 6px 12px !important;
+    margin-left: 4px !important;
+    color: var(--text-secondary) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: var(--navy-accent) !important;
+    color: #fff !important;
+    border-color: var(--navy-accent) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current) {
+    background: var(--table-hover) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+    opacity: 0.4;
 }
 
 /* DataTable wrapper for mobile scroll */
@@ -1174,14 +1220,19 @@ body.dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
 
 /* ===== Action Icons ===== */
 .action-icon {
-    background: transparent;
-    border: none;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
     cursor: pointer;
-    font-size: 18px;
-    padding: 6px 10px;
-    margin: 0 4px;
-    border-radius: 2px;
-    transition: all 0.3s;
+    font-size: 16px;
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 3px;
+    border-radius: 9px;
+    transition: all 0.2s;
+    color: var(--text-secondary);
 }
 
 .action-icon.edit-icon {
@@ -1189,8 +1240,8 @@ body.dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
 }
 
 .action-icon.edit-icon:hover {
-    background: rgba(251,188,4,0.1);
-    transform: scale(1.15);
+    background: rgba(251,188,4,0.12);
+    border-color: var(--warning);
 }
 
 .action-icon.delete-icon {
@@ -1198,8 +1249,8 @@ body.dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
 }
 
 .action-icon.delete-icon:hover {
-    background: rgba(234,67,53,0.1);
-    transform: scale(1.15);
+    background: rgba(234,67,53,0.12);
+    border-color: var(--danger);
 }
 
 .action-icon.view-icon {
@@ -1207,17 +1258,28 @@ body.dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
 }
 
 .action-icon.view-icon:hover {
-    background: rgba(0,116,217,0.1);
-    transform: scale(1.15);
+    background: rgba(0,116,217,0.12);
+    border-color: var(--navy-accent);
 }
 
 /* ===== Status Badges ===== */
 .status-badge {
-    padding: 6px 14px;
-    border-radius: 3px;
+    padding: 5px 14px 5px 10px;
+    border-radius: 999px;
     font-size: 13px;
     font-weight: 600;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-badge::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
 }
 
 .status-active {
@@ -1397,9 +1459,9 @@ body.dark-mode .modal-header {
 
 /* ===== Filters Section ===== */
 .filters-section {
-    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+    background: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    border-radius: 4px;
+    border-radius: 14px;
     padding: 20px;
     margin-bottom: 25px;
     transition: background 0.3s ease, border-color 0.3s ease;
@@ -1411,7 +1473,7 @@ body.dark-mode .modal-header {
     align-items: center;
     margin-bottom: 20px;
     padding-bottom: 15px;
-    border-bottom: 2px solid var(--navy-accent);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .filters-header h3 {
@@ -1450,8 +1512,8 @@ body.dark-mode .modal-header {
 .filter-input {
     width: 100%;
     padding: 10px 12px;
-    border: 2px solid var(--input-border);
-    border-radius: 3px;
+    border: 1px solid var(--input-border);
+    border-radius: 10px;
     font-size: 14px;
     transition: all 0.3s;
     font-family: inherit;
@@ -4038,16 +4100,18 @@ body.dark-mode .header div {
     align-items: center;
     gap: 6px;
     padding: 5px 12px;
-    border-radius: 3px;
+    border-radius: 999px;
     font-size: 13px;
     font-weight: 600;
-    color: white;
+    background: rgba(0, 0, 0, 0.06);
+    background: color-mix(in srgb, currentColor 14%, var(--bg-card));
+    border: 1px solid color-mix(in srgb, currentColor 32%, transparent);
 }
 
 .type-badge {
     display: inline-block;
     padding: 4px 10px;
-    border-radius: 3px;
+    border-radius: 999px;
     font-size: 12px;
     font-weight: 600;
     text-transform: capitalize;
@@ -4608,11 +4672,12 @@ body.dark-mode .skill-name {
     align-items: center;
     gap: 5px;
     padding: 4px 10px;
-    border-radius: 20px;
+    border-radius: 999px;
     font-size: 12px;
     font-weight: 700;
-    color: #fff;
     white-space: nowrap;
+    background: color-mix(in srgb, currentColor 14%, var(--bg-card));
+    border: 1px solid color-mix(in srgb, currentColor 32%, transparent);
 }
 
 .days-badge i {

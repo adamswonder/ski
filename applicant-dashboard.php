@@ -41,7 +41,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>My Applications - Careers</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles.css?v=5.5">
+    <link rel="stylesheet" href="styles.css?v=5.7">
     <?php echo generateBrandAccentCSS(); ?>
 </head>
 <body>
@@ -89,7 +89,7 @@ $conn->close();
                                 <td style="padding: 10px;"><?php echo date('M d, Y', strtotime($app['applied_date'])); ?></td>
                                 <td style="padding: 10px;">
                                     <?php if ($app['stage_name']): ?>
-                                        <span class="stage-badge" style="background:<?php echo htmlspecialchars($app['stage_color']); ?>">
+                                        <span class="stage-badge" style="color:<?php echo htmlspecialchars($app['stage_color']); ?>">
                                             <?php echo htmlspecialchars($app['stage_name']); ?>
                                         </span>
                                     <?php else: ?>
@@ -98,7 +98,7 @@ $conn->close();
                                 </td>
                                 <td style="padding: 10px;">
                                     <?php if ($app['status_name']): ?>
-                                        <span class="stage-badge" style="background:<?php echo htmlspecialchars($app['status_color']); ?>">
+                                        <span class="stage-badge" style="color:<?php echo htmlspecialchars($app['status_color']); ?>">
                                             <?php echo htmlspecialchars($app['status_name']); ?>
                                         </span>
                                     <?php else: ?>
