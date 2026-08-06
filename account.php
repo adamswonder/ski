@@ -51,7 +51,7 @@ if (isset($_GET['action'])) {
                             'allow_user_uploads' => $allowUserUploads,
                             'theme_primary' => $theme['theme_primary'],
                             'theme_secondary' => $theme['theme_secondary'],
-                            'theme_accent' => $theme['theme_accent'],
+                            'theme_accent' => getBrandAccentColor(),
                             'theme_mode' => $theme['theme_mode']
                         ]
                     ]);
@@ -71,14 +71,14 @@ if (isset($_GET['action'])) {
 
                 $theme_primary = isset($_POST['theme_primary']) ? trim($_POST['theme_primary']) : '#001f3f';
                 $theme_secondary = isset($_POST['theme_secondary']) ? trim($_POST['theme_secondary']) : '#003366';
-                $theme_accent = isset($_POST['theme_accent']) ? trim($_POST['theme_accent']) : '#0074D9';
+                // Accent is a fixed, admin-set brand color - never accepted from the per-user form
+                $theme_accent = getBrandAccentColor();
                 $theme_mode = isset($_POST['theme_mode']) ? trim($_POST['theme_mode']) : 'light';
 
                 // Validate hex colors
                 $color_pattern = '/^#[0-9A-Fa-f]{6}$/';
                 if (!preg_match($color_pattern, $theme_primary) ||
-                    !preg_match($color_pattern, $theme_secondary) ||
-                    !preg_match($color_pattern, $theme_accent)) {
+                    !preg_match($color_pattern, $theme_secondary)) {
                     echo json_encode(['success' => false, 'message' => 'Invalid color format. Use hex colors like #001f3f']);
                     exit();
                 }
@@ -99,7 +99,7 @@ if (isset($_GET['action'])) {
                 exit();
 
             case 'resetTheme':
-                $result = setUserTheme($user_id, '#001f3f', '#003366', '#0074D9', 'light');
+                $result = setUserTheme($user_id, '#001f3f', '#003366', getBrandAccentColor(), 'light');
 
                 if ($result) {
                     logActivity($user_id, 'UPDATE', 'Reset UI colors to default', ['module' => 'settings']);
@@ -516,10 +516,10 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
                         <div class="form-group">
                             <label><i class="fas fa-square" id="accentColorIcon"></i> Accent Color</label>
                             <div style="display: flex; gap: 10px; align-items: center;">
-                                <input type="color" id="theme_accent" name="theme_accent" value="#0074D9" style="width: 60px; height: 45px; padding: 2px; cursor: pointer; border: 2px solid var(--border-color); border-radius: 4px;">
-                                <input type="text" id="theme_accent_hex" value="#0074D9" maxlength="7" style="flex: 1; text-transform: uppercase;">
+                                <input type="color" id="theme_accent" name="theme_accent" value="<?php echo htmlspecialchars(getBrandAccentColor()); ?>" disabled style="width: 60px; height: 45px; padding: 2px; cursor: not-allowed; border: 2px solid var(--border-color); border-radius: 4px; opacity: 0.7;">
+                                <input type="text" id="theme_accent_hex" value="<?php echo htmlspecialchars(getBrandAccentColor()); ?>" maxlength="7" disabled style="flex: 1; text-transform: uppercase; cursor: not-allowed; opacity: 0.7;">
                             </div>
-                            <small class="help-text" style="color: var(--text-muted); margin-top: 5px; display: block;">Buttons & links</small>
+                            <small class="help-text" style="color: var(--text-muted); margin-top: 5px; display: block;"><i class="fas fa-lock"></i> Set by your administrator in System Settings</small>
                         </div>
                     </div>
 
@@ -927,14 +927,12 @@ if (isset($_POST['action']) && $_POST['action'] === 'uploadProfileImage') {
             document.getElementById('accentColorIcon').style.color = document.getElementById('theme_accent').value;
         }
 
-        // Apply preset colors
-        function applyPreset(primary, secondary, accent) {
+        // Apply preset colors (accent is fixed brand-wide and not part of presets)
+        function applyPreset(primary, secondary) {
             document.getElementById('theme_primary').value = primary;
             document.getElementById('theme_primary_hex').value = primary.toUpperCase();
             document.getElementById('theme_secondary').value = secondary;
             document.getElementById('theme_secondary_hex').value = secondary.toUpperCase();
-            document.getElementById('theme_accent').value = accent;
-            document.getElementById('theme_accent_hex').value = accent.toUpperCase();
             updatePreview();
             updateColorIcons();
 
