@@ -19,6 +19,28 @@ $role = $_SESSION['role'];
 $user_id = $_SESSION['user_id'];
 $current_page = 'users';
 
+// Grants or revokes the manage_postings permission for a user, based on the "Manage Job Postings" checkbox
+function syncManagePostingsPermission($conn, $targetUserId, $canManage) {
+    $permStmt = $conn->prepare("SELECT id FROM permissions WHERE slug = 'manage_postings'");
+    $permStmt->execute();
+    $permResult = $permStmt->get_result();
+    $permId = $permResult->num_rows > 0 ? $permResult->fetch_assoc()['id'] : null;
+    $permStmt->close();
+
+    if (!$permId) {
+        return;
+    }
+
+    if ($canManage) {
+        $stmt = $conn->prepare("INSERT IGNORE INTO user_permissions (user_id, permission_id) VALUES (?, ?)");
+    } else {
+        $stmt = $conn->prepare("DELETE FROM user_permissions WHERE user_id = ? AND permission_id = ?");
+    }
+    $stmt->bind_param("ii", $targetUserId, $permId);
+    $stmt->execute();
+    $stmt->close();
+}
+
 // Handle AJAX requests
 if (isset($_GET['action'])) {
     header('Content-Type: application/json');
@@ -27,7 +49,13 @@ if (isset($_GET['action'])) {
         switch ($_GET['action']) {
             case 'getUsers':
                 $conn = getDBConnection();
-                $stmt = $conn->prepare("SELECT id, full_name, email, role, is_active, avatar_url, last_login_at, created_at, updated_at FROM users ORDER BY id DESC");
+                $stmt = $conn->prepare("SELECT u.id, u.full_name, u.email, u.role, u.is_active, u.avatar_url, u.last_login_at, u.created_at, u.updated_at,
+                                                EXISTS(
+                                                    SELECT 1 FROM user_permissions up
+                                                    JOIN permissions p ON p.id = up.permission_id
+                                                    WHERE up.user_id = u.id AND p.slug = 'manage_postings'
+                                                ) AS can_manage_postings
+                                         FROM users u ORDER BY u.id DESC");
                 $stmt->execute();
                 $result = $stmt->get_result();
 
@@ -41,7 +69,8 @@ if (isset($_GET['action'])) {
                         'is_active' => (bool)$row['is_active'],
                         'avatar_url' => $row['avatar_url'],
                         'last_login_at' => $row['last_login_at'] ? date('M d, Y h:i A', strtotime($row['last_login_at'])) : 'Never',
-                        'created_at' => date('M d, Y', strtotime($row['created_at']))
+                        'created_at' => date('M d, Y', strtotime($row['created_at'])),
+                        'can_manage_postings' => (bool)$row['can_manage_postings']
                     ];
                 }
 
@@ -94,14 +123,22 @@ if (isset($_GET['action'])) {
                 }
                 $stmt->close();
 
+                $canManagePostings = isset($_POST['can_manage_postings']) && $_POST['can_manage_postings'] == '1';
+
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
                 $stmt = $conn->prepare("INSERT INTO users (full_name, email, password_hash, role, is_active) VALUES (?, ?, ?, ?, ?)");
                 $stmt->bind_param("ssssi", $fullName, $email, $hashedPassword, $newRole, $isActive);
 
                 if ($stmt->execute()) {
+                    $newUserId = $conn->insert_id;
+                    $stmt->close();
+
+                    if ($newRole !== 'admin') {
+                        syncManagePostingsPermission($conn, $newUserId, $canManagePostings);
+                    }
+
                     logActivity($user_id, 'CREATE', "Created user: $fullName ($email) - Role: $newRole", ['module' => 'users']);
 
-                    $stmt->close();
                     $conn->close();
                     echo json_encode(['success' => true, 'message' => 'User added successfully']);
                 } else {
@@ -165,10 +202,14 @@ if (isset($_GET['action'])) {
                 }
 
                 if ($stmt->execute()) {
+                    $stmt->close();
+
+                    $canManagePostings = isset($_POST['can_manage_postings']) && $_POST['can_manage_postings'] == '1';
+                    syncManagePostingsPermission($conn, $userId, $newRole !== 'admin' && $canManagePostings);
+
                     $details = !empty($password) ? "Updated user: $fullName ($email) - password changed" : "Updated user: $fullName ($email)";
                     logActivity($user_id, 'UPDATE', $details, ['module' => 'users']);
 
-                    $stmt->close();
                     $conn->close();
                     echo json_encode(['success' => true, 'message' => 'User updated successfully']);
                 } else {
@@ -449,6 +490,14 @@ if (isset($_GET['action'])) {
                         </div>
                     </div>
 
+                    <div class="form-group" id="managePostingsGroup">
+                        <label style="display:flex; align-items:center; gap:8px; font-weight:normal;">
+                            <input type="checkbox" id="canManagePostings" name="can_manage_postings" value="1" style="width:18px; height:18px;">
+                            <i class="fas fa-bullhorn"></i> Can Manage Job Postings
+                        </label>
+                        <small class="help-text" style="color: var(--text-muted); margin-top: 5px; display: block;">Grants access to create and edit job postings without full admin rights.</small>
+                    </div>
+
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save"></i> Save
@@ -644,6 +693,19 @@ if (isset($_GET['action'])) {
             }
         }
 
+        function updateManagePostingsVisibility() {
+            const role = document.getElementById('role').value;
+            const group = document.getElementById('managePostingsGroup');
+            if (role === 'admin') {
+                group.style.display = 'none';
+                document.getElementById('canManagePostings').checked = false;
+            } else {
+                group.style.display = 'block';
+            }
+        }
+
+        document.getElementById('role').addEventListener('change', updateManagePostingsVisibility);
+
         function openAddModal() {
             isEditMode = false;
             document.getElementById('modalTitle').innerHTML = '<i class="fas fa-user-plus"></i> Add User';
@@ -652,6 +714,8 @@ if (isset($_GET['action'])) {
             document.getElementById('passwordHint').style.display = 'none';
             document.getElementById('password').required = true;
             document.getElementById('isActive').value = '1';
+            document.getElementById('canManagePostings').checked = false;
+            updateManagePostingsVisibility();
             document.getElementById('userModal').classList.add('active');
         }
 
@@ -666,6 +730,8 @@ if (isset($_GET['action'])) {
             document.getElementById('password').value = '';
             document.getElementById('passwordHint').style.display = 'inline';
             document.getElementById('password').required = false;
+            document.getElementById('canManagePostings').checked = !!user.can_manage_postings;
+            updateManagePostingsVisibility();
             document.getElementById('userModal').classList.add('active');
         }
 
