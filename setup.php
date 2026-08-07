@@ -153,6 +153,8 @@
             email VARCHAR(150) NOT NULL UNIQUE,
             password_hash VARCHAR(255) NOT NULL,
             phone VARCHAR(20) DEFAULT NULL,
+            date_of_birth DATE DEFAULT NULL,
+            avatar_url VARCHAR(500) DEFAULT NULL,
             is_active BOOLEAN NOT NULL DEFAULT TRUE,
             password_reset_token VARCHAR(255) DEFAULT NULL,
             password_reset_expires DATETIME DEFAULT NULL,

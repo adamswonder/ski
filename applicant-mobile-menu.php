@@ -19,6 +19,11 @@ $mobile_current = isset($current_page) ? $current_page : '';
         <span>Openings</span>
     </a>
 
+    <a href="applicant-account.php" class="mobile-nav-item <?php echo $mobile_current === 'applicant-account' ? 'active' : ''; ?>">
+        <i class="ri-settings-3-line"></i>
+        <span>Settings</span>
+    </a>
+
     <a href="applicant-logout.php" class="mobile-nav-item">
         <i class="ri-logout-box-line"></i>
         <span>Logout</span>

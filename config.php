@@ -491,6 +491,31 @@ function getProfileImage($user_id) {
     }
 }
 
+function getApplicantProfileImage($applicant_id) {
+    try {
+        $conn = getDBConnection();
+        $stmt = $conn->prepare("SELECT avatar_url FROM applicants WHERE id = ?");
+        $stmt->bind_param("i", $applicant_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $profile_image = $row['avatar_url'];
+            $stmt->close();
+            $conn->close();
+            return $profile_image;
+        }
+
+        $stmt->close();
+        $conn->close();
+        return null;
+    } catch (Exception $e) {
+        error_log("Get applicant profile image error: " . $e->getMessage());
+        return null;
+    }
+}
+
 // User Theme Preferences Functions
 function getUserTheme($user_id) {
     $defaults = [

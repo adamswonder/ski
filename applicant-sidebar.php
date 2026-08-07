@@ -13,7 +13,9 @@ if (!isset($applicant_name) || !isset($current_page)) {
 }
 
 $default_logo = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiGXxCe0WNNedmFqSWeF761f7Kshhc-NP5ChRQKz9fr97cO8VaarvD0KlCwqHojJVBWv-RAxfOqMI5rD4H78KnARyOc6QgwL1nRRFWf5xNQ1d9F9HfAoLPPGlTyP0GwNl4n-INMEsWLQ4Y7zJtz5bOdAnc2ePH9-uCRgshlo6BsS6gJEz6fhrxL-5U5O3sX/s160/channels4_profile.jpg";
-$image_src = getSetting('login_logo', '') ?: $default_logo;
+$site_logo = getSetting('login_logo', '') ?: $default_logo;
+$applicant_avatar = isset($applicantId) ? getApplicantProfileImage($applicantId) : null;
+$image_src = $applicant_avatar ?: $site_logo;
 ?>
 <!-- Applicant Sidebar -->
 <div class="sidebar" id="sidebar">
@@ -42,6 +44,13 @@ $image_src = getSetting('login_logo', '') ?: $default_logo;
                 <a href="careers.php" class="<?php echo $current_page === 'careers' ? 'active' : ''; ?>">
                     <i class="ri-briefcase-line"></i>
                     <span>Browse Openings</span>
+                </a>
+            </li>
+
+            <li data-tooltip="Settings">
+                <a href="applicant-account.php" class="<?php echo $current_page === 'applicant-account' ? 'active' : ''; ?>">
+                    <i class="ri-settings-3-line"></i>
+                    <span>Settings</span>
                 </a>
             </li>
         </ul>
