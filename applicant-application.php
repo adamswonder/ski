@@ -86,6 +86,87 @@ if (isset($_GET['action'])) {
                 }
                 exit();
 
+            case 'updateProfile':
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+                    exit();
+                }
+
+                $profileAppId = isset($_POST['application_id']) ? intval($_POST['application_id']) : 0;
+                if ($profileAppId <= 0) {
+                    echo json_encode(['success' => false, 'message' => 'Invalid application ID']);
+                    exit();
+                }
+
+                $conn = getDBConnection();
+
+                // Ownership check - this application must belong to the logged-in applicant
+                $stmt = $conn->prepare("SELECT id FROM applications WHERE id = ? AND applicant_id = ?");
+                $stmt->bind_param("ii", $profileAppId, $applicantId);
+                $stmt->execute();
+                $owns = $stmt->get_result()->num_rows > 0;
+                $stmt->close();
+
+                if (!$owns) {
+                    $conn->close();
+                    echo json_encode(['success' => false, 'message' => 'Access denied']);
+                    exit();
+                }
+
+                $contactNumber = trim($_POST['contact_number'] ?? '') ?: null;
+                $currentLocation = trim($_POST['current_location'] ?? '');
+                $countyOfResidence = trim($_POST['county_of_residence'] ?? '') ?: null;
+                $nationality = trim($_POST['nationality'] ?? '') ?: null;
+                $experience = trim($_POST['experience'] ?? '') ?: null;
+                $expectedSalary = trim($_POST['expected_salary'] ?? '') ?: null;
+                $availabilityNoticePeriod = trim($_POST['availability_notice_period'] ?? '') ?: null;
+                $highestEducationLevel = trim($_POST['highest_education_level'] ?? '') ?: null;
+                $institution = trim($_POST['institution'] ?? '') ?: null;
+                $courseQualification = trim($_POST['course_qualification'] ?? '') ?: null;
+                $graduationYear = !empty($_POST['graduation_year']) ? intval($_POST['graduation_year']) : null;
+                $professionalCertifications = trim($_POST['professional_certifications'] ?? '') ?: null;
+                $relevantTraining = trim($_POST['relevant_training'] ?? '') ?: null;
+                $currentEmployer = trim($_POST['current_employer'] ?? '') ?: null;
+                $currentJobTitle = trim($_POST['current_job_title'] ?? '') ?: null;
+                $previousEmployers = trim($_POST['previous_employers'] ?? '') ?: null;
+                $aviationExperience = trim($_POST['aviation_experience'] ?? '') ?: null;
+                $customerServiceExperience = trim($_POST['customer_service_experience'] ?? '') ?: null;
+                $relevantSkills = trim($_POST['relevant_skills'] ?? '') ?: null;
+
+                $academicQual = isset($_POST['academic_qualification']) && is_array($_POST['academic_qualification'])
+                    ? json_encode(array_values($_POST['academic_qualification']))
+                    : null;
+                $technicalQual = isset($_POST['technical_qualification']) && is_array($_POST['technical_qualification'])
+                    ? json_encode(array_values($_POST['technical_qualification']))
+                    : null;
+
+                if ($currentLocation === '') {
+                    echo json_encode(['success' => false, 'message' => 'Current location is required']);
+                    exit();
+                }
+
+                $stmt = $conn->prepare("UPDATE applications SET contact_number = ?, current_location = ?, county_of_residence = ?, nationality = ?, experience = ?, expected_salary = ?, availability_notice_period = ?, highest_education_level = ?, institution = ?, course_qualification = ?, graduation_year = ?, professional_certifications = ?, relevant_training = ?, current_employer = ?, current_job_title = ?, previous_employers = ?, aviation_experience = ?, customer_service_experience = ?, relevant_skills = ?, academic_qualification = ?, technical_qualification = ? WHERE id = ?");
+                $stmt->bind_param(
+                    "ssssssssssissssssssssi",
+                    $contactNumber, $currentLocation, $countyOfResidence, $nationality, $experience,
+                    $expectedSalary, $availabilityNoticePeriod, $highestEducationLevel, $institution,
+                    $courseQualification, $graduationYear, $professionalCertifications, $relevantTraining,
+                    $currentEmployer, $currentJobTitle, $previousEmployers, $aviationExperience,
+                    $customerServiceExperience, $relevantSkills, $academicQual, $technicalQual, $profileAppId
+                );
+
+                if ($stmt->execute()) {
+                    $stmt->close();
+                    $conn->close();
+                    echo json_encode(['success' => true, 'message' => 'Profile updated successfully']);
+                } else {
+                    $error = $stmt->error;
+                    $stmt->close();
+                    $conn->close();
+                    echo json_encode(['success' => false, 'message' => 'Failed to update profile: ' . $error]);
+                }
+                exit();
+
             default:
                 echo json_encode(['success' => false, 'message' => 'Invalid action']);
                 exit();
@@ -181,6 +262,12 @@ $conn->close();
 
 $academicQual = $app['academic_qualification'] ? json_decode($app['academic_qualification'], true) : [];
 $technicalQual = $app['technical_qualification'] ? json_decode($app['technical_qualification'], true) : [];
+
+$ACADEMIC_OPTIONS = ["Certificate", "Diploma", "Bachelor's", "Master's", "PhD", "Professional Certification"];
+$technicalSkillsOptions = json_decode(getSetting('technical_skills', '[]'), true);
+if (!is_array($technicalSkillsOptions)) {
+    $technicalSkillsOptions = [];
+}
 
 $loginLogo = getSetting('login_logo', '');
 $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiGXxCe0WNNedmFqSWeF761f7Kshhc-NP5ChRQKz9fr97cO8VaarvD0KlCwqHojJVBWv-RAxfOqMI5rD4H78KnARyOc6QgwL1nRRFWf5xNQ1d9F9HfAoLPPGlTyP0GwNl4n-INMEsWLQ4Y7zJtz5bOdAnc2ePH9-uCRgshlo6BsS6gJEz6fhrxL-5U5O3sX/s160/channels4_profile.jpg';
@@ -279,77 +366,236 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
 
         <!-- Application Details -->
         <div class="data-section" style="margin-bottom: 24px;">
-            <h3 style="margin: 0 0 20px;"><i class="ri-file-user-line"></i> Application Details</h3>
-            <div class="aa-grid">
-                <div>
-                    <div class="aa-field-label">Email</div>
-                    <div class="aa-field-value"><?php echo htmlspecialchars($app['email']); ?></div>
-                </div>
-                <div>
-                    <div class="aa-field-label">Contact Number</div>
-                    <div class="aa-field-value"><?php echo htmlspecialchars($app['contact_number'] ?: '—'); ?></div>
-                </div>
-                <div>
-                    <div class="aa-field-label">Current Location</div>
-                    <div class="aa-field-value"><?php echo htmlspecialchars($app['current_location'] ?: '—'); ?></div>
-                </div>
-                <div>
-                    <div class="aa-field-label">County of Residence</div>
-                    <div class="aa-field-value"><?php echo htmlspecialchars($app['county_of_residence'] ?: '—'); ?></div>
-                </div>
-                <div>
-                    <div class="aa-field-label">Experience</div>
-                    <div class="aa-field-value"><?php echo htmlspecialchars($app['experience'] ?: '—'); ?></div>
-                </div>
-                <div>
-                    <div class="aa-field-label">Expected Salary</div>
-                    <div class="aa-field-value"><?php echo htmlspecialchars($app['expected_salary'] ?: '—'); ?></div>
-                </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                <h3 style="margin: 0;"><i class="ri-file-user-line"></i> Application Details</h3>
+                <button type="button" class="btn btn-secondary btn-sm" id="profileEditToggleBtn" onclick="toggleProfileEdit()">
+                    <i class="ri-edit-line"></i> Edit
+                </button>
             </div>
 
-            <?php if ($app['highest_education_level'] || $app['institution'] || $app['course_qualification']): ?>
-            <h4 class="form-section-title"><i class="ri-graduation-cap-line"></i> Education</h4>
-            <div class="aa-grid">
-                <div>
-                    <div class="aa-field-label">Highest Education Level</div>
-                    <div class="aa-field-value"><?php echo htmlspecialchars($app['highest_education_level'] ?: '—'); ?></div>
+            <div id="profileViewMode">
+                <div class="aa-grid">
+                    <div>
+                        <div class="aa-field-label">Email</div>
+                        <div class="aa-field-value"><?php echo htmlspecialchars($app['email']); ?></div>
+                    </div>
+                    <div>
+                        <div class="aa-field-label">Contact Number</div>
+                        <div class="aa-field-value"><?php echo htmlspecialchars($app['contact_number'] ?: '—'); ?></div>
+                    </div>
+                    <div>
+                        <div class="aa-field-label">Current Location</div>
+                        <div class="aa-field-value"><?php echo htmlspecialchars($app['current_location'] ?: '—'); ?></div>
+                    </div>
+                    <div>
+                        <div class="aa-field-label">County of Residence</div>
+                        <div class="aa-field-value"><?php echo htmlspecialchars($app['county_of_residence'] ?: '—'); ?></div>
+                    </div>
+                    <div>
+                        <div class="aa-field-label">Nationality</div>
+                        <div class="aa-field-value"><?php echo htmlspecialchars($app['nationality'] ?: '—'); ?></div>
+                    </div>
+                    <div>
+                        <div class="aa-field-label">Experience</div>
+                        <div class="aa-field-value"><?php echo htmlspecialchars($app['experience'] ?: '—'); ?></div>
+                    </div>
+                    <div>
+                        <div class="aa-field-label">Expected Salary</div>
+                        <div class="aa-field-value"><?php echo htmlspecialchars($app['expected_salary'] ?: '—'); ?></div>
+                    </div>
+                    <div>
+                        <div class="aa-field-label">Availability / Notice Period</div>
+                        <div class="aa-field-value"><?php echo htmlspecialchars($app['availability_notice_period'] ?: '—'); ?></div>
+                    </div>
                 </div>
-                <div>
-                    <div class="aa-field-label">Institution</div>
-                    <div class="aa-field-value"><?php echo htmlspecialchars($app['institution'] ?: '—'); ?></div>
-                </div>
-                <div>
-                    <div class="aa-field-label">Course / Qualification</div>
-                    <div class="aa-field-value"><?php echo htmlspecialchars($app['course_qualification'] ?: '—'); ?></div>
-                </div>
-                <div>
-                    <div class="aa-field-label">Graduation Year</div>
-                    <div class="aa-field-value"><?php echo htmlspecialchars($app['graduation_year'] ?: '—'); ?></div>
-                </div>
-            </div>
-            <?php endif; ?>
 
-            <?php if (!empty($academicQual) || !empty($technicalQual)): ?>
-            <h4 class="form-section-title"><i class="ri-award-line"></i> Qualifications</h4>
-            <div style="margin-bottom: 10px;">
-                <?php foreach ($academicQual as $q): ?><span class="doc-qual-tag"><?php echo htmlspecialchars($q); ?></span><?php endforeach; ?>
-                <?php foreach ($technicalQual as $q): ?><span class="doc-qual-tag"><?php echo htmlspecialchars($q); ?></span><?php endforeach; ?>
-            </div>
-            <?php endif; ?>
+                <?php if ($app['highest_education_level'] || $app['institution'] || $app['course_qualification']): ?>
+                <h4 class="form-section-title"><i class="ri-graduation-cap-line"></i> Education</h4>
+                <div class="aa-grid">
+                    <div>
+                        <div class="aa-field-label">Highest Education Level</div>
+                        <div class="aa-field-value"><?php echo htmlspecialchars($app['highest_education_level'] ?: '—'); ?></div>
+                    </div>
+                    <div>
+                        <div class="aa-field-label">Institution</div>
+                        <div class="aa-field-value"><?php echo htmlspecialchars($app['institution'] ?: '—'); ?></div>
+                    </div>
+                    <div>
+                        <div class="aa-field-label">Course / Qualification</div>
+                        <div class="aa-field-value"><?php echo htmlspecialchars($app['course_qualification'] ?: '—'); ?></div>
+                    </div>
+                    <div>
+                        <div class="aa-field-label">Graduation Year</div>
+                        <div class="aa-field-value"><?php echo htmlspecialchars($app['graduation_year'] ?: '—'); ?></div>
+                    </div>
+                </div>
+                <?php if ($app['professional_certifications']): ?><div class="aa-field-label">Professional Certifications</div><div class="aa-field-value"><?php echo nl2br(htmlspecialchars($app['professional_certifications'])); ?></div><?php endif; ?>
+                <?php if ($app['relevant_training']): ?><div class="aa-field-label">Relevant Training</div><div class="aa-field-value"><?php echo nl2br(htmlspecialchars($app['relevant_training'])); ?></div><?php endif; ?>
+                <?php endif; ?>
 
-            <?php if (!empty($questionAnswers)): ?>
-            <h4 class="form-section-title"><i class="ri-question-answer-line"></i> Your Responses</h4>
-            <?php foreach ($questionAnswers as $qa): ?>
-                <div class="aa-field-label"><?php echo htmlspecialchars($qa['label']); ?></div>
-                <div class="aa-field-value">
-                    <?php if ($qa['field_type'] === 'file' && $qa['answer_value']): ?>
-                        <a href="<?php echo htmlspecialchars($qa['answer_value']); ?>" target="_blank"><i class="ri-file-line"></i> View uploaded file</a>
-                    <?php else: ?>
-                        <?php echo htmlspecialchars($qa['answer_value'] ?: '—'); ?>
+                <?php if ($app['current_employer'] || $app['current_job_title'] || $app['previous_employers'] || $app['aviation_experience'] || $app['customer_service_experience'] || $app['relevant_skills']): ?>
+                <h4 class="form-section-title"><i class="ri-briefcase-4-line"></i> Work Experience</h4>
+                <div class="aa-grid">
+                    <div>
+                        <div class="aa-field-label">Current / Most Recent Employer</div>
+                        <div class="aa-field-value"><?php echo htmlspecialchars($app['current_employer'] ?: '—'); ?></div>
+                    </div>
+                    <div>
+                        <div class="aa-field-label">Job Title</div>
+                        <div class="aa-field-value"><?php echo htmlspecialchars($app['current_job_title'] ?: '—'); ?></div>
+                    </div>
+                </div>
+                <?php if ($app['previous_employers']): ?><div class="aa-field-label">Previous Employers</div><div class="aa-field-value"><?php echo nl2br(htmlspecialchars($app['previous_employers'])); ?></div><?php endif; ?>
+                <?php if ($app['aviation_experience']): ?><div class="aa-field-label">Aviation Experience</div><div class="aa-field-value"><?php echo nl2br(htmlspecialchars($app['aviation_experience'])); ?></div><?php endif; ?>
+                <?php if ($app['customer_service_experience']): ?><div class="aa-field-label">Customer Service Experience</div><div class="aa-field-value"><?php echo nl2br(htmlspecialchars($app['customer_service_experience'])); ?></div><?php endif; ?>
+                <?php if ($app['relevant_skills']): ?><div class="aa-field-label">Relevant Skills</div><div class="aa-field-value"><?php echo nl2br(htmlspecialchars($app['relevant_skills'])); ?></div><?php endif; ?>
+                <?php endif; ?>
+
+                <?php if (!empty($academicQual) || !empty($technicalQual)): ?>
+                <h4 class="form-section-title"><i class="ri-award-line"></i> Qualifications</h4>
+                <div style="margin-bottom: 10px;">
+                    <?php foreach ($academicQual as $q): ?><span class="doc-qual-tag"><?php echo htmlspecialchars($q); ?></span><?php endforeach; ?>
+                    <?php foreach ($technicalQual as $q): ?><span class="doc-qual-tag"><?php echo htmlspecialchars($q); ?></span><?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+
+                <?php if (!empty($questionAnswers)): ?>
+                <h4 class="form-section-title"><i class="ri-question-answer-line"></i> Your Responses</h4>
+                <?php foreach ($questionAnswers as $qa): ?>
+                    <div class="aa-field-label"><?php echo htmlspecialchars($qa['label']); ?></div>
+                    <div class="aa-field-value">
+                        <?php if ($qa['field_type'] === 'file' && $qa['answer_value']): ?>
+                            <a href="<?php echo htmlspecialchars($qa['answer_value']); ?>" target="_blank"><i class="ri-file-line"></i> View uploaded file</a>
+                        <?php else: ?>
+                            <?php echo htmlspecialchars($qa['answer_value'] ?: '—'); ?>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+
+            <div id="profileEditMode" style="display:none;">
+                <form id="profileEditForm">
+                    <input type="hidden" name="application_id" value="<?php echo $app['id']; ?>">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Contact Number</label>
+                            <input type="text" name="contact_number" maxlength="20" value="<?php echo htmlspecialchars($app['contact_number'] ?? ''); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Current Location *</label>
+                            <input type="text" name="current_location" required maxlength="150" value="<?php echo htmlspecialchars($app['current_location'] ?? ''); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>County of Residence</label>
+                            <input type="text" name="county_of_residence" maxlength="100" value="<?php echo htmlspecialchars($app['county_of_residence'] ?? ''); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Nationality</label>
+                            <input type="text" name="nationality" maxlength="80" value="<?php echo htmlspecialchars($app['nationality'] ?? ''); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Experience</label>
+                            <input type="text" name="experience" maxlength="100" placeholder="e.g. 3 years" value="<?php echo htmlspecialchars($app['experience'] ?? ''); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Expected Salary</label>
+                            <input type="text" name="expected_salary" maxlength="50" placeholder="e.g. KES 80,000" value="<?php echo htmlspecialchars($app['expected_salary'] ?? ''); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Availability / Notice Period</label>
+                            <input type="text" name="availability_notice_period" maxlength="100" placeholder="e.g. 30 days" value="<?php echo htmlspecialchars($app['availability_notice_period'] ?? ''); ?>">
+                        </div>
+                    </div>
+
+                    <h4 class="form-section-title"><i class="ri-graduation-cap-line"></i> Education</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Highest Education Level</label>
+                            <input type="text" name="highest_education_level" maxlength="100" value="<?php echo htmlspecialchars($app['highest_education_level'] ?? ''); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Institution</label>
+                            <input type="text" name="institution" maxlength="150" value="<?php echo htmlspecialchars($app['institution'] ?? ''); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Course / Qualification</label>
+                            <input type="text" name="course_qualification" maxlength="150" value="<?php echo htmlspecialchars($app['course_qualification'] ?? ''); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Graduation Year</label>
+                            <input type="number" name="graduation_year" min="1950" max="2100" value="<?php echo htmlspecialchars($app['graduation_year'] ?? ''); ?>">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Professional Certifications</label>
+                        <textarea name="professional_certifications" rows="2"><?php echo htmlspecialchars($app['professional_certifications'] ?? ''); ?></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Relevant Training</label>
+                        <textarea name="relevant_training" rows="2"><?php echo htmlspecialchars($app['relevant_training'] ?? ''); ?></textarea>
+                    </div>
+
+                    <h4 class="form-section-title"><i class="ri-briefcase-4-line"></i> Work Experience</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Current / Most Recent Employer</label>
+                            <input type="text" name="current_employer" maxlength="150" value="<?php echo htmlspecialchars($app['current_employer'] ?? ''); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Job Title</label>
+                            <input type="text" name="current_job_title" maxlength="150" value="<?php echo htmlspecialchars($app['current_job_title'] ?? ''); ?>">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Previous Employers</label>
+                        <textarea name="previous_employers" rows="2"><?php echo htmlspecialchars($app['previous_employers'] ?? ''); ?></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Aviation Experience</label>
+                        <textarea name="aviation_experience" rows="2"><?php echo htmlspecialchars($app['aviation_experience'] ?? ''); ?></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Customer Service Experience</label>
+                        <textarea name="customer_service_experience" rows="2"><?php echo htmlspecialchars($app['customer_service_experience'] ?? ''); ?></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Relevant Skills</label>
+                        <textarea name="relevant_skills" rows="2"><?php echo htmlspecialchars($app['relevant_skills'] ?? ''); ?></textarea>
+                    </div>
+
+                    <h4 class="form-section-title"><i class="ri-award-line"></i> Qualifications</h4>
+                    <div class="form-group">
+                        <label>Academic Qualification</label>
+                        <div class="checkbox-group">
+                            <?php foreach ($ACADEMIC_OPTIONS as $opt): ?>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="academic_qualification[]" value="<?php echo htmlspecialchars($opt); ?>" <?php echo in_array($opt, $academicQual) ? 'checked' : ''; ?>>
+                                    <span><?php echo htmlspecialchars($opt); ?></span>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <?php if (!empty($technicalSkillsOptions)): ?>
+                    <div class="form-group">
+                        <label>Technical Skills</label>
+                        <div class="checkbox-group">
+                            <?php foreach ($technicalSkillsOptions as $skill): ?>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="technical_qualification[]" value="<?php echo htmlspecialchars($skill); ?>" <?php echo in_array($skill, $technicalQual) ? 'checked' : ''; ?>>
+                                    <span><?php echo htmlspecialchars($skill); ?></span>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
                     <?php endif; ?>
-                </div>
-            <?php endforeach; ?>
-            <?php endif; ?>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary"><i class="ri-save-line"></i> Save Changes</button>
+                        <button type="button" class="btn btn-secondary" onclick="toggleProfileEdit()"><i class="ri-close-line"></i> Cancel</button>
+                    </div>
+                </form>
+            </div>
         </div>
 
         <!-- Documents -->
@@ -395,6 +641,50 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        function toggleProfileEdit() {
+            var viewMode = document.getElementById('profileViewMode');
+            var editMode = document.getElementById('profileEditMode');
+            var btn = document.getElementById('profileEditToggleBtn');
+            var isEditing = editMode.style.display !== 'none';
+
+            if (isEditing) {
+                editMode.style.display = 'none';
+                viewMode.style.display = 'block';
+                btn.innerHTML = '<i class="ri-edit-line"></i> Edit';
+            } else {
+                viewMode.style.display = 'none';
+                editMode.style.display = 'block';
+                btn.innerHTML = '<i class="ri-close-line"></i> Cancel';
+            }
+        }
+
+        document.getElementById('profileEditForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+
+            Swal.fire({ title: 'Saving...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            $.ajax({
+                url: '?action=updateProfile',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({ icon: 'success', title: 'Saved!', timer: 1200, showConfirmButton: false })
+                            .then(() => location.reload());
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Error', text: response.message });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Connection error: ' + error });
+                }
+            });
+        });
+
         document.getElementById('docUploadForm').addEventListener('submit', function(e) {
             e.preventDefault();
             var formData = new FormData(this);
