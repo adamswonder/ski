@@ -48,12 +48,14 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
 
         .careers-list { border-top: 1px solid var(--border-color); }
         .careers-row {
+            padding: 28px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .careers-row-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 20px;
-            padding: 28px 0;
-            border-bottom: 1px solid var(--border-color);
             flex-wrap: wrap;
         }
         .careers-row-main { flex: 1; min-width: 240px; }
@@ -81,9 +83,42 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
             align-items: center;
             justify-content: center;
             font-size: 16px;
+            font-family: inherit;
+            cursor: pointer;
             transition: all 0.2s;
+            flex-shrink: 0;
         }
         .careers-view-btn:hover { border-color: var(--navy-primary); color: var(--navy-primary); }
+        .careers-view-btn i { transition: transform 0.2s; }
+        .careers-view-btn.open { background: var(--navy-primary); border-color: var(--navy-primary); color: #fff; }
+        .careers-view-btn.open i { transform: rotate(180deg); }
+
+        .careers-row-detail {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.25s ease, opacity 0.2s ease, margin-top 0.25s ease;
+            opacity: 0;
+            margin-top: 0;
+        }
+        .careers-row-detail.open {
+            max-height: 400px;
+            opacity: 1;
+            margin-top: 18px;
+        }
+        .careers-row-detail p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .careers-detail-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--navy-accent);
+            font-size: 13px;
+            font-weight: 600;
+        }
         .careers-apply-btn {
             background: var(--navy-primary);
             color: #fff;
@@ -104,7 +139,7 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
         .careers-footer-info-item p { color: var(--text-secondary); font-size: 15px; line-height: 1.6; }
 
         @media (max-width: 640px) {
-            .careers-row { flex-direction: column; align-items: flex-start; }
+            .careers-row-top { flex-direction: column; align-items: flex-start; }
             .careers-row-actions { width: 100%; }
             .careers-apply-btn { flex: 1; justify-content: center; }
             .careers-footer-info { grid-template-columns: 1fr; }
@@ -139,29 +174,37 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
             <div class="careers-list">
                 <?php foreach ($postings as $posting): ?>
                     <div class="careers-row">
-                        <div class="careers-row-main">
-                            <div class="careers-eyebrow"><?php echo htmlspecialchars($posting['department'] ?: 'Open Roles'); ?></div>
-                            <h2><?php echo htmlspecialchars($posting['title']); ?></h2>
-                            <div class="careers-meta">
-                                <?php
-                                    $metaParts = array_filter([
-                                        $posting['employment_type'],
-                                        $posting['salary_range'],
-                                        $posting['location']
-                                    ]);
-                                ?>
-                                <?php foreach ($metaParts as $i => $part): ?>
-                                    <?php if ($i > 0): ?><span class="dot"></span><?php endif; ?>
-                                    <span><?php echo htmlspecialchars($part); ?></span>
-                                <?php endforeach; ?>
+                        <div class="careers-row-top">
+                            <div class="careers-row-main">
+                                <div class="careers-eyebrow"><?php echo htmlspecialchars($posting['department'] ?: 'Open Roles'); ?></div>
+                                <h2><?php echo htmlspecialchars($posting['title']); ?></h2>
+                                <div class="careers-meta">
+                                    <?php
+                                        $metaParts = array_filter([
+                                            $posting['employment_type'],
+                                            $posting['salary_range'],
+                                            $posting['location']
+                                        ]);
+                                    ?>
+                                    <?php foreach ($metaParts as $i => $part): ?>
+                                        <?php if ($i > 0): ?><span class="dot"></span><?php endif; ?>
+                                        <span><?php echo htmlspecialchars($part); ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                            <div class="careers-row-actions">
+                                <button type="button" class="careers-view-btn" title="View Details" onclick="toggleCareersRow(<?php echo $posting['id']; ?>, this)">
+                                    <i class="ri-arrow-down-s-line"></i>
+                                </button>
+                                <a href="careers-job.php?id=<?php echo $posting['id']; ?>" class="careers-apply-btn">
+                                    Submit Application <i class="ri-arrow-right-up-line"></i>
+                                </a>
                             </div>
                         </div>
-                        <div class="careers-row-actions">
-                            <a href="careers-job.php?id=<?php echo $posting['id']; ?>" class="careers-view-btn" title="View Details">
-                                <i class="ri-arrow-down-s-line"></i>
-                            </a>
-                            <a href="careers-job.php?id=<?php echo $posting['id']; ?>" class="careers-apply-btn">
-                                Submit Application <i class="ri-arrow-right-up-line"></i>
+                        <div class="careers-row-detail" id="careers-detail-<?php echo $posting['id']; ?>">
+                            <p><?php echo htmlspecialchars($posting['excerpt']); ?></p>
+                            <a href="careers-job.php?id=<?php echo $posting['id']; ?>" class="careers-detail-link">
+                                View full posting <i class="ri-arrow-right-line"></i>
                             </a>
                         </div>
                     </div>
@@ -181,5 +224,15 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
             </div>
         </div>
     </div>
+
+    <script>
+        function toggleCareersRow(id, btn) {
+            var detail = document.getElementById('careers-detail-' + id);
+            if (!detail) return;
+
+            var isOpen = detail.classList.toggle('open');
+            btn.classList.toggle('open', isOpen);
+        }
+    </script>
 </body>
 </html>
