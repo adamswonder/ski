@@ -1316,7 +1316,7 @@ body.dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
     color: var(--navy-accent);
 }
 
-.form-group input,
+.form-group input:not([type="checkbox"]):not([type="radio"]),
 .form-group select,
 .form-group textarea {
     width: 100%;
@@ -1328,6 +1328,15 @@ body.dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
     font-family: inherit;
     background: var(--input-bg);
     color: var(--text-primary);
+}
+
+.form-group input[type="checkbox"],
+.form-group input[type="radio"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--navy-accent);
+    cursor: pointer;
+    flex-shrink: 0;
 }
 
 .form-group input:focus,
@@ -4340,6 +4349,39 @@ body.dark-mode .form-section-title {
     font-weight: 600;
 }
 
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.radio-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+    touch-action: manipulation;
+}
+
+.radio-item:hover {
+    border-color: var(--navy-accent);
+    background: rgba(2, 63, 87, 0.05);
+}
+
+.radio-item:has(input[type="radio"]:checked) {
+    border-color: var(--navy-primary);
+    color: var(--navy-primary);
+    font-weight: 600;
+}
+
 body.dark-mode .checkbox-group {
     background: rgba(255,255,255,0.03);
     border-color: rgba(255,255,255,0.1);
@@ -4352,6 +4394,17 @@ body.dark-mode .checkbox-item {
 }
 
 body.dark-mode .checkbox-item:hover {
+    border-color: var(--navy-accent);
+    background: rgba(2, 63, 87, 0.1);
+}
+
+body.dark-mode .radio-item {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.1);
+    color: #b0b3c5;
+}
+
+body.dark-mode .radio-item:hover {
     border-color: var(--navy-accent);
     background: rgba(2, 63, 87, 0.1);
 }

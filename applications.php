@@ -548,7 +548,11 @@ if (isset($_GET['action'])) {
                     $stmt->close();
                 }
 
-                $stmt = $conn->prepare("SELECT d.*, u.full_name AS uploaded_by_name FROM application_documents d LEFT JOIN users u ON d.uploaded_by = u.id WHERE d.application_id = ? ORDER BY d.uploaded_at DESC");
+                $stmt = $conn->prepare("SELECT d.*, COALESCE(u.full_name, CONCAT(ap.full_name, ' (applicant)')) AS uploaded_by_name
+                                         FROM application_documents d
+                                         LEFT JOIN users u ON d.uploaded_by = u.id
+                                         LEFT JOIN applicants ap ON d.uploaded_by_applicant_id = ap.id
+                                         WHERE d.application_id = ? ORDER BY d.uploaded_at DESC");
                 $stmt->bind_param("i", $appId);
                 $stmt->execute();
                 $result = $stmt->get_result();
@@ -888,7 +892,7 @@ if (isset($_GET['action'])) {
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.10">
+    <link rel="stylesheet" href="styles.css?v=5.11">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

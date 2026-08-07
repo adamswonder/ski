@@ -10,7 +10,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <title>Database Setup</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles.css?v=5.10">
+    <link rel="stylesheet" href="styles.css?v=5.11">
 </head>
 <body>
     <div class="setup-wrapper">
@@ -286,12 +286,15 @@
             file_type VARCHAR(50) DEFAULT NULL,
             file_size_kb INT DEFAULT NULL,
             document_label VARCHAR(100) DEFAULT 'CV',
-            uploaded_by INT NOT NULL,
+            uploaded_by INT DEFAULT NULL,
+            uploaded_by_applicant_id INT DEFAULT NULL,
             uploaded_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             INDEX idx_application_id (application_id),
             INDEX idx_uploaded_by (uploaded_by),
+            INDEX idx_uploaded_by_applicant_id (uploaded_by_applicant_id),
             FOREIGN KEY (application_id) REFERENCES applications(id) ON DELETE CASCADE,
-            FOREIGN KEY (uploaded_by) REFERENCES users(id)
+            FOREIGN KEY (uploaded_by) REFERENCES users(id),
+            FOREIGN KEY (uploaded_by_applicant_id) REFERENCES applicants(id) ON DELETE SET NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
         echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Table "application_documents" created</div>';
 

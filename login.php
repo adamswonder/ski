@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="mobile-web-app-capable" content="yes">
     <title>Login - Skyward Airlines</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles.css?v=5.10">
+    <link rel="stylesheet" href="styles.css?v=5.11">
     <?php echo generateBrandAccentCSS(); ?>
 </head>
 <body>

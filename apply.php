@@ -220,7 +220,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Apply - <?php echo htmlspecialchars($posting['title']); ?></title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles.css?v=5.10">
+    <link rel="stylesheet" href="styles.css?v=5.11">
     <?php echo generateBrandAccentCSS(); ?>
 </head>
 <body>
@@ -280,12 +280,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="form-group">
                     <label>Academic Qualification</label>
-                    <div style="display:flex; flex-wrap:wrap; gap: 12px;">
+                    <div class="checkbox-group">
                         <?php foreach ($ACADEMIC_OPTIONS as $opt): ?>
-                            <label style="display:flex; align-items:center; gap:6px; font-weight:normal;">
+                            <label class="checkbox-item">
                                 <input type="checkbox" name="academic_qualification[]" value="<?php echo htmlspecialchars($opt); ?>"
                                     <?php echo in_array($opt, $formValues['academic_qualification']) ? 'checked' : ''; ?>>
-                                <?php echo htmlspecialchars($opt); ?>
+                                <span><?php echo htmlspecialchars($opt); ?></span>
                             </label>
                         <?php endforeach; ?>
                     </div>
@@ -294,12 +294,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php if (!empty($technicalSkills)): ?>
                 <div class="form-group">
                     <label>Technical Skills</label>
-                    <div style="display:flex; flex-wrap:wrap; gap: 12px;">
+                    <div class="checkbox-group">
                         <?php foreach ($technicalSkills as $skill): ?>
-                            <label style="display:flex; align-items:center; gap:6px; font-weight:normal;">
+                            <label class="checkbox-item">
                                 <input type="checkbox" name="technical_qualification[]" value="<?php echo htmlspecialchars($skill); ?>"
                                     <?php echo in_array($skill, $formValues['technical_qualification']) ? 'checked' : ''; ?>>
-                                <?php echo htmlspecialchars($skill); ?>
+                                <span><?php echo htmlspecialchars($skill); ?></span>
                             </label>
                         <?php endforeach; ?>
                     </div>
@@ -321,12 +321,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <textarea name="answers[<?php echo $q['id']; ?>]" rows="4"><?php echo htmlspecialchars($formValues['answers'][$q['id']] ?? ''); ?></textarea>
 
                             <?php elseif ($q['field_type'] === 'radio'): ?>
-                                <div style="display:flex; flex-direction:column; gap:6px;">
+                                <div class="radio-group">
                                     <?php foreach ($q['options'] as $opt): ?>
-                                        <label style="display:flex; align-items:center; gap:6px; font-weight:normal;">
+                                        <label class="radio-item">
                                             <input type="radio" name="answers[<?php echo $q['id']; ?>]" value="<?php echo htmlspecialchars($opt); ?>"
                                                 <?php echo (($formValues['answers'][$q['id']] ?? '') === $opt) ? 'checked' : ''; ?>>
-                                            <?php echo htmlspecialchars($opt); ?>
+                                            <span><?php echo htmlspecialchars($opt); ?></span>
                                         </label>
                                     <?php endforeach; ?>
                                 </div>
@@ -342,13 +342,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </select>
 
                             <?php elseif ($q['field_type'] === 'checkbox'): ?>
-                                <div style="display:flex; flex-direction:column; gap:6px;">
+                                <div class="checkbox-group">
                                     <?php $selectedAnswers = $formValues['answers'][$q['id']] ?? []; ?>
                                     <?php foreach ($q['options'] as $opt): ?>
-                                        <label style="display:flex; align-items:center; gap:6px; font-weight:normal;">
+                                        <label class="checkbox-item">
                                             <input type="checkbox" name="answers[<?php echo $q['id']; ?>][]" value="<?php echo htmlspecialchars($opt); ?>"
                                                 <?php echo (is_array($selectedAnswers) && in_array($opt, $selectedAnswers)) ? 'checked' : ''; ?>>
-                                            <?php echo htmlspecialchars($opt); ?>
+                                            <span><?php echo htmlspecialchars($opt); ?></span>
                                         </label>
                                     <?php endforeach; ?>
                                 </div>

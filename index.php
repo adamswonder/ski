@@ -51,7 +51,7 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Skyward Airlines Careers</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles.css?v=5.10">
+    <link rel="stylesheet" href="styles.css?v=5.11">
     <?php echo generateBrandAccentCSS(); ?>
     <style>
         html, body.landing {
