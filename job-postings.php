@@ -388,7 +388,7 @@ if (isset($_GET['action'])) {
                         </div>
                         <div class="form-group">
                             <label><i class="ri-money-dollar-circle-line"></i> Salary Range</label>
-                            <input type="text" id="postingSalaryRange" name="salary_range" maxlength="100" placeholder="e.g. $100 - $500K">
+                            <input type="text" id="postingSalaryRange" name="salary_range" maxlength="100" placeholder="e.g. KES 80,000 - 120,000">
                         </div>
                     </div>
 

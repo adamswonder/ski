@@ -269,7 +269,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <div class="form-group">
                         <label>Expected Salary</label>
-                        <input type="text" name="expected_salary" maxlength="50" value="<?php echo htmlspecialchars($formValues['expected_salary']); ?>">
+                        <input type="text" name="expected_salary" maxlength="50" placeholder="e.g. KES 80,000" value="<?php echo htmlspecialchars($formValues['expected_salary']); ?>">
                     </div>
                 </div>
 

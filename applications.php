@@ -774,7 +774,7 @@ if (isset($_GET['action'])) {
                         </div>
                         <div class="form-group">
                             <label><i class="ri-money-dollar-circle-line"></i> Expected Salary</label>
-                            <input type="text" id="expectedSalary" name="expected_salary" maxlength="50" placeholder="e.g. 50,000 PKR">
+                            <input type="text" id="expectedSalary" name="expected_salary" maxlength="50" placeholder="e.g. KES 80,000">
                         </div>
                     </div>
 
