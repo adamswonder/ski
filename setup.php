@@ -73,7 +73,7 @@
             full_name VARCHAR(100) NOT NULL,
             email VARCHAR(150) NOT NULL UNIQUE,
             password_hash VARCHAR(255) NOT NULL,
-            role ENUM('admin', 'user') NOT NULL DEFAULT 'user',
+            role ENUM('admin', 'staff') NOT NULL DEFAULT 'staff',
             avatar_url VARCHAR(500) DEFAULT NULL,
             is_active BOOLEAN NOT NULL DEFAULT TRUE,
             password_reset_token VARCHAR(255) DEFAULT NULL,
@@ -364,7 +364,7 @@
         // seed 39 demo users (admin + 39 = 40 total)
         $user_ids = [$admin_id];
         $user_pwd = password_hash('user123', PASSWORD_DEFAULT);
-        $user_role = 'user';
+        $user_role = 'staff';
         $insert_user = $conn->prepare("INSERT INTO users (full_name, email, password_hash, role) VALUES (?, ?, ?, ?)");
         for ($i = 1; $i <= 39; $i++) {
             $name = "User $i";
@@ -393,6 +393,10 @@
 
         $default_permissions = [
             ['manage_postings', 'Manage Job Postings'],
+            ['manage_screening', 'Manage Screening'],
+            ['manage_assessment', 'Manage Assessment'],
+            ['manage_interviews', 'Manage Interviews'],
+            ['view_sensitive_notes', 'View Recruiter/HR Notes'],
         ];
         $insert_permission = $conn->prepare("INSERT INTO permissions (slug, label) VALUES (?, ?)");
         $permissions_inserted = 0;

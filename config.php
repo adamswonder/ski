@@ -219,7 +219,7 @@ function logActivity($user_id, $action, $description = '', $options = []) {
     }
 }
 
-function getActivityLogs($user_id = null, $role = 'user', $limit = null) {
+function getActivityLogs($user_id = null, $role = 'staff', $limit = null) {
     try {
         $conn = getDBConnection();
 

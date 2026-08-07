@@ -19,9 +19,19 @@ $role = $_SESSION['role'];
 $user_id = $_SESSION['user_id'];
 $current_page = 'users';
 
-// Grants or revokes the manage_postings permission for a user, based on the "Manage Job Postings" checkbox
-function syncManagePostingsPermission($conn, $targetUserId, $canManage) {
-    $permStmt = $conn->prepare("SELECT id FROM permissions WHERE slug = 'manage_postings'");
+// All grantable permission slugs, keyed by the POST field name used to toggle them
+$GRANTABLE_PERMISSIONS = [
+    'can_manage_postings' => 'manage_postings',
+    'can_manage_screening' => 'manage_screening',
+    'can_manage_assessment' => 'manage_assessment',
+    'can_manage_interviews' => 'manage_interviews',
+    'can_view_sensitive_notes' => 'view_sensitive_notes'
+];
+
+// Grants or revokes a single permission slug for a user
+function syncPermission($conn, $targetUserId, $permissionSlug, $granted) {
+    $permStmt = $conn->prepare("SELECT id FROM permissions WHERE slug = ?");
+    $permStmt->bind_param("s", $permissionSlug);
     $permStmt->execute();
     $permResult = $permStmt->get_result();
     $permId = $permResult->num_rows > 0 ? $permResult->fetch_assoc()['id'] : null;
@@ -31,7 +41,7 @@ function syncManagePostingsPermission($conn, $targetUserId, $canManage) {
         return;
     }
 
-    if ($canManage) {
+    if ($granted) {
         $stmt = $conn->prepare("INSERT IGNORE INTO user_permissions (user_id, permission_id) VALUES (?, ?)");
     } else {
         $stmt = $conn->prepare("DELETE FROM user_permissions WHERE user_id = ? AND permission_id = ?");
@@ -39,6 +49,14 @@ function syncManagePostingsPermission($conn, $targetUserId, $canManage) {
     $stmt->bind_param("ii", $targetUserId, $permId);
     $stmt->execute();
     $stmt->close();
+}
+
+// Reads all grantable-permission checkboxes from POST and syncs each one
+function syncPermissionsFromPost($conn, $targetUserId, $isAdmin, $grantablePermissions) {
+    foreach ($grantablePermissions as $postField => $slug) {
+        $granted = !$isAdmin && isset($_POST[$postField]) && $_POST[$postField] == '1';
+        syncPermission($conn, $targetUserId, $slug, $granted);
+    }
 }
 
 // Handle AJAX requests
@@ -54,7 +72,27 @@ if (isset($_GET['action'])) {
                                                     SELECT 1 FROM user_permissions up
                                                     JOIN permissions p ON p.id = up.permission_id
                                                     WHERE up.user_id = u.id AND p.slug = 'manage_postings'
-                                                ) AS can_manage_postings
+                                                ) AS can_manage_postings,
+                                                EXISTS(
+                                                    SELECT 1 FROM user_permissions up
+                                                    JOIN permissions p ON p.id = up.permission_id
+                                                    WHERE up.user_id = u.id AND p.slug = 'manage_screening'
+                                                ) AS can_manage_screening,
+                                                EXISTS(
+                                                    SELECT 1 FROM user_permissions up
+                                                    JOIN permissions p ON p.id = up.permission_id
+                                                    WHERE up.user_id = u.id AND p.slug = 'manage_assessment'
+                                                ) AS can_manage_assessment,
+                                                EXISTS(
+                                                    SELECT 1 FROM user_permissions up
+                                                    JOIN permissions p ON p.id = up.permission_id
+                                                    WHERE up.user_id = u.id AND p.slug = 'manage_interviews'
+                                                ) AS can_manage_interviews,
+                                                EXISTS(
+                                                    SELECT 1 FROM user_permissions up
+                                                    JOIN permissions p ON p.id = up.permission_id
+                                                    WHERE up.user_id = u.id AND p.slug = 'view_sensitive_notes'
+                                                ) AS can_view_sensitive_notes
                                          FROM users u ORDER BY u.id DESC");
                 $stmt->execute();
                 $result = $stmt->get_result();
@@ -70,7 +108,11 @@ if (isset($_GET['action'])) {
                         'avatar_url' => $row['avatar_url'],
                         'last_login_at' => $row['last_login_at'] ? date('M d, Y h:i A', strtotime($row['last_login_at'])) : 'Never',
                         'created_at' => date('M d, Y', strtotime($row['created_at'])),
-                        'can_manage_postings' => (bool)$row['can_manage_postings']
+                        'can_manage_postings' => (bool)$row['can_manage_postings'],
+                        'can_manage_screening' => (bool)$row['can_manage_screening'],
+                        'can_manage_assessment' => (bool)$row['can_manage_assessment'],
+                        'can_manage_interviews' => (bool)$row['can_manage_interviews'],
+                        'can_view_sensitive_notes' => (bool)$row['can_view_sensitive_notes']
                     ];
                 }
 
@@ -89,7 +131,7 @@ if (isset($_GET['action'])) {
                 $fullName = isset($_POST['full_name']) ? trim($_POST['full_name']) : '';
                 $email = isset($_POST['email']) ? trim($_POST['email']) : '';
                 $password = isset($_POST['password']) ? $_POST['password'] : '';
-                $newRole = isset($_POST['role']) ? $_POST['role'] : 'user';
+                $newRole = isset($_POST['role']) ? $_POST['role'] : 'staff';
                 $isActive = isset($_POST['is_active']) ? intval($_POST['is_active']) : 1;
 
                 if (empty($fullName) || empty($email) || empty($password)) {
@@ -123,8 +165,6 @@ if (isset($_GET['action'])) {
                 }
                 $stmt->close();
 
-                $canManagePostings = isset($_POST['can_manage_postings']) && $_POST['can_manage_postings'] == '1';
-
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
                 $stmt = $conn->prepare("INSERT INTO users (full_name, email, password_hash, role, is_active) VALUES (?, ?, ?, ?, ?)");
                 $stmt->bind_param("ssssi", $fullName, $email, $hashedPassword, $newRole, $isActive);
@@ -133,9 +173,7 @@ if (isset($_GET['action'])) {
                     $newUserId = $conn->insert_id;
                     $stmt->close();
 
-                    if ($newRole !== 'admin') {
-                        syncManagePostingsPermission($conn, $newUserId, $canManagePostings);
-                    }
+                    syncPermissionsFromPost($conn, $newUserId, $newRole === 'admin', $GRANTABLE_PERMISSIONS);
 
                     logActivity($user_id, 'CREATE', "Created user: $fullName ($email) - Role: $newRole", ['module' => 'users']);
 
@@ -157,7 +195,7 @@ if (isset($_GET['action'])) {
                 $userId = isset($_POST['id']) ? intval($_POST['id']) : 0;
                 $fullName = isset($_POST['full_name']) ? trim($_POST['full_name']) : '';
                 $email = isset($_POST['email']) ? trim($_POST['email']) : '';
-                $newRole = isset($_POST['role']) ? $_POST['role'] : 'user';
+                $newRole = isset($_POST['role']) ? $_POST['role'] : 'staff';
                 $password = isset($_POST['password']) ? $_POST['password'] : '';
                 $isActive = isset($_POST['is_active']) ? intval($_POST['is_active']) : 1;
 
@@ -204,8 +242,7 @@ if (isset($_GET['action'])) {
                 if ($stmt->execute()) {
                     $stmt->close();
 
-                    $canManagePostings = isset($_POST['can_manage_postings']) && $_POST['can_manage_postings'] == '1';
-                    syncManagePostingsPermission($conn, $userId, $newRole !== 'admin' && $canManagePostings);
+                    syncPermissionsFromPost($conn, $userId, $newRole === 'admin', $GRANTABLE_PERMISSIONS);
 
                     $details = !empty($password) ? "Updated user: $fullName ($email) - password changed" : "Updated user: $fullName ($email)";
                     logActivity($user_id, 'UPDATE', $details, ['module' => 'users']);
@@ -420,7 +457,7 @@ if (isset($_GET['action'])) {
                             <select id="filterRole" class="filter-input">
                                 <option value="">All Roles</option>
                                 <option value="admin">Admin</option>
-                                <option value="user">User</option>
+                                <option value="staff">Staff</option>
                             </select>
                         </div>
                         <div class="filter-group">
@@ -476,7 +513,7 @@ if (isset($_GET['action'])) {
                         <div class="form-group">
                             <label><i class="ri-user-settings-line"></i> Role *</label>
                             <select id="role" name="role" required>
-                                <option value="user">User</option>
+                                <option value="staff">Staff</option>
                                 <option value="admin">Admin</option>
                             </select>
                         </div>
@@ -490,12 +527,42 @@ if (isset($_GET['action'])) {
                         </div>
                     </div>
 
-                    <div class="form-group" id="managePostingsGroup">
-                        <label style="display:flex; align-items:center; gap:8px; font-weight:normal;">
+                    <div class="form-group" id="permissionsGroup">
+                        <label><i class="ri-shield-user-line"></i> Permissions</label>
+
+                        <div style="display:flex; gap:8px; margin: 6px 0 12px;">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="applyRolePreset('recruiter')">
+                                <i class="ri-user-star-line"></i> Recruiter
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="applyRolePreset('hr')">
+                                <i class="ri-team-line"></i> HR
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="applyRolePreset('none')">
+                                <i class="ri-close-circle-line"></i> Clear
+                            </button>
+                        </div>
+
+                        <label style="display:flex; align-items:center; gap:8px; font-weight:normal; margin-bottom: 8px;">
                             <input type="checkbox" id="canManagePostings" name="can_manage_postings" value="1" style="width:18px; height:18px;">
                             <i class="ri-megaphone-line"></i> Can Manage Job Postings
                         </label>
-                        <small class="help-text" style="color: var(--text-muted); margin-top: 5px; display: block;">Grants access to create and edit job postings without full admin rights.</small>
+                        <label style="display:flex; align-items:center; gap:8px; font-weight:normal; margin-bottom: 8px;">
+                            <input type="checkbox" id="canManageScreening" name="can_manage_screening" value="1" style="width:18px; height:18px;">
+                            <i class="ri-file-search-line"></i> Can Manage Screening
+                        </label>
+                        <label style="display:flex; align-items:center; gap:8px; font-weight:normal; margin-bottom: 8px;">
+                            <input type="checkbox" id="canManageAssessment" name="can_manage_assessment" value="1" style="width:18px; height:18px;">
+                            <i class="ri-clipboard-line"></i> Can Manage Assessment
+                        </label>
+                        <label style="display:flex; align-items:center; gap:8px; font-weight:normal; margin-bottom: 8px;">
+                            <input type="checkbox" id="canManageInterviews" name="can_manage_interviews" value="1" style="width:18px; height:18px;">
+                            <i class="ri-calendar-check-line"></i> Can Manage Interviews
+                        </label>
+                        <label style="display:flex; align-items:center; gap:8px; font-weight:normal;">
+                            <input type="checkbox" id="canViewSensitiveNotes" name="can_view_sensitive_notes" value="1" style="width:18px; height:18px;">
+                            <i class="ri-lock-line"></i> Can View Recruiter/HR Notes
+                        </label>
+                        <small class="help-text" style="color: var(--text-muted); margin-top: 8px; display: block;">Use the Recruiter/HR buttons to quickly grant the standard permission bundle for that role, or check individual boxes for a custom set.</small>
                     </div>
 
                     <div class="form-actions">
@@ -693,12 +760,27 @@ if (isset($_GET['action'])) {
             }
         }
 
+        const PERMISSION_CHECKBOX_IDS = ['canManagePostings', 'canManageScreening', 'canManageAssessment', 'canManageInterviews', 'canViewSensitiveNotes'];
+
+        const ROLE_PRESETS = {
+            recruiter: ['canManagePostings', 'canManageScreening', 'canViewSensitiveNotes'],
+            hr: ['canManageScreening', 'canManageAssessment', 'canManageInterviews', 'canViewSensitiveNotes'],
+            none: []
+        };
+
+        function applyRolePreset(preset) {
+            const enabled = ROLE_PRESETS[preset] || [];
+            PERMISSION_CHECKBOX_IDS.forEach(function(id) {
+                document.getElementById(id).checked = enabled.includes(id);
+            });
+        }
+
         function updateManagePostingsVisibility() {
             const role = document.getElementById('role').value;
-            const group = document.getElementById('managePostingsGroup');
+            const group = document.getElementById('permissionsGroup');
             if (role === 'admin') {
                 group.style.display = 'none';
-                document.getElementById('canManagePostings').checked = false;
+                applyRolePreset('none');
             } else {
                 group.style.display = 'block';
             }
@@ -714,7 +796,7 @@ if (isset($_GET['action'])) {
             document.getElementById('passwordHint').style.display = 'none';
             document.getElementById('password').required = true;
             document.getElementById('isActive').value = '1';
-            document.getElementById('canManagePostings').checked = false;
+            applyRolePreset('none');
             updateManagePostingsVisibility();
             document.getElementById('userModal').classList.add('active');
         }
@@ -731,6 +813,10 @@ if (isset($_GET['action'])) {
             document.getElementById('passwordHint').style.display = 'inline';
             document.getElementById('password').required = false;
             document.getElementById('canManagePostings').checked = !!user.can_manage_postings;
+            document.getElementById('canManageScreening').checked = !!user.can_manage_screening;
+            document.getElementById('canManageAssessment').checked = !!user.can_manage_assessment;
+            document.getElementById('canManageInterviews').checked = !!user.can_manage_interviews;
+            document.getElementById('canViewSensitiveNotes').checked = !!user.can_view_sensitive_notes;
             updateManagePostingsVisibility();
             document.getElementById('userModal').classList.add('active');
         }

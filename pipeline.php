@@ -13,7 +13,7 @@ if (!checkSessionTimeout()) {
 }
 
 $username = $_SESSION['username'];
-$role = isset($_SESSION['role']) ? $_SESSION['role'] : 'user';
+$role = isset($_SESSION['role']) ? $_SESSION['role'] : 'staff';
 $user_id = $_SESSION['user_id'];
 $current_page = 'pipeline';
 

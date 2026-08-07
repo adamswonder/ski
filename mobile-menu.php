@@ -10,7 +10,7 @@
 
 // Get current page from the including file
 $mobile_current = isset($current_page) ? $current_page : '';
-$mobile_role = isset($role) ? $role : 'user';
+$mobile_role = isset($role) ? $role : 'staff';
 ?>
 
 <!-- Mobile Bottom Navigation Bar -->
