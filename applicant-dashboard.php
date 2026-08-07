@@ -60,7 +60,7 @@ foreach ($applications as $app) {
     <meta name="mobile-web-app-capable" content="yes">
     <title>My Applications - Skyward Airlines</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles.css?v=5.11">
+    <link rel="stylesheet" href="styles.css?v=5.12">
     <?php echo generateBrandAccentCSS(); ?>
     <style>
         .ad-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }

@@ -4745,6 +4745,141 @@ body.dark-mode .skill-name {
     font-size: 11px;
 }
 
+/* ===== Application Profile Modal (tabbed ATS view) ===== */
+.profile-summary {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.profile-summary h2 {
+    margin: 0 0 4px;
+    font-size: 20px;
+    color: var(--text-primary);
+}
+
+.profile-summary-meta {
+    color: var(--text-secondary);
+    font-size: 13px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 8px;
+}
+
+.profile-summary-meta span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.profile-summary-badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.profile-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 20px;
+    overflow-x: auto;
+}
+
+.profile-tab-btn {
+    background: transparent;
+    border: none;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.profile-tab-btn:hover {
+    color: var(--navy-primary);
+}
+
+.profile-tab-btn.active {
+    color: var(--navy-primary);
+    border-bottom-color: var(--navy-primary);
+}
+
+.profile-tab-pane {
+    display: none;
+}
+
+.profile-tab-pane.active {
+    display: block;
+}
+
+.profile-field-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.profile-field-value {
+    font-size: 14px;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 24px;
+    row-gap: 16px;
+    margin-bottom: 8px;
+}
+
+.profile-empty {
+    color: var(--text-muted);
+    text-align: center;
+    padding: 30px 0;
+}
+
+.activity-log-item {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.activity-log-item:last-child {
+    border-bottom: none;
+}
+
+.activity-log-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+@media (max-width: 640px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+    .profile-summary {
+        flex-direction: column;
+    }
+}
+
 /* ===== Print Overlay (Same-Tab View) ===== */
 .print-overlay-page {
     width: 210mm;

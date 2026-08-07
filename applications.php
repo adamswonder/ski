@@ -369,9 +369,6 @@ if (isset($_GET['action'])) {
                 $relevantSkills = isset($_POST['relevant_skills']) ? trim($_POST['relevant_skills']) : null;
                 $availabilityNoticePeriod = isset($_POST['availability_notice_period']) ? trim($_POST['availability_notice_period']) : null;
 
-                // Sensitive notes: only accepted from users with view_sensitive_notes (existing value preserved otherwise)
-                $canViewSensitiveNotes = hasPermission($user_id, $role, 'view_sensitive_notes');
-
                 // Handle multi-select qualifications
                 $academicQual = isset($_POST['academic_qualification']) ? $_POST['academic_qualification'] : '';
                 $technicalQual = isset($_POST['technical_qualification']) ? $_POST['technical_qualification'] : '';
@@ -419,17 +416,6 @@ if (isset($_GET['action'])) {
                             exit();
                         }
                     }
-                    $stmt->close();
-                }
-
-                // Sensitive notes fields are only updated when the submitter actually has permission,
-                // so a request that omits/strips them (no permission) can't silently wipe existing values
-                if ($canViewSensitiveNotes) {
-                    $rejectionReason = isset($_POST['rejection_reason']) ? trim($_POST['rejection_reason']) : null;
-                    $hrComments = isset($_POST['hr_comments']) ? trim($_POST['hr_comments']) : null;
-                    $stmt = $conn->prepare("UPDATE applications SET rejection_reason = ?, hr_comments = ? WHERE id = ?");
-                    $stmt->bind_param("ssi", $rejectionReason, $hrComments, $appId);
-                    $stmt->execute();
                     $stmt->close();
                 }
 
@@ -856,6 +842,109 @@ if (isset($_GET['action'])) {
                 }
                 exit();
 
+            case 'saveNotes':
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+                    exit();
+                }
+
+                $notesAppId = isset($_POST['id']) ? intval($_POST['id']) : 0;
+                if ($notesAppId <= 0) {
+                    echo json_encode(['success' => false, 'message' => 'Invalid application ID']);
+                    exit();
+                }
+
+                $conn = getDBConnection();
+
+                // Check ownership for non-admin users
+                if ($role !== 'admin') {
+                    $stmt = $conn->prepare("SELECT assigned_to FROM applications WHERE id = ?");
+                    $stmt->bind_param("i", $notesAppId);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    if ($result->num_rows > 0) {
+                        $row = $result->fetch_assoc();
+                        if ($row['assigned_to'] != $user_id) {
+                            $stmt->close();
+                            $conn->close();
+                            echo json_encode(['success' => false, 'message' => 'You can only edit applications assigned to you']);
+                            exit();
+                        }
+                    }
+                    $stmt->close();
+                }
+
+                $notesValue = isset($_POST['notes']) ? trim($_POST['notes']) : null;
+                $stmt = $conn->prepare("UPDATE applications SET notes = ? WHERE id = ?");
+                $stmt->bind_param("si", $notesValue, $notesAppId);
+                $stmt->execute();
+                $stmt->close();
+
+                // Sensitive fields are only touched when the submitter actually has permission,
+                // so a request without them (no permission) can't silently wipe existing values
+                if (hasPermission($user_id, $role, 'view_sensitive_notes')) {
+                    $rejectionReasonValue = isset($_POST['rejection_reason']) ? trim($_POST['rejection_reason']) : null;
+                    $hrCommentsValue = isset($_POST['hr_comments']) ? trim($_POST['hr_comments']) : null;
+                    $stmt = $conn->prepare("UPDATE applications SET rejection_reason = ?, hr_comments = ? WHERE id = ?");
+                    $stmt->bind_param("ssi", $rejectionReasonValue, $hrCommentsValue, $notesAppId);
+                    $stmt->execute();
+                    $stmt->close();
+                }
+
+                logActivity($user_id, 'UPDATE', "Updated notes for application #$notesAppId", ['module' => 'applications', 'application_id' => $notesAppId]);
+                $conn->close();
+                echo json_encode(['success' => true, 'message' => 'Notes saved successfully']);
+                exit();
+
+            case 'getApplicationActivity':
+                $activityAppId = isset($_GET['application_id']) ? intval($_GET['application_id']) : 0;
+                if ($activityAppId <= 0) {
+                    echo json_encode(['success' => false, 'message' => 'Invalid application ID']);
+                    exit();
+                }
+
+                $conn = getDBConnection();
+
+                if ($role !== 'admin') {
+                    $stmt = $conn->prepare("SELECT assigned_to FROM applications WHERE id = ?");
+                    $stmt->bind_param("i", $activityAppId);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    if ($result->num_rows > 0) {
+                        $row = $result->fetch_assoc();
+                        if ($row['assigned_to'] != $user_id) {
+                            $stmt->close();
+                            $conn->close();
+                            echo json_encode(['success' => false, 'message' => 'Access denied']);
+                            exit();
+                        }
+                    }
+                    $stmt->close();
+                }
+
+                $stmt = $conn->prepare("SELECT l.action, l.description, l.created_at, u.full_name AS user_name
+                                         FROM activity_logs l
+                                         LEFT JOIN users u ON l.user_id = u.id
+                                         WHERE l.application_id = ?
+                                         ORDER BY l.created_at DESC");
+                $stmt->bind_param("i", $activityAppId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $logs = [];
+                while ($row = $result->fetch_assoc()) {
+                    $logs[] = [
+                        'action' => $row['action'],
+                        'description' => $row['description'],
+                        'user_name' => $row['user_name'],
+                        'created_at' => date('M d, Y h:i A', strtotime($row['created_at']))
+                    ];
+                }
+                $stmt->close();
+                $conn->close();
+
+                echo json_encode(['success' => true, 'data' => $logs]);
+                exit();
+
             case 'getTechnicalSkills':
                 $skills = getSetting('technical_skills', '["HTML/CSS","JavaScript","PHP","Python","Java","SQL"]');
                 $skillsArray = json_decode($skills, true);
@@ -892,7 +981,7 @@ if (isset($_GET['action'])) {
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-    <link rel="stylesheet" href="styles.css?v=5.11">
+    <link rel="stylesheet" href="styles.css?v=5.12">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -1185,21 +1274,6 @@ if (isset($_GET['action'])) {
                         <textarea id="notes" name="notes" rows="3" placeholder="Additional notes about this application..."></textarea>
                     </div>
 
-                    <?php if (hasPermission($user_id, $role, 'view_sensitive_notes')): ?>
-                    <!-- Sensitive Notes (Recruiter/HR only) -->
-                    <h4 class="form-section-title"><i class="ri-lock-line"></i> Sensitive Notes</h4>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label><i class="ri-close-circle-line"></i> Rejection Reason</label>
-                            <textarea id="rejectionReason" name="rejection_reason" rows="2"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label><i class="ri-shield-user-line"></i> HR Comments</label>
-                            <textarea id="hrComments" name="hr_comments" rows="2"></textarea>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-
                     <!-- Attach Document (Optional) -->
                     <h4 class="form-section-title"><i class="ri-attachment-line"></i> Attach Document (Optional)</h4>
                     <div class="form-grid">
@@ -1237,111 +1311,15 @@ if (isset($_GET['action'])) {
                         </button>
                     </div>
                 </form>
-
-                <?php if (hasPermission($user_id, $role, 'manage_screening')): ?>
-                <!-- Screening (visible only in edit mode, saved independently) -->
-                <div id="screeningPanel" style="display:none; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
-                    <h4 class="form-section-title"><i class="ri-file-search-line"></i> Screening</h4>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label><i class="ri-check-line"></i> Eligibility</label>
-                            <select id="eligibilityPass">
-                                <option value="">Not Screened</option>
-                                <option value="1">Pass</option>
-                                <option value="0">Fail</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label><i class="ri-graduation-cap-line"></i> Minimum Qualification</label>
-                            <select id="minQualificationPass">
-                                <option value="">Not Screened</option>
-                                <option value="1">Pass</option>
-                                <option value="0">Fail</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label><i class="ri-time-line"></i> Required Experience</label>
-                            <select id="requiredExperiencePass">
-                                <option value="">Not Screened</option>
-                                <option value="1">Pass</option>
-                                <option value="0">Fail</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label><i class="ri-map-pin-line"></i> Location Requirement</label>
-                            <select id="locationRequirementPass">
-                                <option value="">Not Screened</option>
-                                <option value="1">Pass</option>
-                                <option value="0">Fail</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label><i class="ri-percent-line"></i> Screening Score</label>
-                            <input type="number" id="screeningScore" min="0" max="100">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label><i class="ri-chat-3-line"></i> Recruiter Comments</label>
-                        <textarea id="recruiterComments" rows="2"></textarea>
-                    </div>
-                    <button type="button" class="btn btn-primary btn-sm" onclick="saveScreening()">
-                        <i class="ri-save-line"></i> Save Screening
-                    </button>
-                </div>
-                <?php endif; ?>
-
-                <?php if (hasPermission($user_id, $role, 'manage_assessment')): ?>
-                <!-- Assessment (visible only in edit mode, saved independently) -->
-                <div id="assessmentPanel" style="display:none; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
-                    <h4 class="form-section-title"><i class="ri-clipboard-line"></i> Assessment</h4>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label><i class="ri-percent-line"></i> Assessment Score</label>
-                            <input type="number" id="assessmentScore" min="0" max="100">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label><i class="ri-chat-3-line"></i> Assessment Comments</label>
-                        <textarea id="assessmentComments" rows="2"></textarea>
-                    </div>
-                    <button type="button" class="btn btn-primary btn-sm" onclick="saveAssessment()">
-                        <i class="ri-save-line"></i> Save Assessment
-                    </button>
-                </div>
-                <?php endif; ?>
-
-                <?php if (hasPermission($user_id, $role, 'manage_interviews')): ?>
-                <!-- Interview (visible only in edit mode, saved independently) -->
-                <div id="interviewPanel" style="display:none; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
-                    <h4 class="form-section-title"><i class="ri-calendar-check-line"></i> Interview</h4>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label><i class="ri-calendar-event-line"></i> Interview Date</label>
-                            <input type="date" id="interviewDate">
-                        </div>
-                        <div class="form-group">
-                            <label><i class="ri-percent-line"></i> Interview Score</label>
-                            <input type="number" id="interviewScore" min="0" max="100">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label><i class="ri-chat-3-line"></i> Interviewer Comments</label>
-                        <textarea id="interviewerComments" rows="2"></textarea>
-                    </div>
-                    <button type="button" class="btn btn-primary btn-sm" onclick="saveInterview()">
-                        <i class="ri-save-line"></i> Save Interview
-                    </button>
-                </div>
-                <?php endif; ?>
             </div>
         </div>
     </div>
 
     <!-- View Application Modal -->
     <div class="modal-overlay" id="viewModal">
-        <div class="modal" onclick="event.stopPropagation()" style="max-width: 800px;">
+        <div class="modal" onclick="event.stopPropagation()" style="max-width: 960px;">
             <div class="modal-header">
-                <h3><i class="ri-eye-line"></i> Application Details</h3>
+                <h3 id="profileModalTitle"><i class="ri-eye-line"></i> Application Profile</h3>
                 <button class="close-btn" onclick="closeViewModal()">
                     <i class="ri-close-line"></i>
                 </button>
@@ -1423,6 +1401,10 @@ if (isset($_GET['action'])) {
 
     <script>
         var userRole = '<?php echo $role; ?>';
+        var canManageScreening = <?php echo hasPermission($user_id, $role, 'manage_screening') ? 'true' : 'false'; ?>;
+        var canManageAssessment = <?php echo hasPermission($user_id, $role, 'manage_assessment') ? 'true' : 'false'; ?>;
+        var canManageInterviews = <?php echo hasPermission($user_id, $role, 'manage_interviews') ? 'true' : 'false'; ?>;
+        var canViewSensitiveNotes = <?php echo hasPermission($user_id, $role, 'view_sensitive_notes') ? 'true' : 'false'; ?>;
         let applicationsTable;
         let isEditMode = false;
         let currentFormAppId = null; // Track current application ID for upload button
@@ -1614,7 +1596,8 @@ if (isset($_GET['action'])) {
                     e.stopPropagation();
                     var app = findAppById($(this).data('id'));
                     if (app) {
-                        viewApplicationInPage(app);
+                        renderProfileModal(app);
+                        document.getElementById('viewModal').classList.add('active');
                     } else {
                         Swal.fire({ icon: 'error', title: 'Error', text: 'Could not find application data. Please refresh.' });
                     }
@@ -1741,12 +1724,6 @@ if (isset($_GET['action'])) {
             // Uncheck all academic qualification checkboxes
             document.querySelectorAll('#academicCheckboxes input[type="checkbox"]').forEach(function(cb) { cb.checked = false; });
 
-            // Screening/Assessment/Interview only make sense for an existing application
-            ['screeningPanel', 'assessmentPanel', 'interviewPanel'].forEach(function(id) {
-                var el = document.getElementById(id);
-                if (el) el.style.display = 'none';
-            });
-
             document.getElementById('appModal').classList.add('active');
         }
 
@@ -1802,42 +1779,6 @@ if (isset($_GET['action'])) {
             setFieldValue('customerServiceExperience', app.customer_service_experience);
             setFieldValue('relevantSkills', app.relevant_skills);
 
-            // Sensitive notes (fields only exist in DOM for users with view_sensitive_notes)
-            setFieldValue('rejectionReason', app.rejection_reason);
-            setFieldValue('hrComments', app.hr_comments);
-
-            // Screening (panel only exists in DOM for users with manage_screening)
-            var screeningPanel = document.getElementById('screeningPanel');
-            if (screeningPanel) {
-                var sc = app.screening || {};
-                setFieldValue('eligibilityPass', sc.eligibility_pass === null || sc.eligibility_pass === undefined ? '' : sc.eligibility_pass);
-                setFieldValue('minQualificationPass', sc.min_qualification_pass === null || sc.min_qualification_pass === undefined ? '' : sc.min_qualification_pass);
-                setFieldValue('requiredExperiencePass', sc.required_experience_pass === null || sc.required_experience_pass === undefined ? '' : sc.required_experience_pass);
-                setFieldValue('locationRequirementPass', sc.location_requirement_pass === null || sc.location_requirement_pass === undefined ? '' : sc.location_requirement_pass);
-                setFieldValue('screeningScore', sc.screening_score);
-                setFieldValue('recruiterComments', sc.recruiter_comments);
-                screeningPanel.style.display = 'block';
-            }
-
-            // Assessment (panel only exists in DOM for users with manage_assessment)
-            var assessmentPanel = document.getElementById('assessmentPanel');
-            if (assessmentPanel) {
-                var asm = app.assessment || {};
-                setFieldValue('assessmentScore', asm.assessment_score);
-                setFieldValue('assessmentComments', asm.assessment_comments);
-                assessmentPanel.style.display = 'block';
-            }
-
-            // Interview (panel only exists in DOM for users with manage_interviews)
-            var interviewPanel = document.getElementById('interviewPanel');
-            if (interviewPanel) {
-                var iv = app.interview || {};
-                setFieldValue('interviewDate', iv.interview_date);
-                setFieldValue('interviewScore', iv.interview_score);
-                setFieldValue('interviewerComments', iv.interviewer_comments);
-                interviewPanel.style.display = 'block';
-            }
-
             // Set academic qualification checkboxes
             document.querySelectorAll('#academicCheckboxes input[type="checkbox"]').forEach(function(cb) {
                 cb.checked = app.academic_qualification && app.academic_qualification.includes(cb.value);
@@ -1867,10 +1808,9 @@ if (isset($_GET['action'])) {
             document.getElementById('appModal').classList.add('active');
         }
 
-        function saveScreening() {
-            if (!currentFormAppId) return;
+        function saveScreening(appId) {
             var formData = new FormData();
-            formData.append('application_id', currentFormAppId);
+            formData.append('application_id', appId);
             formData.append('eligibility_pass', document.getElementById('eligibilityPass').value);
             formData.append('min_qualification_pass', document.getElementById('minQualificationPass').value);
             formData.append('required_experience_pass', document.getElementById('requiredExperiencePass').value);
@@ -1888,7 +1828,7 @@ if (isset($_GET['action'])) {
                 success: function(response) {
                     if (response.success) {
                         Swal.fire({ icon: 'success', text: response.message, timer: 1500, showConfirmButton: false });
-                        loadApplications();
+                        refreshProfileTab(appId, 'screening');
                     } else {
                         Swal.fire({ icon: 'error', title: 'Error', text: response.message });
                     }
@@ -1899,10 +1839,9 @@ if (isset($_GET['action'])) {
             });
         }
 
-        function saveAssessment() {
-            if (!currentFormAppId) return;
+        function saveAssessment(appId) {
             var formData = new FormData();
-            formData.append('application_id', currentFormAppId);
+            formData.append('application_id', appId);
             formData.append('assessment_score', document.getElementById('assessmentScore').value);
             formData.append('assessment_comments', document.getElementById('assessmentComments').value);
 
@@ -1916,7 +1855,7 @@ if (isset($_GET['action'])) {
                 success: function(response) {
                     if (response.success) {
                         Swal.fire({ icon: 'success', text: response.message, timer: 1500, showConfirmButton: false });
-                        loadApplications();
+                        refreshProfileTab(appId, 'assessment');
                     } else {
                         Swal.fire({ icon: 'error', title: 'Error', text: response.message });
                     }
@@ -1927,10 +1866,9 @@ if (isset($_GET['action'])) {
             });
         }
 
-        function saveInterview() {
-            if (!currentFormAppId) return;
+        function saveInterview(appId) {
             var formData = new FormData();
-            formData.append('application_id', currentFormAppId);
+            formData.append('application_id', appId);
             formData.append('interview_date', document.getElementById('interviewDate').value);
             formData.append('interview_score', document.getElementById('interviewScore').value);
             formData.append('interviewer_comments', document.getElementById('interviewerComments').value);
@@ -1945,13 +1883,65 @@ if (isset($_GET['action'])) {
                 success: function(response) {
                     if (response.success) {
                         Swal.fire({ icon: 'success', text: response.message, timer: 1500, showConfirmButton: false });
-                        loadApplications();
+                        refreshProfileTab(appId, 'interview');
                     } else {
                         Swal.fire({ icon: 'error', title: 'Error', text: response.message });
                     }
                 },
                 error: function(xhr, status, error) {
                     Swal.fire({ icon: 'error', title: 'Error', text: 'Connection error: ' + error });
+                }
+            });
+        }
+
+        function saveNotes(appId) {
+            var formData = new FormData();
+            formData.append('id', appId);
+            formData.append('notes', document.getElementById('profileNotes').value);
+            var rejectionEl = document.getElementById('profileRejectionReason');
+            var hrEl = document.getElementById('profileHrComments');
+            if (rejectionEl) formData.append('rejection_reason', rejectionEl.value);
+            if (hrEl) formData.append('hr_comments', hrEl.value);
+
+            $.ajax({
+                url: '?action=saveNotes',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({ icon: 'success', text: response.message, timer: 1500, showConfirmButton: false });
+                        refreshProfileTab(appId, 'notes');
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Error', text: response.message });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Connection error: ' + error });
+                }
+            });
+        }
+
+        // Re-fetches applications data (so the in-memory cache reflects the save), then re-renders the open profile modal on the given tab
+        function refreshProfileTab(appId, tabName) {
+            $.ajax({
+                url: '?action=getApplications',
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        applicationsData = response.data;
+                        if (applicationsTable) {
+                            applicationsTable.clear().rows.add(response.data).draw(false);
+                        }
+                        var app = findAppById(appId);
+                        if (app) {
+                            renderProfileModal(app);
+                            switchProfileTab(tabName);
+                        }
+                    }
                 }
             });
         }
@@ -2340,6 +2330,265 @@ if (isset($_GET['action'])) {
         document.getElementById('viewModal').addEventListener('click', function(e) {
             if (e.target === this) closeViewModal();
         });
+
+        function escapeHtml(text) {
+            if (text === null || text === undefined || text === '') return '';
+            var div = document.createElement('div');
+            div.appendChild(document.createTextNode(text));
+            return div.innerHTML;
+        }
+
+        function profileField(label, value) {
+            return '<div><div class="profile-field-label">' + escapeHtml(label) + '</div><div class="profile-field-value">' +
+                (value !== null && value !== undefined && value !== '' ? escapeHtml(value) : '<span style="color:var(--text-muted);">&mdash;</span>') +
+                '</div></div>';
+        }
+
+        var currentProfileApp = null;
+
+        function renderProfileModal(app) {
+            currentProfileApp = app;
+            document.getElementById('profileModalTitle').innerHTML = '<i class="ri-eye-line"></i> ' + escapeHtml(app.candidate_name);
+
+            var stageHtml = app.stage_name ? '<span class="stage-badge" style="color:' + (app.stage_color || '#6B7280') + '">' + escapeHtml(app.stage_name) + '</span>' : '';
+            var statusHtml = app.status_name ? '<span class="stage-badge" style="color:' + (app.status_color || '#6B7280') + '">' + escapeHtml(app.status_name) + '</span>' : '';
+
+            var html = '';
+            html += '<div class="profile-summary">';
+            html += '<div>';
+            html += '<h2>' + escapeHtml(app.candidate_name) + '</h2>';
+            html += '<div>' + escapeHtml(app.position) + (app.company ? ' &ndash; ' + escapeHtml(app.company) : '') + '</div>';
+            html += '<div class="profile-summary-meta">';
+            html += '<span><i class="ri-hashtag"></i> ' + escapeHtml(app.recruitment_reference || ('APP-' + app.id)) + '</span>';
+            if (app.email) html += '<span><i class="ri-mail-line"></i> ' + escapeHtml(app.email) + '</span>';
+            if (app.contact_number) html += '<span><i class="ri-phone-line"></i> ' + escapeHtml(app.contact_number) + '</span>';
+            if (app.current_location) html += '<span><i class="ri-map-pin-line"></i> ' + escapeHtml(app.current_location) + '</span>';
+            html += '</div></div>';
+            html += '<div class="profile-summary-badges">' + stageHtml + statusHtml + '</div>';
+            html += '</div>';
+
+            html += '<div class="profile-tabs">';
+            html += '<button type="button" class="profile-tab-btn active" data-tab="overview" onclick="switchProfileTab(\'overview\', ' + app.id + ')">Overview</button>';
+            html += '<button type="button" class="profile-tab-btn" data-tab="application" onclick="switchProfileTab(\'application\', ' + app.id + ')">Application</button>';
+            html += '<button type="button" class="profile-tab-btn" data-tab="documents" onclick="switchProfileTab(\'documents\', ' + app.id + ')">CV &amp; Documents</button>';
+            if (canManageScreening) html += '<button type="button" class="profile-tab-btn" data-tab="screening" onclick="switchProfileTab(\'screening\', ' + app.id + ')">Screening</button>';
+            if (canManageAssessment) html += '<button type="button" class="profile-tab-btn" data-tab="assessment" onclick="switchProfileTab(\'assessment\', ' + app.id + ')">Assessment</button>';
+            if (canManageInterviews) html += '<button type="button" class="profile-tab-btn" data-tab="interviews" onclick="switchProfileTab(\'interviews\', ' + app.id + ')">Interviews</button>';
+            html += '<button type="button" class="profile-tab-btn" data-tab="notes" onclick="switchProfileTab(\'notes\', ' + app.id + ')">Notes</button>';
+            html += '<button type="button" class="profile-tab-btn" data-tab="activity" onclick="switchProfileTab(\'activity\', ' + app.id + ')">Activity</button>';
+            html += '</div>';
+
+            html += '<div class="profile-tab-content">';
+            html += '<div class="profile-tab-pane active" id="profile-tab-overview">' + buildOverviewTab(app) + '</div>';
+            html += '<div class="profile-tab-pane" id="profile-tab-application">' + buildApplicationTab(app) + '</div>';
+            html += '<div class="profile-tab-pane" id="profile-tab-documents"><div class="profile-empty"><i class="ri-loader-4-line ri-spin"></i></div></div>';
+            if (canManageScreening) html += '<div class="profile-tab-pane" id="profile-tab-screening">' + buildScreeningTab(app) + '</div>';
+            if (canManageAssessment) html += '<div class="profile-tab-pane" id="profile-tab-assessment">' + buildAssessmentTab(app) + '</div>';
+            if (canManageInterviews) html += '<div class="profile-tab-pane" id="profile-tab-interviews">' + buildInterviewsTab(app) + '</div>';
+            html += '<div class="profile-tab-pane" id="profile-tab-notes">' + buildNotesTab(app) + '</div>';
+            html += '<div class="profile-tab-pane" id="profile-tab-activity"><div class="profile-empty"><i class="ri-loader-4-line ri-spin"></i></div></div>';
+            html += '</div>';
+
+            document.getElementById('viewModalBody').innerHTML = html;
+        }
+
+        function switchProfileTab(tabName, appId) {
+            document.querySelectorAll('.profile-tab-btn').forEach(function(btn) {
+                btn.classList.toggle('active', btn.getAttribute('data-tab') === tabName);
+            });
+            document.querySelectorAll('.profile-tab-pane').forEach(function(pane) {
+                pane.classList.toggle('active', pane.id === 'profile-tab-' + tabName);
+            });
+
+            if (tabName === 'documents') loadProfileDocuments(appId);
+            if (tabName === 'activity') loadProfileActivity(appId);
+        }
+
+        function buildOverviewTab(app) {
+            var html = '<div class="profile-grid">';
+            html += profileField('Department', app.company);
+            html += profileField('Assigned To', app.assigned_to_name);
+            html += profileField('Applied Date', app.applied_date_display);
+            html += profileField('Joined Date', app.joined_date_display);
+            html += profileField('Next Action', app.next_action);
+            html += profileField('Next Action Date', app.next_action_date_display);
+            html += '</div>';
+            html += '<button type="button" class="btn btn-secondary btn-sm" onclick="viewApplication(currentProfileApp)"><i class="ri-printer-line"></i> Print / Export</button>';
+            return html;
+        }
+
+        function buildApplicationTab(app) {
+            var html = '<div class="profile-grid">';
+            html += profileField('Email', app.email);
+            html += profileField('Contact Number', app.contact_number);
+            html += profileField('Current Location', app.current_location);
+            html += profileField('County of Residence', app.county_of_residence);
+            html += profileField('Nationality', app.nationality);
+            html += profileField('Experience', app.experience);
+            html += profileField('Expected Salary', app.expected_salary);
+            html += profileField('Availability / Notice Period', app.availability_notice_period);
+            html += '</div>';
+
+            if (app.highest_education_level || app.institution || app.course_qualification || app.professional_certifications || app.relevant_training) {
+                html += '<h4 class="form-section-title"><i class="ri-graduation-cap-line"></i> Education</h4>';
+                html += '<div class="profile-grid">';
+                html += profileField('Highest Education Level', app.highest_education_level);
+                html += profileField('Institution', app.institution);
+                html += profileField('Course / Qualification', app.course_qualification);
+                html += profileField('Graduation Year', app.graduation_year);
+                html += '</div>';
+                if (app.professional_certifications) html += profileField('Professional Certifications', app.professional_certifications);
+                if (app.relevant_training) html += profileField('Relevant Training', app.relevant_training);
+            }
+
+            if (app.current_employer || app.current_job_title || app.previous_employers || app.aviation_experience || app.customer_service_experience || app.relevant_skills) {
+                html += '<h4 class="form-section-title"><i class="ri-briefcase-4-line"></i> Work Experience</h4>';
+                html += '<div class="profile-grid">';
+                html += profileField('Current / Most Recent Employer', app.current_employer);
+                html += profileField('Job Title', app.current_job_title);
+                html += '</div>';
+                if (app.previous_employers) html += profileField('Previous Employers', app.previous_employers);
+                if (app.aviation_experience) html += profileField('Aviation Experience', app.aviation_experience);
+                if (app.customer_service_experience) html += profileField('Customer Service Experience', app.customer_service_experience);
+                if (app.relevant_skills) html += profileField('Relevant Skills', app.relevant_skills);
+            }
+
+            var acad = app.academic_qualification || [];
+            var tech = app.technical_qualification || [];
+            if (acad.length || tech.length) {
+                html += '<h4 class="form-section-title"><i class="ri-award-line"></i> Qualifications</h4>';
+                html += '<div style="margin-bottom:10px;">';
+                acad.forEach(function(q) { html += '<span class="doc-qual-tag">' + escapeHtml(q) + '</span>'; });
+                tech.forEach(function(q) { html += '<span class="doc-qual-tag">' + escapeHtml(q) + '</span>'; });
+                html += '</div>';
+            }
+
+            return html;
+        }
+
+        function passSelectHtml(id, val) {
+            var v = (val === null || val === undefined) ? '' : String(val);
+            return '<select id="' + id + '"><option value="">Not Screened</option>' +
+                '<option value="1"' + (v === '1' ? ' selected' : '') + '>Pass</option>' +
+                '<option value="0"' + (v === '0' ? ' selected' : '') + '>Fail</option></select>';
+        }
+
+        function buildScreeningTab(app) {
+            var sc = app.screening || {};
+            var html = '<div class="form-grid">';
+            html += '<div class="form-group"><label>Eligibility</label>' + passSelectHtml('eligibilityPass', sc.eligibility_pass) + '</div>';
+            html += '<div class="form-group"><label>Minimum Qualification</label>' + passSelectHtml('minQualificationPass', sc.min_qualification_pass) + '</div>';
+            html += '<div class="form-group"><label>Required Experience</label>' + passSelectHtml('requiredExperiencePass', sc.required_experience_pass) + '</div>';
+            html += '<div class="form-group"><label>Location Requirement</label>' + passSelectHtml('locationRequirementPass', sc.location_requirement_pass) + '</div>';
+            html += '<div class="form-group"><label>Screening Score</label><input type="number" id="screeningScore" min="0" max="100" value="' + (sc.screening_score !== null && sc.screening_score !== undefined ? sc.screening_score : '') + '"></div>';
+            html += '</div>';
+            html += '<div class="form-group"><label>Recruiter Comments</label><textarea id="recruiterComments" rows="3">' + escapeHtml(sc.recruiter_comments) + '</textarea></div>';
+            if (sc.screened_by_name) {
+                html += '<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Last screened by ' + escapeHtml(sc.screened_by_name) + (sc.screened_at ? ' on ' + escapeHtml(sc.screened_at) : '') + '</p>';
+            }
+            html += '<button type="button" class="btn btn-primary btn-sm" onclick="saveScreening(' + app.id + ')"><i class="ri-save-line"></i> Save Screening</button>';
+            return html;
+        }
+
+        function buildAssessmentTab(app) {
+            var asm = app.assessment || {};
+            var html = '<div class="form-grid">';
+            html += '<div class="form-group"><label>Assessment Score</label><input type="number" id="assessmentScore" min="0" max="100" value="' + (asm.assessment_score !== null && asm.assessment_score !== undefined ? asm.assessment_score : '') + '"></div>';
+            html += '</div>';
+            html += '<div class="form-group"><label>Assessment Comments</label><textarea id="assessmentComments" rows="3">' + escapeHtml(asm.assessment_comments) + '</textarea></div>';
+            if (asm.assessed_by_name) {
+                html += '<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Last assessed by ' + escapeHtml(asm.assessed_by_name) + (asm.assessed_at ? ' on ' + escapeHtml(asm.assessed_at) : '') + '</p>';
+            }
+            html += '<button type="button" class="btn btn-primary btn-sm" onclick="saveAssessment(' + app.id + ')"><i class="ri-save-line"></i> Save Assessment</button>';
+            return html;
+        }
+
+        function buildInterviewsTab(app) {
+            var iv = app.interview || {};
+            var html = '<div class="form-grid">';
+            html += '<div class="form-group"><label>Interview Date</label><input type="date" id="interviewDate" value="' + (iv.interview_date || '') + '"></div>';
+            html += '<div class="form-group"><label>Interview Score</label><input type="number" id="interviewScore" min="0" max="100" value="' + (iv.interview_score !== null && iv.interview_score !== undefined ? iv.interview_score : '') + '"></div>';
+            html += '</div>';
+            html += '<div class="form-group"><label>Interviewer Comments</label><textarea id="interviewerComments" rows="3">' + escapeHtml(iv.interviewer_comments) + '</textarea></div>';
+            if (iv.interviewed_by_name) {
+                html += '<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Last updated by ' + escapeHtml(iv.interviewed_by_name) + '</p>';
+            }
+            html += '<button type="button" class="btn btn-primary btn-sm" onclick="saveInterview(' + app.id + ')"><i class="ri-save-line"></i> Save Interview</button>';
+            return html;
+        }
+
+        function buildNotesTab(app) {
+            var html = '<div class="form-group"><label>Notes</label><textarea id="profileNotes" rows="4">' + escapeHtml(app.notes) + '</textarea></div>';
+            if (canViewSensitiveNotes) {
+                html += '<div class="form-grid">';
+                html += '<div class="form-group"><label><i class="ri-close-circle-line"></i> Rejection Reason</label><textarea id="profileRejectionReason" rows="3">' + escapeHtml(app.rejection_reason) + '</textarea></div>';
+                html += '<div class="form-group"><label><i class="ri-shield-user-line"></i> HR Comments</label><textarea id="profileHrComments" rows="3">' + escapeHtml(app.hr_comments) + '</textarea></div>';
+                html += '</div>';
+            }
+            html += '<button type="button" class="btn btn-primary btn-sm" onclick="saveNotes(' + app.id + ')"><i class="ri-save-line"></i> Save Notes</button>';
+            return html;
+        }
+
+        function loadProfileDocuments(appId) {
+            var pane = document.getElementById('profile-tab-documents');
+            $.ajax({
+                url: '?action=getDocuments&application_id=' + appId,
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    if (!response.success) {
+                        pane.innerHTML = '<div class="profile-empty">Failed to load documents.</div>';
+                        return;
+                    }
+                    var html = '';
+                    if (response.data.length === 0) {
+                        html += '<div class="profile-empty"><i class="ri-inbox-line" style="font-size:32px;"></i><p>No documents on file.</p></div>';
+                    } else {
+                        response.data.forEach(function(doc) {
+                            html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-light);">';
+                            html += '<div><i class="ri-file-line"></i> ' + escapeHtml(doc.file_name) + ' <span style="color:var(--text-muted);font-size:12px;">(' + escapeHtml(doc.document_label) + (doc.uploaded_by_name ? ' &bull; ' + escapeHtml(doc.uploaded_by_name) : '') + ')</span></div>';
+                            html += '<a href="' + doc.file_path + '" target="_blank" class="btn btn-secondary btn-sm"><i class="ri-download-line"></i></a>';
+                            html += '</div>';
+                        });
+                    }
+                    html += '<button type="button" class="btn btn-primary btn-sm" style="margin-top:16px;" onclick="openDocsModal(currentProfileApp.id, currentProfileApp.candidate_name)"><i class="ri-upload-cloud-2-line"></i> Manage Documents</button>';
+                    pane.innerHTML = html;
+                },
+                error: function() {
+                    pane.innerHTML = '<div class="profile-empty">Connection error.</div>';
+                }
+            });
+        }
+
+        function loadProfileActivity(appId) {
+            var pane = document.getElementById('profile-tab-activity');
+            $.ajax({
+                url: '?action=getApplicationActivity&application_id=' + appId,
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    if (!response.success) {
+                        pane.innerHTML = '<div class="profile-empty">Failed to load activity.</div>';
+                        return;
+                    }
+                    var html = '';
+                    if (response.data.length === 0) {
+                        html += '<div class="profile-empty"><i class="ri-history-line" style="font-size:32px;"></i><p>No activity recorded yet.</p></div>';
+                    } else {
+                        response.data.forEach(function(log) {
+                            html += '<div class="activity-log-item">';
+                            html += '<div>' + escapeHtml(log.description) + '</div>';
+                            html += '<div class="activity-log-meta">' + escapeHtml(log.user_name || 'System') + ' &bull; ' + escapeHtml(log.created_at) + '</div>';
+                            html += '</div>';
+                        });
+                    }
+                    pane.innerHTML = html;
+                },
+                error: function() {
+                    pane.innerHTML = '<div class="profile-empty">Connection error.</div>';
+                }
+            });
+        }
 
         // Form submit handler
         document.getElementById('appForm').addEventListener('submit', function(e) {
