@@ -1,8 +1,6 @@
-<!--
-  Developed by Rameez Scripts
-  WhatsApp: https://wa.me/923224083545 (For Custom Projects)
-  YouTube: https://www.youtube.com/@rameezimdad (Subscribe for more!)
--->
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -216,6 +214,23 @@
             expected_salary VARCHAR(50) DEFAULT NULL,
             nationality VARCHAR(80) DEFAULT NULL,
             current_location VARCHAR(150) DEFAULT NULL,
+            recruitment_reference VARCHAR(30) DEFAULT NULL,
+            county_of_residence VARCHAR(100) DEFAULT NULL,
+            highest_education_level VARCHAR(100) DEFAULT NULL,
+            institution VARCHAR(150) DEFAULT NULL,
+            course_qualification VARCHAR(150) DEFAULT NULL,
+            graduation_year YEAR DEFAULT NULL,
+            professional_certifications TEXT DEFAULT NULL,
+            relevant_training TEXT DEFAULT NULL,
+            current_employer VARCHAR(150) DEFAULT NULL,
+            current_job_title VARCHAR(150) DEFAULT NULL,
+            previous_employers TEXT DEFAULT NULL,
+            aviation_experience TEXT DEFAULT NULL,
+            customer_service_experience TEXT DEFAULT NULL,
+            relevant_skills TEXT DEFAULT NULL,
+            availability_notice_period VARCHAR(100) DEFAULT NULL,
+            rejection_reason TEXT DEFAULT NULL,
+            hr_comments TEXT DEFAULT NULL,
             stage_id INT NOT NULL,
             status_id INT NOT NULL,
             next_action VARCHAR(255) DEFAULT NULL,
@@ -239,6 +254,7 @@
             INDEX idx_position (position),
             INDEX idx_job_posting_id (job_posting_id),
             INDEX idx_applicant_id (applicant_id),
+            UNIQUE INDEX idx_recruitment_reference (recruitment_reference),
             FOREIGN KEY (stage_id) REFERENCES stages(id),
             FOREIGN KEY (status_id) REFERENCES stages(id),
             FOREIGN KEY (assigned_to) REFERENCES users(id),
@@ -278,6 +294,58 @@
             FOREIGN KEY (uploaded_by) REFERENCES users(id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
         echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Table "application_documents" created</div>';
+
+        // application_screening (FK → applications CASCADE, users RESTRICT) - one screening record per application
+        $conn->query("CREATE TABLE application_screening (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            application_id INT NOT NULL,
+            eligibility_pass TINYINT(1) DEFAULT NULL,
+            min_qualification_pass TINYINT(1) DEFAULT NULL,
+            required_experience_pass TINYINT(1) DEFAULT NULL,
+            location_requirement_pass TINYINT(1) DEFAULT NULL,
+            screening_score INT DEFAULT NULL,
+            recruiter_comments TEXT DEFAULT NULL,
+            screened_by INT DEFAULT NULL,
+            screened_at DATETIME DEFAULT NULL,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            UNIQUE INDEX idx_application_id (application_id),
+            FOREIGN KEY (application_id) REFERENCES applications(id) ON DELETE CASCADE,
+            FOREIGN KEY (screened_by) REFERENCES users(id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Table "application_screening" created</div>';
+
+        // application_assessment (FK → applications CASCADE, users RESTRICT) - one assessment record per application
+        $conn->query("CREATE TABLE application_assessment (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            application_id INT NOT NULL,
+            assessment_score INT DEFAULT NULL,
+            assessment_comments TEXT DEFAULT NULL,
+            assessed_by INT DEFAULT NULL,
+            assessed_at DATETIME DEFAULT NULL,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            UNIQUE INDEX idx_application_id (application_id),
+            FOREIGN KEY (application_id) REFERENCES applications(id) ON DELETE CASCADE,
+            FOREIGN KEY (assessed_by) REFERENCES users(id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Table "application_assessment" created</div>';
+
+        // application_interviews (FK → applications CASCADE, users RESTRICT) - one interview record per application
+        $conn->query("CREATE TABLE application_interviews (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            application_id INT NOT NULL,
+            interview_date DATE DEFAULT NULL,
+            interview_score INT DEFAULT NULL,
+            interviewer_comments TEXT DEFAULT NULL,
+            interviewed_by INT DEFAULT NULL,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            UNIQUE INDEX idx_application_id (application_id),
+            FOREIGN KEY (application_id) REFERENCES applications(id) ON DELETE CASCADE,
+            FOREIGN KEY (interviewed_by) REFERENCES users(id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Table "application_interviews" created</div>';
 
         // 11. activity_logs (FK → users RESTRICT, applications SET NULL)
         $conn->query("CREATE TABLE activity_logs (

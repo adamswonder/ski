@@ -28,9 +28,17 @@ if (isset($_GET['action'])) {
             case 'getApplications':
                 $conn = getDBConnection();
 
+                $canViewSensitiveNotes = hasPermission($user_id, $role, 'view_sensitive_notes');
+
                 $sql = "SELECT a.id, a.candidate_name, a.email, a.contact_number, a.position, a.company,
                                a.experience, a.academic_qualification, a.technical_qualification,
                                a.expected_salary, a.nationality, a.current_location,
+                               a.recruitment_reference, a.county_of_residence,
+                               a.highest_education_level, a.institution, a.course_qualification, a.graduation_year,
+                               a.professional_certifications, a.relevant_training,
+                               a.current_employer, a.current_job_title, a.previous_employers,
+                               a.aviation_experience, a.customer_service_experience, a.relevant_skills,
+                               a.availability_notice_period, a.rejection_reason, a.hr_comments,
                                a.stage_id, a.status_id, a.next_action, a.next_action_date,
                                a.applied_date, a.joined_date, a.days_to_join, a.notes,
                                a.assigned_to, a.created_by, a.created_at, a.updated_at,
@@ -38,7 +46,14 @@ if (isset($_GET['action'])) {
                                st.name AS status_name, st.color AS status_color, st.icon AS status_icon,
                                u.full_name AS assigned_to_name,
                                c.full_name AS created_by_name,
-                               COALESCE(dc.doc_count, 0) AS document_count
+                               COALESCE(dc.doc_count, 0) AS document_count,
+                               sc.eligibility_pass, sc.min_qualification_pass, sc.required_experience_pass,
+                               sc.location_requirement_pass, sc.screening_score, sc.recruiter_comments,
+                               scu.full_name AS screened_by_name, sc.screened_at,
+                               asm.assessment_score, asm.assessment_comments,
+                               asmu.full_name AS assessed_by_name, asm.assessed_at,
+                               iv.interview_date, iv.interview_score, iv.interviewer_comments,
+                               ivu.full_name AS interviewed_by_name
                         FROM applications a
                         LEFT JOIN stages s ON a.stage_id = s.id
                         LEFT JOIN stages st ON a.status_id = st.id
@@ -48,7 +63,13 @@ if (isset($_GET['action'])) {
                             SELECT application_id, COUNT(*) AS doc_count
                             FROM application_documents
                             GROUP BY application_id
-                        ) dc ON dc.application_id = a.id";
+                        ) dc ON dc.application_id = a.id
+                        LEFT JOIN application_screening sc ON sc.application_id = a.id
+                        LEFT JOIN users scu ON sc.screened_by = scu.id
+                        LEFT JOIN application_assessment asm ON asm.application_id = a.id
+                        LEFT JOIN users asmu ON asm.assessed_by = asmu.id
+                        LEFT JOIN application_interviews iv ON iv.application_id = a.id
+                        LEFT JOIN users ivu ON iv.interviewed_by = ivu.id";
 
                 // Regular users see only applications assigned to them
                 if ($role !== 'admin') {
@@ -79,6 +100,23 @@ if (isset($_GET['action'])) {
                         'expected_salary' => $row['expected_salary'],
                         'nationality' => $row['nationality'],
                         'current_location' => $row['current_location'],
+                        'recruitment_reference' => $row['recruitment_reference'],
+                        'county_of_residence' => $row['county_of_residence'],
+                        'highest_education_level' => $row['highest_education_level'],
+                        'institution' => $row['institution'],
+                        'course_qualification' => $row['course_qualification'],
+                        'graduation_year' => $row['graduation_year'],
+                        'professional_certifications' => $row['professional_certifications'],
+                        'relevant_training' => $row['relevant_training'],
+                        'current_employer' => $row['current_employer'],
+                        'current_job_title' => $row['current_job_title'],
+                        'previous_employers' => $row['previous_employers'],
+                        'aviation_experience' => $row['aviation_experience'],
+                        'customer_service_experience' => $row['customer_service_experience'],
+                        'relevant_skills' => $row['relevant_skills'],
+                        'availability_notice_period' => $row['availability_notice_period'],
+                        'rejection_reason' => $canViewSensitiveNotes ? $row['rejection_reason'] : null,
+                        'hr_comments' => $canViewSensitiveNotes ? $row['hr_comments'] : null,
                         'stage_id' => $row['stage_id'],
                         'stage_name' => $row['stage_name'],
                         'stage_color' => $row['stage_color'],
@@ -95,6 +133,28 @@ if (isset($_GET['action'])) {
                         'notes' => $row['notes'],
                         'assigned_to' => $row['assigned_to'],
                         'assigned_to_name' => $row['assigned_to_name'],
+                        'screening' => [
+                            'eligibility_pass' => $row['eligibility_pass'],
+                            'min_qualification_pass' => $row['min_qualification_pass'],
+                            'required_experience_pass' => $row['required_experience_pass'],
+                            'location_requirement_pass' => $row['location_requirement_pass'],
+                            'screening_score' => $row['screening_score'],
+                            'recruiter_comments' => $canViewSensitiveNotes ? $row['recruiter_comments'] : null,
+                            'screened_by_name' => $row['screened_by_name'],
+                            'screened_at' => $row['screened_at']
+                        ],
+                        'assessment' => [
+                            'assessment_score' => $row['assessment_score'],
+                            'assessment_comments' => $row['assessment_comments'],
+                            'assessed_by_name' => $row['assessed_by_name'],
+                            'assessed_at' => $row['assessed_at']
+                        ],
+                        'interview' => [
+                            'interview_date' => $row['interview_date'],
+                            'interview_score' => $row['interview_score'],
+                            'interviewer_comments' => $row['interviewer_comments'],
+                            'interviewed_by_name' => $row['interviewed_by_name']
+                        ],
                         'created_by' => $row['created_by'],
                         'created_by_name' => $row['created_by_name'],
                         'created_at' => date('M d, Y', strtotime($row['created_at'])),
@@ -183,6 +243,27 @@ if (isset($_GET['action'])) {
                 $notes = isset($_POST['notes']) ? trim($_POST['notes']) : null;
                 $assignedTo = isset($_POST['assigned_to']) && !empty($_POST['assigned_to']) ? intval($_POST['assigned_to']) : null;
 
+                // Candidate profile: education, work experience, county (editable by anyone who can edit the application)
+                $countyOfResidence = isset($_POST['county_of_residence']) ? trim($_POST['county_of_residence']) : null;
+                $highestEducationLevel = isset($_POST['highest_education_level']) ? trim($_POST['highest_education_level']) : null;
+                $institution = isset($_POST['institution']) ? trim($_POST['institution']) : null;
+                $courseQualification = isset($_POST['course_qualification']) ? trim($_POST['course_qualification']) : null;
+                $graduationYear = isset($_POST['graduation_year']) && !empty($_POST['graduation_year']) ? intval($_POST['graduation_year']) : null;
+                $professionalCertifications = isset($_POST['professional_certifications']) ? trim($_POST['professional_certifications']) : null;
+                $relevantTraining = isset($_POST['relevant_training']) ? trim($_POST['relevant_training']) : null;
+                $currentEmployer = isset($_POST['current_employer']) ? trim($_POST['current_employer']) : null;
+                $currentJobTitle = isset($_POST['current_job_title']) ? trim($_POST['current_job_title']) : null;
+                $previousEmployers = isset($_POST['previous_employers']) ? trim($_POST['previous_employers']) : null;
+                $aviationExperience = isset($_POST['aviation_experience']) ? trim($_POST['aviation_experience']) : null;
+                $customerServiceExperience = isset($_POST['customer_service_experience']) ? trim($_POST['customer_service_experience']) : null;
+                $relevantSkills = isset($_POST['relevant_skills']) ? trim($_POST['relevant_skills']) : null;
+                $availabilityNoticePeriod = isset($_POST['availability_notice_period']) ? trim($_POST['availability_notice_period']) : null;
+
+                // Sensitive notes: only accepted from users with view_sensitive_notes (silently ignored otherwise)
+                $canViewSensitiveNotes = hasPermission($user_id, $role, 'view_sensitive_notes');
+                $rejectionReason = $canViewSensitiveNotes && isset($_POST['rejection_reason']) ? trim($_POST['rejection_reason']) : null;
+                $hrComments = $canViewSensitiveNotes && isset($_POST['hr_comments']) ? trim($_POST['hr_comments']) : null;
+
                 // Handle multi-select qualifications (sent as comma-separated or JSON)
                 $academicQual = isset($_POST['academic_qualification']) ? $_POST['academic_qualification'] : '';
                 $technicalQual = isset($_POST['technical_qualification']) ? $_POST['technical_qualification'] : '';
@@ -216,19 +297,24 @@ if (isset($_GET['action'])) {
 
                 $conn = getDBConnection();
 
-                $stmt = $conn->prepare("INSERT INTO applications (candidate_name, email, contact_number, position, company, experience, academic_qualification, technical_qualification, expected_salary, nationality, current_location, stage_id, status_id, next_action, next_action_date, applied_date, joined_date, notes, assigned_to, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt = $conn->prepare("INSERT INTO applications (candidate_name, email, contact_number, position, company, experience, academic_qualification, technical_qualification, expected_salary, nationality, current_location, county_of_residence, highest_education_level, institution, course_qualification, graduation_year, professional_certifications, relevant_training, current_employer, current_job_title, previous_employers, aviation_experience, customer_service_experience, relevant_skills, availability_notice_period, rejection_reason, hr_comments, stage_id, status_id, next_action, next_action_date, applied_date, joined_date, notes, assigned_to, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
                 $createdBy = $user_id;
-                $stmt->bind_param("sssssssssssiisssssis",
+                $stmt->bind_param("sssssssssssssssisssssssssssiisssssii",
                     $candidateName, $email, $contactNumber, $position, $company,
                     $experience, $academicQual, $technicalQual, $expectedSalary,
-                    $nationality, $currentLocation, $stageId, $statusId,
+                    $nationality, $currentLocation, $countyOfResidence, $highestEducationLevel,
+                    $institution, $courseQualification, $graduationYear, $professionalCertifications,
+                    $relevantTraining, $currentEmployer, $currentJobTitle, $previousEmployers,
+                    $aviationExperience, $customerServiceExperience, $relevantSkills, $availabilityNoticePeriod,
+                    $rejectionReason, $hrComments, $stageId, $statusId,
                     $nextAction, $nextActionDate, $appliedDate, $joinedDate,
                     $notes, $assignedTo, $createdBy
                 );
 
                 if ($stmt->execute()) {
                     $newAppId = $conn->insert_id;
+                    generateRecruitmentReference($conn, $newAppId, $appliedDate);
                     logActivity($user_id, 'CREATE', "Created application for: $candidateName - $position", ['module' => 'applications', 'application_id' => $newAppId]);
 
                     $stmt->close();
@@ -266,6 +352,25 @@ if (isset($_GET['action'])) {
                 $joinedDate = isset($_POST['joined_date']) && !empty($_POST['joined_date']) ? $_POST['joined_date'] : null;
                 $notes = isset($_POST['notes']) ? trim($_POST['notes']) : null;
                 $assignedTo = isset($_POST['assigned_to']) && !empty($_POST['assigned_to']) ? intval($_POST['assigned_to']) : null;
+
+                // Candidate profile: education, work experience, county (editable by anyone who can edit the application)
+                $countyOfResidence = isset($_POST['county_of_residence']) ? trim($_POST['county_of_residence']) : null;
+                $highestEducationLevel = isset($_POST['highest_education_level']) ? trim($_POST['highest_education_level']) : null;
+                $institution = isset($_POST['institution']) ? trim($_POST['institution']) : null;
+                $courseQualification = isset($_POST['course_qualification']) ? trim($_POST['course_qualification']) : null;
+                $graduationYear = isset($_POST['graduation_year']) && !empty($_POST['graduation_year']) ? intval($_POST['graduation_year']) : null;
+                $professionalCertifications = isset($_POST['professional_certifications']) ? trim($_POST['professional_certifications']) : null;
+                $relevantTraining = isset($_POST['relevant_training']) ? trim($_POST['relevant_training']) : null;
+                $currentEmployer = isset($_POST['current_employer']) ? trim($_POST['current_employer']) : null;
+                $currentJobTitle = isset($_POST['current_job_title']) ? trim($_POST['current_job_title']) : null;
+                $previousEmployers = isset($_POST['previous_employers']) ? trim($_POST['previous_employers']) : null;
+                $aviationExperience = isset($_POST['aviation_experience']) ? trim($_POST['aviation_experience']) : null;
+                $customerServiceExperience = isset($_POST['customer_service_experience']) ? trim($_POST['customer_service_experience']) : null;
+                $relevantSkills = isset($_POST['relevant_skills']) ? trim($_POST['relevant_skills']) : null;
+                $availabilityNoticePeriod = isset($_POST['availability_notice_period']) ? trim($_POST['availability_notice_period']) : null;
+
+                // Sensitive notes: only accepted from users with view_sensitive_notes (existing value preserved otherwise)
+                $canViewSensitiveNotes = hasPermission($user_id, $role, 'view_sensitive_notes');
 
                 // Handle multi-select qualifications
                 $academicQual = isset($_POST['academic_qualification']) ? $_POST['academic_qualification'] : '';
@@ -317,12 +422,27 @@ if (isset($_GET['action'])) {
                     $stmt->close();
                 }
 
-                $stmt = $conn->prepare("UPDATE applications SET candidate_name = ?, email = ?, contact_number = ?, position = ?, company = ?, experience = ?, academic_qualification = ?, technical_qualification = ?, expected_salary = ?, nationality = ?, current_location = ?, stage_id = ?, status_id = ?, next_action = ?, next_action_date = ?, applied_date = ?, joined_date = ?, notes = ?, assigned_to = ? WHERE id = ?");
+                // Sensitive notes fields are only updated when the submitter actually has permission,
+                // so a request that omits/strips them (no permission) can't silently wipe existing values
+                if ($canViewSensitiveNotes) {
+                    $rejectionReason = isset($_POST['rejection_reason']) ? trim($_POST['rejection_reason']) : null;
+                    $hrComments = isset($_POST['hr_comments']) ? trim($_POST['hr_comments']) : null;
+                    $stmt = $conn->prepare("UPDATE applications SET rejection_reason = ?, hr_comments = ? WHERE id = ?");
+                    $stmt->bind_param("ssi", $rejectionReason, $hrComments, $appId);
+                    $stmt->execute();
+                    $stmt->close();
+                }
 
-                $stmt->bind_param("sssssssssssiisssssii",
+                $stmt = $conn->prepare("UPDATE applications SET candidate_name = ?, email = ?, contact_number = ?, position = ?, company = ?, experience = ?, academic_qualification = ?, technical_qualification = ?, expected_salary = ?, nationality = ?, current_location = ?, county_of_residence = ?, highest_education_level = ?, institution = ?, course_qualification = ?, graduation_year = ?, professional_certifications = ?, relevant_training = ?, current_employer = ?, current_job_title = ?, previous_employers = ?, aviation_experience = ?, customer_service_experience = ?, relevant_skills = ?, availability_notice_period = ?, stage_id = ?, status_id = ?, next_action = ?, next_action_date = ?, applied_date = ?, joined_date = ?, notes = ?, assigned_to = ? WHERE id = ?");
+
+                $stmt->bind_param("sssssssssssssssisssssssssiisssssii",
                     $candidateName, $email, $contactNumber, $position, $company,
                     $experience, $academicQual, $technicalQual, $expectedSalary,
-                    $nationality, $currentLocation, $stageId, $statusId,
+                    $nationality, $currentLocation, $countyOfResidence, $highestEducationLevel,
+                    $institution, $courseQualification, $graduationYear, $professionalCertifications,
+                    $relevantTraining, $currentEmployer, $currentJobTitle, $previousEmployers,
+                    $aviationExperience, $customerServiceExperience, $relevantSkills, $availabilityNoticePeriod,
+                    $stageId, $statusId,
                     $nextAction, $nextActionDate, $appliedDate, $joinedDate,
                     $notes, $assignedTo, $appId
                 );
@@ -590,6 +710,148 @@ if (isset($_GET['action'])) {
                 }
                 exit();
 
+            case 'saveScreening':
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+                    exit();
+                }
+                if (!hasPermission($user_id, $role, 'manage_screening')) {
+                    echo json_encode(['success' => false, 'message' => 'Access denied']);
+                    exit();
+                }
+
+                $screeningAppId = isset($_POST['application_id']) ? intval($_POST['application_id']) : 0;
+                if ($screeningAppId <= 0) {
+                    echo json_encode(['success' => false, 'message' => 'Invalid application ID']);
+                    exit();
+                }
+
+                $toPassFail = function($val) {
+                    if ($val === '' || $val === null) return null;
+                    return $val === '1' ? 1 : 0;
+                };
+                $eligibilityPass = $toPassFail($_POST['eligibility_pass'] ?? null);
+                $minQualificationPass = $toPassFail($_POST['min_qualification_pass'] ?? null);
+                $requiredExperiencePass = $toPassFail($_POST['required_experience_pass'] ?? null);
+                $locationRequirementPass = $toPassFail($_POST['location_requirement_pass'] ?? null);
+                $screeningScore = isset($_POST['screening_score']) && $_POST['screening_score'] !== '' ? intval($_POST['screening_score']) : null;
+                $recruiterComments = isset($_POST['recruiter_comments']) ? trim($_POST['recruiter_comments']) : null;
+
+                $conn = getDBConnection();
+                $stmt = $conn->prepare("INSERT INTO application_screening
+                    (application_id, eligibility_pass, min_qualification_pass, required_experience_pass, location_requirement_pass, screening_score, recruiter_comments, screened_by, screened_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                    ON DUPLICATE KEY UPDATE
+                    eligibility_pass = VALUES(eligibility_pass),
+                    min_qualification_pass = VALUES(min_qualification_pass),
+                    required_experience_pass = VALUES(required_experience_pass),
+                    location_requirement_pass = VALUES(location_requirement_pass),
+                    screening_score = VALUES(screening_score),
+                    recruiter_comments = VALUES(recruiter_comments),
+                    screened_by = VALUES(screened_by),
+                    screened_at = NOW()");
+                $stmt->bind_param("iiiiiisi", $screeningAppId, $eligibilityPass, $minQualificationPass, $requiredExperiencePass, $locationRequirementPass, $screeningScore, $recruiterComments, $user_id);
+
+                if ($stmt->execute()) {
+                    logActivity($user_id, 'UPDATE', "Saved screening for application #$screeningAppId", ['module' => 'applications', 'application_id' => $screeningAppId]);
+                    $stmt->close();
+                    $conn->close();
+                    echo json_encode(['success' => true, 'message' => 'Screening saved successfully']);
+                } else {
+                    $error = $stmt->error;
+                    $stmt->close();
+                    $conn->close();
+                    echo json_encode(['success' => false, 'message' => 'Failed to save screening: ' . $error]);
+                }
+                exit();
+
+            case 'saveAssessment':
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+                    exit();
+                }
+                if (!hasPermission($user_id, $role, 'manage_assessment')) {
+                    echo json_encode(['success' => false, 'message' => 'Access denied']);
+                    exit();
+                }
+
+                $assessmentAppId = isset($_POST['application_id']) ? intval($_POST['application_id']) : 0;
+                if ($assessmentAppId <= 0) {
+                    echo json_encode(['success' => false, 'message' => 'Invalid application ID']);
+                    exit();
+                }
+
+                $assessmentScore = isset($_POST['assessment_score']) && $_POST['assessment_score'] !== '' ? intval($_POST['assessment_score']) : null;
+                $assessmentComments = isset($_POST['assessment_comments']) ? trim($_POST['assessment_comments']) : null;
+
+                $conn = getDBConnection();
+                $stmt = $conn->prepare("INSERT INTO application_assessment
+                    (application_id, assessment_score, assessment_comments, assessed_by, assessed_at)
+                    VALUES (?, ?, ?, ?, NOW())
+                    ON DUPLICATE KEY UPDATE
+                    assessment_score = VALUES(assessment_score),
+                    assessment_comments = VALUES(assessment_comments),
+                    assessed_by = VALUES(assessed_by),
+                    assessed_at = NOW()");
+                $stmt->bind_param("iisi", $assessmentAppId, $assessmentScore, $assessmentComments, $user_id);
+
+                if ($stmt->execute()) {
+                    logActivity($user_id, 'UPDATE', "Saved assessment for application #$assessmentAppId", ['module' => 'applications', 'application_id' => $assessmentAppId]);
+                    $stmt->close();
+                    $conn->close();
+                    echo json_encode(['success' => true, 'message' => 'Assessment saved successfully']);
+                } else {
+                    $error = $stmt->error;
+                    $stmt->close();
+                    $conn->close();
+                    echo json_encode(['success' => false, 'message' => 'Failed to save assessment: ' . $error]);
+                }
+                exit();
+
+            case 'saveInterview':
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+                    exit();
+                }
+                if (!hasPermission($user_id, $role, 'manage_interviews')) {
+                    echo json_encode(['success' => false, 'message' => 'Access denied']);
+                    exit();
+                }
+
+                $interviewAppId = isset($_POST['application_id']) ? intval($_POST['application_id']) : 0;
+                if ($interviewAppId <= 0) {
+                    echo json_encode(['success' => false, 'message' => 'Invalid application ID']);
+                    exit();
+                }
+
+                $interviewDate = isset($_POST['interview_date']) && !empty($_POST['interview_date']) ? $_POST['interview_date'] : null;
+                $interviewScore = isset($_POST['interview_score']) && $_POST['interview_score'] !== '' ? intval($_POST['interview_score']) : null;
+                $interviewerComments = isset($_POST['interviewer_comments']) ? trim($_POST['interviewer_comments']) : null;
+
+                $conn = getDBConnection();
+                $stmt = $conn->prepare("INSERT INTO application_interviews
+                    (application_id, interview_date, interview_score, interviewer_comments, interviewed_by)
+                    VALUES (?, ?, ?, ?, ?)
+                    ON DUPLICATE KEY UPDATE
+                    interview_date = VALUES(interview_date),
+                    interview_score = VALUES(interview_score),
+                    interviewer_comments = VALUES(interviewer_comments),
+                    interviewed_by = VALUES(interviewed_by)");
+                $stmt->bind_param("isisi", $interviewAppId, $interviewDate, $interviewScore, $interviewerComments, $user_id);
+
+                if ($stmt->execute()) {
+                    logActivity($user_id, 'UPDATE', "Saved interview for application #$interviewAppId", ['module' => 'applications', 'application_id' => $interviewAppId]);
+                    $stmt->close();
+                    $conn->close();
+                    echo json_encode(['success' => true, 'message' => 'Interview saved successfully']);
+                } else {
+                    $error = $stmt->error;
+                    $stmt->close();
+                    $conn->close();
+                    echo json_encode(['success' => false, 'message' => 'Failed to save interview: ' . $error]);
+                }
+                exit();
+
             case 'getTechnicalSkills':
                 $skills = getSetting('technical_skills', '["HTML/CSS","JavaScript","PHP","Python","Java","SQL"]');
                 $skillsArray = json_decode($skills, true);
@@ -755,6 +1017,10 @@ if (isset($_GET['action'])) {
                             <label><i class="ri-map-pin-line"></i> Current Location</label>
                             <input type="text" id="currentLocation" name="current_location" maxlength="150">
                         </div>
+                        <div class="form-group">
+                            <label><i class="ri-map-2-line"></i> County of Residence</label>
+                            <input type="text" id="countyOfResidence" name="county_of_residence" maxlength="100" placeholder="e.g. Nairobi">
+                        </div>
                     </div>
 
                     <!-- Job Details -->
@@ -800,6 +1066,68 @@ if (isset($_GET['action'])) {
                                     <i class="ri-loader-4-line ri-spin"></i> Loading skills...
                                 </p>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Education & Qualifications -->
+                    <h4 class="form-section-title"><i class="ri-book-open-line"></i> Education & Qualifications</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label><i class="ri-graduation-cap-line"></i> Highest Education Level</label>
+                            <input type="text" id="highestEducationLevel" name="highest_education_level" maxlength="100" placeholder="e.g. Bachelor's Degree">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-school-line"></i> Institution</label>
+                            <input type="text" id="institution" name="institution" maxlength="150">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-file-list-3-line"></i> Course / Qualification</label>
+                            <input type="text" id="courseQualification" name="course_qualification" maxlength="150">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-calendar-line"></i> Graduation Year</label>
+                            <input type="number" id="graduationYear" name="graduation_year" min="1950" max="2100" placeholder="e.g. 2020">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-award-line"></i> Professional Certifications</label>
+                            <textarea id="professionalCertifications" name="professional_certifications" rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-slideshow-line"></i> Relevant Training</label>
+                            <textarea id="relevantTraining" name="relevant_training" rows="2"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Work Experience -->
+                    <h4 class="form-section-title"><i class="ri-briefcase-4-line"></i> Work Experience</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label><i class="ri-building-4-line"></i> Current / Most Recent Employer</label>
+                            <input type="text" id="currentEmployer" name="current_employer" maxlength="150">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-id-card-line"></i> Job Title</label>
+                            <input type="text" id="currentJobTitle" name="current_job_title" maxlength="150">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-time-line"></i> Availability / Notice Period</label>
+                            <input type="text" id="availabilityNoticePeriod" name="availability_notice_period" maxlength="100" placeholder="e.g. 30 days">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-history-line"></i> Previous Employers</label>
+                            <textarea id="previousEmployers" name="previous_employers" rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-flight-takeoff-line"></i> Aviation Experience</label>
+                            <textarea id="aviationExperience" name="aviation_experience" rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-customer-service-2-line"></i> Customer Service Experience</label>
+                            <textarea id="customerServiceExperience" name="customer_service_experience" rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-tools-line"></i> Relevant Skills</label>
+                            <textarea id="relevantSkills" name="relevant_skills" rows="2"></textarea>
                         </div>
                     </div>
 
@@ -853,6 +1181,21 @@ if (isset($_GET['action'])) {
                         <textarea id="notes" name="notes" rows="3" placeholder="Additional notes about this application..."></textarea>
                     </div>
 
+                    <?php if (hasPermission($user_id, $role, 'view_sensitive_notes')): ?>
+                    <!-- Sensitive Notes (Recruiter/HR only) -->
+                    <h4 class="form-section-title"><i class="ri-lock-line"></i> Sensitive Notes</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label><i class="ri-close-circle-line"></i> Rejection Reason</label>
+                            <textarea id="rejectionReason" name="rejection_reason" rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-shield-user-line"></i> HR Comments</label>
+                            <textarea id="hrComments" name="hr_comments" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
                     <!-- Attach Document (Optional) -->
                     <h4 class="form-section-title"><i class="ri-attachment-line"></i> Attach Document (Optional)</h4>
                     <div class="form-grid">
@@ -890,6 +1233,102 @@ if (isset($_GET['action'])) {
                         </button>
                     </div>
                 </form>
+
+                <?php if (hasPermission($user_id, $role, 'manage_screening')): ?>
+                <!-- Screening (visible only in edit mode, saved independently) -->
+                <div id="screeningPanel" style="display:none; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                    <h4 class="form-section-title"><i class="ri-file-search-line"></i> Screening</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label><i class="ri-check-line"></i> Eligibility</label>
+                            <select id="eligibilityPass">
+                                <option value="">Not Screened</option>
+                                <option value="1">Pass</option>
+                                <option value="0">Fail</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-graduation-cap-line"></i> Minimum Qualification</label>
+                            <select id="minQualificationPass">
+                                <option value="">Not Screened</option>
+                                <option value="1">Pass</option>
+                                <option value="0">Fail</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-time-line"></i> Required Experience</label>
+                            <select id="requiredExperiencePass">
+                                <option value="">Not Screened</option>
+                                <option value="1">Pass</option>
+                                <option value="0">Fail</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-map-pin-line"></i> Location Requirement</label>
+                            <select id="locationRequirementPass">
+                                <option value="">Not Screened</option>
+                                <option value="1">Pass</option>
+                                <option value="0">Fail</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-percent-line"></i> Screening Score</label>
+                            <input type="number" id="screeningScore" min="0" max="100">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="ri-chat-3-line"></i> Recruiter Comments</label>
+                        <textarea id="recruiterComments" rows="2"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="saveScreening()">
+                        <i class="ri-save-line"></i> Save Screening
+                    </button>
+                </div>
+                <?php endif; ?>
+
+                <?php if (hasPermission($user_id, $role, 'manage_assessment')): ?>
+                <!-- Assessment (visible only in edit mode, saved independently) -->
+                <div id="assessmentPanel" style="display:none; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                    <h4 class="form-section-title"><i class="ri-clipboard-line"></i> Assessment</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label><i class="ri-percent-line"></i> Assessment Score</label>
+                            <input type="number" id="assessmentScore" min="0" max="100">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="ri-chat-3-line"></i> Assessment Comments</label>
+                        <textarea id="assessmentComments" rows="2"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="saveAssessment()">
+                        <i class="ri-save-line"></i> Save Assessment
+                    </button>
+                </div>
+                <?php endif; ?>
+
+                <?php if (hasPermission($user_id, $role, 'manage_interviews')): ?>
+                <!-- Interview (visible only in edit mode, saved independently) -->
+                <div id="interviewPanel" style="display:none; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                    <h4 class="form-section-title"><i class="ri-calendar-check-line"></i> Interview</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label><i class="ri-calendar-event-line"></i> Interview Date</label>
+                            <input type="date" id="interviewDate">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-percent-line"></i> Interview Score</label>
+                            <input type="number" id="interviewScore" min="0" max="100">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="ri-chat-3-line"></i> Interviewer Comments</label>
+                        <textarea id="interviewerComments" rows="2"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="saveInterview()">
+                        <i class="ri-save-line"></i> Save Interview
+                    </button>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -1298,7 +1737,19 @@ if (isset($_GET['action'])) {
             // Uncheck all academic qualification checkboxes
             document.querySelectorAll('#academicCheckboxes input[type="checkbox"]').forEach(function(cb) { cb.checked = false; });
 
+            // Screening/Assessment/Interview only make sense for an existing application
+            ['screeningPanel', 'assessmentPanel', 'interviewPanel'].forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+
             document.getElementById('appModal').classList.add('active');
+        }
+
+        // Sets a field's value only if the element exists (some fields are permission-gated and may not be in the DOM)
+        function setFieldValue(id, value) {
+            var el = document.getElementById(id);
+            if (el) el.value = value || '';
         }
 
         function editApplication(app) {
@@ -1331,6 +1782,58 @@ if (isset($_GET['action'])) {
             document.getElementById('nextActionDate').value = app.next_action_date || '';
             document.getElementById('notes').value = app.notes || '';
 
+            // Candidate profile: county, education, work experience
+            setFieldValue('countyOfResidence', app.county_of_residence);
+            setFieldValue('highestEducationLevel', app.highest_education_level);
+            setFieldValue('institution', app.institution);
+            setFieldValue('courseQualification', app.course_qualification);
+            setFieldValue('graduationYear', app.graduation_year);
+            setFieldValue('professionalCertifications', app.professional_certifications);
+            setFieldValue('relevantTraining', app.relevant_training);
+            setFieldValue('currentEmployer', app.current_employer);
+            setFieldValue('currentJobTitle', app.current_job_title);
+            setFieldValue('availabilityNoticePeriod', app.availability_notice_period);
+            setFieldValue('previousEmployers', app.previous_employers);
+            setFieldValue('aviationExperience', app.aviation_experience);
+            setFieldValue('customerServiceExperience', app.customer_service_experience);
+            setFieldValue('relevantSkills', app.relevant_skills);
+
+            // Sensitive notes (fields only exist in DOM for users with view_sensitive_notes)
+            setFieldValue('rejectionReason', app.rejection_reason);
+            setFieldValue('hrComments', app.hr_comments);
+
+            // Screening (panel only exists in DOM for users with manage_screening)
+            var screeningPanel = document.getElementById('screeningPanel');
+            if (screeningPanel) {
+                var sc = app.screening || {};
+                setFieldValue('eligibilityPass', sc.eligibility_pass === null || sc.eligibility_pass === undefined ? '' : sc.eligibility_pass);
+                setFieldValue('minQualificationPass', sc.min_qualification_pass === null || sc.min_qualification_pass === undefined ? '' : sc.min_qualification_pass);
+                setFieldValue('requiredExperiencePass', sc.required_experience_pass === null || sc.required_experience_pass === undefined ? '' : sc.required_experience_pass);
+                setFieldValue('locationRequirementPass', sc.location_requirement_pass === null || sc.location_requirement_pass === undefined ? '' : sc.location_requirement_pass);
+                setFieldValue('screeningScore', sc.screening_score);
+                setFieldValue('recruiterComments', sc.recruiter_comments);
+                screeningPanel.style.display = 'block';
+            }
+
+            // Assessment (panel only exists in DOM for users with manage_assessment)
+            var assessmentPanel = document.getElementById('assessmentPanel');
+            if (assessmentPanel) {
+                var asm = app.assessment || {};
+                setFieldValue('assessmentScore', asm.assessment_score);
+                setFieldValue('assessmentComments', asm.assessment_comments);
+                assessmentPanel.style.display = 'block';
+            }
+
+            // Interview (panel only exists in DOM for users with manage_interviews)
+            var interviewPanel = document.getElementById('interviewPanel');
+            if (interviewPanel) {
+                var iv = app.interview || {};
+                setFieldValue('interviewDate', iv.interview_date);
+                setFieldValue('interviewScore', iv.interview_score);
+                setFieldValue('interviewerComments', iv.interviewer_comments);
+                interviewPanel.style.display = 'block';
+            }
+
             // Set academic qualification checkboxes
             document.querySelectorAll('#academicCheckboxes input[type="checkbox"]').forEach(function(cb) {
                 cb.checked = app.academic_qualification && app.academic_qualification.includes(cb.value);
@@ -1358,6 +1861,95 @@ if (isset($_GET['action'])) {
             });
 
             document.getElementById('appModal').classList.add('active');
+        }
+
+        function saveScreening() {
+            if (!currentFormAppId) return;
+            var formData = new FormData();
+            formData.append('application_id', currentFormAppId);
+            formData.append('eligibility_pass', document.getElementById('eligibilityPass').value);
+            formData.append('min_qualification_pass', document.getElementById('minQualificationPass').value);
+            formData.append('required_experience_pass', document.getElementById('requiredExperiencePass').value);
+            formData.append('location_requirement_pass', document.getElementById('locationRequirementPass').value);
+            formData.append('screening_score', document.getElementById('screeningScore').value);
+            formData.append('recruiter_comments', document.getElementById('recruiterComments').value);
+
+            $.ajax({
+                url: '?action=saveScreening',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({ icon: 'success', text: response.message, timer: 1500, showConfirmButton: false });
+                        loadApplications();
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Error', text: response.message });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Connection error: ' + error });
+                }
+            });
+        }
+
+        function saveAssessment() {
+            if (!currentFormAppId) return;
+            var formData = new FormData();
+            formData.append('application_id', currentFormAppId);
+            formData.append('assessment_score', document.getElementById('assessmentScore').value);
+            formData.append('assessment_comments', document.getElementById('assessmentComments').value);
+
+            $.ajax({
+                url: '?action=saveAssessment',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({ icon: 'success', text: response.message, timer: 1500, showConfirmButton: false });
+                        loadApplications();
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Error', text: response.message });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Connection error: ' + error });
+                }
+            });
+        }
+
+        function saveInterview() {
+            if (!currentFormAppId) return;
+            var formData = new FormData();
+            formData.append('application_id', currentFormAppId);
+            formData.append('interview_date', document.getElementById('interviewDate').value);
+            formData.append('interview_score', document.getElementById('interviewScore').value);
+            formData.append('interviewer_comments', document.getElementById('interviewerComments').value);
+
+            $.ajax({
+                url: '?action=saveInterview',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({ icon: 'success', text: response.message, timer: 1500, showConfirmButton: false });
+                        loadApplications();
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Error', text: response.message });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Connection error: ' + error });
+                }
+            });
         }
 
         function closeModal() {

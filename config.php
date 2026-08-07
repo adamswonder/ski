@@ -91,6 +91,17 @@ function computeEffectiveStatus($statusOverride, $openDate, $closeDate) {
     return 'open';
 }
 
+// Builds and saves the SKY-{year}-{padded id} reference for a newly-inserted application
+function generateRecruitmentReference($conn, $applicationId, $appliedDate) {
+    $year = $appliedDate ? date('Y', strtotime($appliedDate)) : date('Y');
+    $ref = 'SKY-' . $year . '-' . str_pad($applicationId, 5, '0', STR_PAD_LEFT);
+    $stmt = $conn->prepare("UPDATE applications SET recruitment_reference = ? WHERE id = ?");
+    $stmt->bind_param("si", $ref, $applicationId);
+    $stmt->execute();
+    $stmt->close();
+    return $ref;
+}
+
 // Permission check - admins implicitly have every permission, users need an explicit grant
 function hasPermission($user_id, $role, $permission_slug) {
     if ($role === 'admin') {
