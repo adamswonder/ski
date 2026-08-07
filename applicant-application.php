@@ -207,8 +207,8 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
         .aa-progress-step.current { background: var(--navy-primary); border-color: var(--navy-primary); color: #fff; }
         .aa-progress-arrow { color: var(--border-color); margin: 0 4px; font-size: 16px; }
 
-        .aa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .aa-field-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 3px; }
+        .aa-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 32px; row-gap: 20px; margin-bottom: 8px; }
+        .aa-field-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 6px; }
         .aa-field-value { font-size: 14px; color: var(--text-primary); margin-bottom: 16px; }
         .aa-doc-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-light); }
         .aa-doc-row:last-child { border-bottom: none; }
@@ -257,7 +257,7 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
         <!-- Progress -->
         <?php if (!empty($pipelineStages)): ?>
         <div class="data-section" style="margin-bottom: 24px;">
-            <h3 style="margin-top:0;"><i class="ri-route-line"></i> Application Progress</h3>
+            <h3 style="margin: 0 0 20px;"><i class="ri-route-line"></i> Application Progress</h3>
             <div class="aa-progress">
                 <?php foreach ($pipelineStages as $i => $s): ?>
                     <?php
@@ -279,7 +279,7 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
 
         <!-- Application Details -->
         <div class="data-section" style="margin-bottom: 24px;">
-            <h3 style="margin-top:0;"><i class="ri-file-user-line"></i> Application Details</h3>
+            <h3 style="margin: 0 0 20px;"><i class="ri-file-user-line"></i> Application Details</h3>
             <div class="aa-grid">
                 <div>
                     <div class="aa-field-label">Email</div>
@@ -354,7 +354,7 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
 
         <!-- Documents -->
         <div class="data-section">
-            <h3 style="margin-top:0;"><i class="ri-attachment-line"></i> Documents</h3>
+            <h3 style="margin: 0 0 20px;"><i class="ri-attachment-line"></i> Documents</h3>
 
             <?php if (empty($documents)): ?>
                 <p style="color: var(--text-muted);">No documents on file yet.</p>

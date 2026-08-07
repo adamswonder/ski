@@ -487,10 +487,12 @@
             ['Applied',     'pipeline', '#3B82F6', 'ri-send-plane-line',    1],
             ['Screening',   'pipeline', '#8B5CF6', 'ri-search-line',         2],
             ['Shortlisted', 'pipeline', '#F59E0B', 'ri-star-line',           3],
-            ['Interview',   'pipeline', '#023f57', 'ri-chat-3-line',       4],
-            ['Offer',       'pipeline', '#10B981', 'ri-shake-hands-line',      5],
-            ['Joined',      'pipeline', '#34A853', 'ri-user-follow-line',     6],
-            ['Rejected',    'pipeline', '#EF4444', 'ri-close-circle-line',   7]
+            ['Assessment',  'pipeline', '#06B6D4', 'ri-clipboard-line',      4],
+            ['Interview',   'pipeline', '#023f57', 'ri-chat-3-line',       5],
+            ['Selected',    'pipeline', '#22C55E', 'ri-checkbox-circle-line', 6],
+            ['Offer',       'pipeline', '#10B981', 'ri-shake-hands-line',      7],
+            ['Joined',      'pipeline', '#34A853', 'ri-user-follow-line',     8],
+            ['Rejected',    'pipeline', '#EF4444', 'ri-close-circle-line',   9]
         ];
 
         $statuses = [
@@ -517,7 +519,7 @@
         echo '<div class="log-item log-success"><i class="ri-checkbox-circle-line"></i> Inserted ' . $inserted . ' default stages & statuses</div>';
         echo '<div class="credentials-box">';
         echo '<strong><i class="ri-list-unordered"></i> Pipeline Stages:</strong><br>';
-        echo 'Applied → Screening → Shortlisted → Interview → Offer → Joined → Rejected<br><br>';
+        echo 'Applied → Screening → Shortlisted → Assessment → Interview → Selected → Offer → Joined → Rejected<br><br>';
         echo '<strong><i class="ri-price-tag-3-line"></i> Statuses:</strong><br>';
         echo 'Active, On Hold, Withdrawn, Hired, Not Suitable, Blacklisted';
         echo '</div>';
@@ -552,7 +554,7 @@
             ['MS Office'],
             ['JavaScript', 'React', 'Node.js', 'SQL', 'Python']
         ];
-        $pipeline_keys = ['Applied', 'Screening', 'Shortlisted', 'Interview', 'Offer', 'Joined', 'Rejected'];
+        $pipeline_keys = ['Applied', 'Screening', 'Shortlisted', 'Assessment', 'Interview', 'Selected', 'Offer', 'Joined', 'Rejected'];
         $status_keys = ['Active', 'On Hold', 'Withdrawn', 'Hired', 'Not Suitable', 'Blacklisted'];
 
         $insert_app = $conn->prepare("INSERT INTO applications (candidate_name, email, contact_number, position, company, experience, academic_qualification, technical_qualification, expected_salary, nationality, current_location, stage_id, status_id, next_action, next_action_date, applied_date, joined_date, notes, assigned_to, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
