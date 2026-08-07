@@ -52,8 +52,7 @@ if (isset($_GET['action'])) {
                                scu.full_name AS screened_by_name, sc.screened_at,
                                asm.assessment_score, asm.assessment_comments,
                                asmu.full_name AS assessed_by_name, asm.assessed_at,
-                               iv.interview_date, iv.interview_score, iv.interviewer_comments,
-                               ivu.full_name AS interviewed_by_name
+                               ivagg.interview_count, ivagg.avg_interview_score, ivagg.latest_interview_date
                         FROM applications a
                         LEFT JOIN stages s ON a.stage_id = s.id
                         LEFT JOIN stages st ON a.status_id = st.id
@@ -68,8 +67,13 @@ if (isset($_GET['action'])) {
                         LEFT JOIN users scu ON sc.screened_by = scu.id
                         LEFT JOIN application_assessment asm ON asm.application_id = a.id
                         LEFT JOIN users asmu ON asm.assessed_by = asmu.id
-                        LEFT JOIN application_interviews iv ON iv.application_id = a.id
-                        LEFT JOIN users ivu ON iv.interviewed_by = ivu.id";
+                        LEFT JOIN (
+                            SELECT application_id, COUNT(*) AS interview_count,
+                                   AVG(interview_score) AS avg_interview_score,
+                                   MAX(interview_date) AS latest_interview_date
+                            FROM application_interviews
+                            GROUP BY application_id
+                        ) ivagg ON ivagg.application_id = a.id";
 
                 // Regular users see only applications assigned to them
                 if ($role !== 'admin') {
@@ -150,11 +154,11 @@ if (isset($_GET['action'])) {
                             'assessed_at' => $row['assessed_at']
                         ],
                         'interview' => [
-                            'interview_date' => $row['interview_date'],
-                            'interview_score' => $row['interview_score'],
-                            'interviewer_comments' => $row['interviewer_comments'],
-                            'interviewed_by_name' => $row['interviewed_by_name']
+                            'interview_count' => intval($row['interview_count']),
+                            'avg_interview_score' => $row['avg_interview_score'] !== null ? round($row['avg_interview_score'], 1) : null,
+                            'latest_interview_date' => $row['latest_interview_date']
                         ],
+                        'overall_score' => computeOverallScore($row['screening_score'], $row['assessment_score'], $row['avg_interview_score']),
                         'created_by' => $row['created_by'],
                         'created_by_name' => $row['created_by_name'],
                         'created_at' => date('M d, Y', strtotime($row['created_at'])),
@@ -798,7 +802,38 @@ if (isset($_GET['action'])) {
                 }
                 exit();
 
-            case 'saveInterview':
+            case 'getInterviewRounds':
+                if (!hasPermission($user_id, $role, 'manage_interviews')) {
+                    echo json_encode(['success' => false, 'message' => 'Access denied']);
+                    exit();
+                }
+
+                $interviewAppId = isset($_GET['application_id']) ? intval($_GET['application_id']) : 0;
+                if ($interviewAppId <= 0) {
+                    echo json_encode(['success' => false, 'message' => 'Invalid application ID']);
+                    exit();
+                }
+
+                $conn = getDBConnection();
+                $stmt = $conn->prepare("SELECT iv.id, iv.round_label, iv.interview_date, iv.interview_score, iv.interviewer_comments, u.full_name AS interviewed_by_name
+                                         FROM application_interviews iv
+                                         LEFT JOIN users u ON iv.interviewed_by = u.id
+                                         WHERE iv.application_id = ?
+                                         ORDER BY iv.interview_date ASC, iv.id ASC");
+                $stmt->bind_param("i", $interviewAppId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $rounds = [];
+                while ($row = $result->fetch_assoc()) {
+                    $rounds[] = $row;
+                }
+                $stmt->close();
+                $conn->close();
+
+                echo json_encode(['success' => true, 'data' => $rounds]);
+                exit();
+
+            case 'addInterviewRound':
                 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                     echo json_encode(['success' => false, 'message' => 'Invalid request method']);
                     exit();
@@ -814,31 +849,73 @@ if (isset($_GET['action'])) {
                     exit();
                 }
 
+                $roundLabel = isset($_POST['round_label']) ? trim($_POST['round_label']) : null;
+                $roundLabel = $roundLabel !== '' ? $roundLabel : null;
                 $interviewDate = isset($_POST['interview_date']) && !empty($_POST['interview_date']) ? $_POST['interview_date'] : null;
                 $interviewScore = isset($_POST['interview_score']) && $_POST['interview_score'] !== '' ? intval($_POST['interview_score']) : null;
                 $interviewerComments = isset($_POST['interviewer_comments']) ? trim($_POST['interviewer_comments']) : null;
 
                 $conn = getDBConnection();
                 $stmt = $conn->prepare("INSERT INTO application_interviews
-                    (application_id, interview_date, interview_score, interviewer_comments, interviewed_by)
-                    VALUES (?, ?, ?, ?, ?)
-                    ON DUPLICATE KEY UPDATE
-                    interview_date = VALUES(interview_date),
-                    interview_score = VALUES(interview_score),
-                    interviewer_comments = VALUES(interviewer_comments),
-                    interviewed_by = VALUES(interviewed_by)");
-                $stmt->bind_param("isisi", $interviewAppId, $interviewDate, $interviewScore, $interviewerComments, $user_id);
+                    (application_id, round_label, interview_date, interview_score, interviewer_comments, interviewed_by)
+                    VALUES (?, ?, ?, ?, ?, ?)");
+                $stmt->bind_param("issisi", $interviewAppId, $roundLabel, $interviewDate, $interviewScore, $interviewerComments, $user_id);
 
                 if ($stmt->execute()) {
-                    logActivity($user_id, 'UPDATE', "Saved interview for application #$interviewAppId", ['module' => 'applications', 'application_id' => $interviewAppId]);
+                    logActivity($user_id, 'CREATE', "Added interview round for application #$interviewAppId", ['module' => 'applications', 'application_id' => $interviewAppId]);
                     $stmt->close();
                     $conn->close();
-                    echo json_encode(['success' => true, 'message' => 'Interview saved successfully']);
+                    echo json_encode(['success' => true, 'message' => 'Interview round added successfully']);
                 } else {
                     $error = $stmt->error;
                     $stmt->close();
                     $conn->close();
-                    echo json_encode(['success' => false, 'message' => 'Failed to save interview: ' . $error]);
+                    echo json_encode(['success' => false, 'message' => 'Failed to add interview round: ' . $error]);
+                }
+                exit();
+
+            case 'deleteInterviewRound':
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+                    exit();
+                }
+                if (!hasPermission($user_id, $role, 'manage_interviews')) {
+                    echo json_encode(['success' => false, 'message' => 'Access denied']);
+                    exit();
+                }
+
+                $roundId = isset($_POST['id']) ? intval($_POST['id']) : 0;
+                if ($roundId <= 0) {
+                    echo json_encode(['success' => false, 'message' => 'Invalid round ID']);
+                    exit();
+                }
+
+                $conn = getDBConnection();
+                $stmt = $conn->prepare("SELECT application_id FROM application_interviews WHERE id = ?");
+                $stmt->bind_param("i", $roundId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                if ($result->num_rows === 0) {
+                    $stmt->close();
+                    $conn->close();
+                    echo json_encode(['success' => false, 'message' => 'Round not found']);
+                    exit();
+                }
+                $roundAppId = $result->fetch_assoc()['application_id'];
+                $stmt->close();
+
+                $stmt = $conn->prepare("DELETE FROM application_interviews WHERE id = ?");
+                $stmt->bind_param("i", $roundId);
+
+                if ($stmt->execute()) {
+                    logActivity($user_id, 'DELETE', "Deleted interview round for application #$roundAppId", ['module' => 'applications', 'application_id' => $roundAppId]);
+                    $stmt->close();
+                    $conn->close();
+                    echo json_encode(['success' => true, 'message' => 'Interview round deleted successfully']);
+                } else {
+                    $stmt->close();
+                    $conn->close();
+                    echo json_encode(['success' => false, 'message' => 'Failed to delete interview round']);
                 }
                 exit();
 
@@ -1866,15 +1943,70 @@ if (isset($_GET['action'])) {
             });
         }
 
-        function saveInterview(appId) {
+        function loadInterviewRounds(appId) {
+            var pane = document.getElementById('profile-tab-interviews');
+            $.ajax({
+                url: '?action=getInterviewRounds&application_id=' + appId,
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    if (!response.success) {
+                        pane.innerHTML = '<div class="profile-empty">Failed to load interviews.</div>';
+                        return;
+                    }
+                    renderInterviewRoundsList(response.data, appId);
+                },
+                error: function() {
+                    pane.innerHTML = '<div class="profile-empty">Connection error.</div>';
+                }
+            });
+        }
+
+        function renderInterviewRoundsList(rounds, appId) {
+            var pane = document.getElementById('profile-tab-interviews');
+            var html = '';
+
+            if (rounds.length === 0) {
+                html += '<div class="profile-empty"><i class="ri-calendar-line" style="font-size:32px;"></i><p>No interview rounds recorded yet.</p></div>';
+            } else {
+                rounds.forEach(function(r) {
+                    html += '<div style="padding:14px 0;border-bottom:1px solid var(--border-light);">';
+                    html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
+                    html += '<strong>' + escapeHtml(r.round_label || 'Interview') + '</strong>';
+                    html += '<button type="button" class="action-icon delete-icon" onclick="deleteInterviewRound(' + r.id + ', ' + appId + ')" title="Delete"><i class="ri-delete-bin-line"></i></button>';
+                    html += '</div>';
+                    html += '<div style="font-size:13px;color:var(--text-secondary);margin-top:4px;display:flex;gap:14px;">';
+                    if (r.interview_date) html += '<span><i class="ri-calendar-event-line"></i> ' + escapeHtml(r.interview_date) + '</span>';
+                    if (r.interview_score !== null && r.interview_score !== undefined) html += '<span><i class="ri-percent-line"></i> ' + r.interview_score + '%</span>';
+                    html += '</div>';
+                    if (r.interviewer_comments) html += '<div style="font-size:14px;margin-top:6px;">' + escapeHtml(r.interviewer_comments) + '</div>';
+                    if (r.interviewed_by_name) html += '<div style="font-size:12px;color:var(--text-muted);margin-top:4px;">by ' + escapeHtml(r.interviewed_by_name) + '</div>';
+                    html += '</div>';
+                });
+            }
+
+            html += '<h4 class="form-section-title"><i class="ri-add-circle-line"></i> Add Interview Round</h4>';
+            html += '<div class="form-grid">';
+            html += '<div class="form-group"><label>Round Label</label><input type="text" id="newRoundLabel" placeholder="e.g. Technical Interview" maxlength="100"></div>';
+            html += '<div class="form-group"><label>Interview Date</label><input type="date" id="newRoundDate"></div>';
+            html += '<div class="form-group"><label>Interview Score</label><input type="number" id="newRoundScore" min="0" max="100"></div>';
+            html += '</div>';
+            html += '<div class="form-group"><label>Interviewer Comments</label><textarea id="newRoundComments" rows="3"></textarea></div>';
+            html += '<button type="button" class="btn btn-primary btn-sm" onclick="addInterviewRound(' + appId + ')"><i class="ri-save-line"></i> Add Round</button>';
+
+            pane.innerHTML = html;
+        }
+
+        function addInterviewRound(appId) {
             var formData = new FormData();
             formData.append('application_id', appId);
-            formData.append('interview_date', document.getElementById('interviewDate').value);
-            formData.append('interview_score', document.getElementById('interviewScore').value);
-            formData.append('interviewer_comments', document.getElementById('interviewerComments').value);
+            formData.append('round_label', document.getElementById('newRoundLabel').value);
+            formData.append('interview_date', document.getElementById('newRoundDate').value);
+            formData.append('interview_score', document.getElementById('newRoundScore').value);
+            formData.append('interviewer_comments', document.getElementById('newRoundComments').value);
 
             $.ajax({
-                url: '?action=saveInterview',
+                url: '?action=addInterviewRound',
                 method: 'POST',
                 data: formData,
                 processData: false,
@@ -1883,7 +2015,7 @@ if (isset($_GET['action'])) {
                 success: function(response) {
                     if (response.success) {
                         Swal.fire({ icon: 'success', text: response.message, timer: 1500, showConfirmButton: false });
-                        refreshProfileTab(appId, 'interview');
+                        refreshProfileTab(appId, 'interviews');
                     } else {
                         Swal.fire({ icon: 'error', title: 'Error', text: response.message });
                     }
@@ -1891,6 +2023,42 @@ if (isset($_GET['action'])) {
                 error: function(xhr, status, error) {
                     Swal.fire({ icon: 'error', title: 'Error', text: 'Connection error: ' + error });
                 }
+            });
+        }
+
+        function deleteInterviewRound(roundId, appId) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Delete this interview round?',
+                text: 'This action cannot be undone.',
+                showCancelButton: true,
+                confirmButtonColor: '#ea4335',
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+
+                var formData = new FormData();
+                formData.append('id', roundId);
+
+                $.ajax({
+                    url: '?action=deleteInterviewRound',
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            refreshProfileTab(appId, 'interviews');
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Error', text: response.message });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Connection error: ' + error });
+                    }
+                });
             });
         }
 
@@ -2364,7 +2532,11 @@ if (isset($_GET['action'])) {
             if (app.contact_number) html += '<span><i class="ri-phone-line"></i> ' + escapeHtml(app.contact_number) + '</span>';
             if (app.current_location) html += '<span><i class="ri-map-pin-line"></i> ' + escapeHtml(app.current_location) + '</span>';
             html += '</div></div>';
-            html += '<div class="profile-summary-badges">' + stageHtml + statusHtml + '</div>';
+            html += '<div class="profile-summary-badges">' + stageHtml + statusHtml;
+            if ((canManageScreening || canManageAssessment || canManageInterviews) && app.overall_score !== null && app.overall_score !== undefined) {
+                html += '<span class="stage-badge" style="color:var(--navy-accent);"><i class="ri-medal-line"></i> Overall: ' + app.overall_score + '%</span>';
+            }
+            html += '</div>';
             html += '</div>';
 
             html += '<div class="profile-tabs">';
@@ -2384,7 +2556,7 @@ if (isset($_GET['action'])) {
             html += '<div class="profile-tab-pane" id="profile-tab-documents"><div class="profile-empty"><i class="ri-loader-4-line ri-spin"></i></div></div>';
             if (canManageScreening) html += '<div class="profile-tab-pane" id="profile-tab-screening">' + buildScreeningTab(app) + '</div>';
             if (canManageAssessment) html += '<div class="profile-tab-pane" id="profile-tab-assessment">' + buildAssessmentTab(app) + '</div>';
-            if (canManageInterviews) html += '<div class="profile-tab-pane" id="profile-tab-interviews">' + buildInterviewsTab(app) + '</div>';
+            if (canManageInterviews) html += '<div class="profile-tab-pane" id="profile-tab-interviews"><div class="profile-empty"><i class="ri-loader-4-line ri-spin"></i></div></div>';
             html += '<div class="profile-tab-pane" id="profile-tab-notes">' + buildNotesTab(app) + '</div>';
             html += '<div class="profile-tab-pane" id="profile-tab-activity"><div class="profile-empty"><i class="ri-loader-4-line ri-spin"></i></div></div>';
             html += '</div>';
@@ -2401,6 +2573,7 @@ if (isset($_GET['action'])) {
             });
 
             if (tabName === 'documents') loadProfileDocuments(appId);
+            if (tabName === 'interviews') loadInterviewRounds(appId);
             if (tabName === 'activity') loadProfileActivity(appId);
         }
 
@@ -2413,6 +2586,20 @@ if (isset($_GET['action'])) {
             html += profileField('Next Action', app.next_action);
             html += profileField('Next Action Date', app.next_action_date_display);
             html += '</div>';
+
+            if (canManageScreening || canManageAssessment || canManageInterviews) {
+                var sc = app.screening || {};
+                var asm = app.assessment || {};
+                var iv = app.interview || {};
+                html += '<h4 class="form-section-title"><i class="ri-medal-line"></i> Scores</h4>';
+                html += '<div class="profile-grid">';
+                html += profileField('Overall Score', app.overall_score !== null && app.overall_score !== undefined ? app.overall_score + '%' : null);
+                if (canManageScreening) html += profileField('Screening Score', sc.screening_score !== null && sc.screening_score !== undefined ? sc.screening_score + '%' : null);
+                if (canManageAssessment) html += profileField('Assessment Score', asm.assessment_score !== null && asm.assessment_score !== undefined ? asm.assessment_score + '%' : null);
+                if (canManageInterviews) html += profileField('Avg. Interview Score (' + (iv.interview_count || 0) + ' round' + (iv.interview_count === 1 ? '' : 's') + ')', iv.avg_interview_score !== null && iv.avg_interview_score !== undefined ? iv.avg_interview_score + '%' : null);
+                html += '</div>';
+            }
+
             html += '<button type="button" class="btn btn-secondary btn-sm" onclick="viewApplication(currentProfileApp)"><i class="ri-printer-line"></i> Print / Export</button>';
             return html;
         }
@@ -2500,20 +2687,6 @@ if (isset($_GET['action'])) {
                 html += '<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Last assessed by ' + escapeHtml(asm.assessed_by_name) + (asm.assessed_at ? ' on ' + escapeHtml(asm.assessed_at) : '') + '</p>';
             }
             html += '<button type="button" class="btn btn-primary btn-sm" onclick="saveAssessment(' + app.id + ')"><i class="ri-save-line"></i> Save Assessment</button>';
-            return html;
-        }
-
-        function buildInterviewsTab(app) {
-            var iv = app.interview || {};
-            var html = '<div class="form-grid">';
-            html += '<div class="form-group"><label>Interview Date</label><input type="date" id="interviewDate" value="' + (iv.interview_date || '') + '"></div>';
-            html += '<div class="form-group"><label>Interview Score</label><input type="number" id="interviewScore" min="0" max="100" value="' + (iv.interview_score !== null && iv.interview_score !== undefined ? iv.interview_score : '') + '"></div>';
-            html += '</div>';
-            html += '<div class="form-group"><label>Interviewer Comments</label><textarea id="interviewerComments" rows="3">' + escapeHtml(iv.interviewer_comments) + '</textarea></div>';
-            if (iv.interviewed_by_name) {
-                html += '<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Last updated by ' + escapeHtml(iv.interviewed_by_name) + '</p>';
-            }
-            html += '<button type="button" class="btn btn-primary btn-sm" onclick="saveInterview(' + app.id + ')"><i class="ri-save-line"></i> Save Interview</button>';
             return html;
         }
 

@@ -340,13 +340,14 @@
         $conn->query("CREATE TABLE application_interviews (
             id INT AUTO_INCREMENT PRIMARY KEY,
             application_id INT NOT NULL,
+            round_label VARCHAR(100) DEFAULT NULL,
             interview_date DATE DEFAULT NULL,
             interview_score INT DEFAULT NULL,
             interviewer_comments TEXT DEFAULT NULL,
             interviewed_by INT DEFAULT NULL,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE INDEX idx_application_id (application_id),
+            INDEX idx_application_id (application_id),
             FOREIGN KEY (application_id) REFERENCES applications(id) ON DELETE CASCADE,
             FOREIGN KEY (interviewed_by) REFERENCES users(id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");

@@ -191,12 +191,16 @@ $conn = getDBConnection();
 $stmt = $conn->prepare("SELECT a.*, p_s.name AS stage_name, p_s.color AS stage_color, p_s.icon AS stage_icon,
                                 st_s.name AS status_name, st_s.color AS status_color,
                                 jp.title AS posting_title, jp.department AS posting_department, jp.location AS posting_location,
-                                iv.interview_date
+                                ivagg.latest_interview_date
                          FROM applications a
                          LEFT JOIN stages p_s ON a.stage_id = p_s.id
                          LEFT JOIN stages st_s ON a.status_id = st_s.id
                          LEFT JOIN job_postings jp ON a.job_posting_id = jp.id
-                         LEFT JOIN application_interviews iv ON iv.application_id = a.id
+                         LEFT JOIN (
+                             SELECT application_id, MAX(interview_date) AS latest_interview_date
+                             FROM application_interviews
+                             GROUP BY application_id
+                         ) ivagg ON ivagg.application_id = a.id
                          WHERE a.id = ? AND a.applicant_id = ?");
 $stmt->bind_param("ii", $appId, $applicantId);
 $stmt->execute();
@@ -229,6 +233,9 @@ foreach ($pipelineStages as $s) {
         break;
     }
 }
+
+
+
 
 // Custom application question answers (submitted with the application)
 $questionAnswers = [];
@@ -326,8 +333,8 @@ $logoUrl = !empty($loginLogo) ? htmlspecialchars($loginLogo) : 'https://blogger.
                 <div class="aa-summary-meta">
                     <span><i class="ri-hashtag"></i> <?php echo htmlspecialchars($app['recruitment_reference'] ?: ('APP-' . $app['id'])); ?></span>
                     <span><i class="ri-calendar-line"></i> Applied <?php echo date('M d, Y', strtotime($app['applied_date'])); ?></span>
-                    <?php if ($app['interview_date']): ?>
-                        <span><i class="ri-calendar-check-line"></i> Interview scheduled: <?php echo date('M d, Y', strtotime($app['interview_date'])); ?></span>
+                    <?php if ($app['latest_interview_date']): ?>
+                        <span><i class="ri-calendar-check-line"></i> Interview scheduled: <?php echo date('M d, Y', strtotime($app['latest_interview_date'])); ?></span>
                     <?php endif; ?>
                 </div>
             </div>

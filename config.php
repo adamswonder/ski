@@ -91,6 +91,19 @@ function computeEffectiveStatus($statusOverride, $openDate, $closeDate) {
     return 'open';
 }
 
+// Overall Score: simple average of whichever of screening/assessment/interview scores are present, rounded
+function computeOverallScore($screeningScore, $assessmentScore, $avgInterviewScore) {
+    $scores = array_filter([$screeningScore, $assessmentScore, $avgInterviewScore], function($s) {
+        return $s !== null;
+    });
+
+    if (empty($scores)) {
+        return null;
+    }
+
+    return round(array_sum($scores) / count($scores), 1);
+}
+
 // Builds and saves the SKY-{year}-{padded id} reference for a newly-inserted application
 function generateRecruitmentReference($conn, $applicationId, $appliedDate) {
     $year = $appliedDate ? date('Y', strtotime($appliedDate)) : date('Y');
